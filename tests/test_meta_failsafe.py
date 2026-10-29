@@ -14,6 +14,7 @@ from pydantic import SecretStr
 
 from bladesight.meta import (
     CacheMissError,
+    ChatDefaults,
     ChatResult,
     DiskCache,
     HttpProvider,
@@ -58,19 +59,26 @@ def reply(usage: dict | None) -> dict:
 @respx.mock
 def test_replay_client_needs_no_key_and_serves_cached_answers(tmp_path: Path) -> None:
     cache_dir = tmp_path / "cache"
+    # The demo machine: no META_API_KEY at all, replay mode (the default).
+    settings = MetaSettings.from_env({"BLADESIGHT_CACHE_DIR": str(cache_dir)})
+    assert settings.meta_api_key is None and settings.mode == "replay"
+
     live = HttpProvider("meta", BASE, SecretStr("k"))
     route = respx.post(RESPONSES_URL).respond(
         200, json=reply({"input_tokens": 5, "output_tokens": 2})
     )
     recorder = MetaClient(
-        live, spend=SpendTracker(1.0, provider="meta"), cache=DiskCache(cache_dir / "responses")
+        live,
+        spend=SpendTracker(1.0, provider="meta"),
+        cache=DiskCache(cache_dir / "responses"),
+        # store / reasoning effort are part of the cache key: record under the same defaults
+        chat_defaults=ChatDefaults(
+            store=settings.store, reasoning_effort=settings.reasoning_effort
+        ),
     )
     recorder.chat(chat_request("cached question"))
     assert route.call_count == 1
 
-    # The demo machine: no META_API_KEY at all, replay mode (the default).
-    settings = MetaSettings.from_env({"BLADESIGHT_CACHE_DIR": str(cache_dir)})
-    assert settings.meta_api_key is None and settings.mode == "replay"
     replay = build_client(settings, provider="meta")
 
     assert replay.chat(chat_request("cached question")).text == "hi"

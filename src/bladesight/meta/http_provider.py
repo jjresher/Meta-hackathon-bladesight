@@ -10,14 +10,17 @@ Baseten (docs.baseten.co) uses the OpenAI Chat Completions format at
 `https://inference.baseten.co/v1`; its reasoning is always on and counts as output tokens, and its
 429/529 responses are retried with backoff while 402 (payment required) is permanent.
 
-Confirmed by the first real calls (docs/evidence/meta-api-step1.md): the Muse Spark request and
-`usage` shape (reasoning tokens are inside `output_tokens`), `max_output_tokens`, public image
-URLs, non-streaming SAM, and SAM's zero-match reply (`output_text == ""`) and `images_processed`
-billing unit.
+Confirmed by real calls (docs/evidence/meta-api-step1.md): the Muse Spark request and `usage`
+shape (reasoning tokens are inside `output_tokens`), `max_output_tokens`, `store: false` and
+`reasoning.effort: "low"`, public image URLs, non-streaming SAM, SAM's zero-match reply
+(`output_text == ""`), and real SAM masks: one-bit `!` payloads with a per-record `c=` confidence,
+box `x2`/`y2` inclusive, `w`/`h` equal to the source image size, and a mask raster exactly the size
+of its box (placed at the box's top-left; checked visually on two photos).
 
 Still unconfirmed: `temperature` and the tool-call item shapes on Meta Responses, whether
-`input_tokens` includes the cached tokens, a real SAM mask on the wire, and the IMAGE INPUT FORMAT
-for Baseten (we send an OpenAI-style `image_url` data URL) (docs/limitations.md, #2).
+`input_tokens` includes the cached tokens, `store` on SAM requests, effort values below "low", and
+the IMAGE INPUT FORMAT for Baseten (we send an OpenAI-style `image_url` data URL)
+(docs/limitations.md, #2).
 """
 
 from __future__ import annotations

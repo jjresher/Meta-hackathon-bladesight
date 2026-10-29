@@ -354,9 +354,21 @@ def test_settings_read_the_defaults_and_build_client_applies_them_to_meta_only()
     assert settings.store is False and settings.reasoning_effort == "low"
     assert build_client(settings, provider="meta").chat_defaults == ChatDefaults(False, "low")
     assert build_client(settings, provider="baseten").chat_defaults == ChatDefaults()
-    assert MetaSettings.from_env({}).store is None
     with pytest.raises(MetaConfigError):
         MetaSettings.from_env({"META_STORE": "maybe"})
+
+
+def test_the_defaults_are_the_values_the_real_api_accepted() -> None:
+    settings = MetaSettings.from_env({})
+    assert settings.store is False
+    assert settings.reasoning_effort == "low"
+
+
+def test_the_word_default_sends_neither_field() -> None:
+    settings = MetaSettings.from_env({"META_STORE": "default", "META_REASONING_EFFORT": "default"})
+    assert settings.store is None and settings.reasoning_effort is None
+    explicit = MetaSettings.from_env({"META_STORE": "true", "META_REASONING_EFFORT": "high"})
+    assert explicit.store is True and explicit.reasoning_effort == "high"
 
 
 def test_cli_flags_override_the_defaults(

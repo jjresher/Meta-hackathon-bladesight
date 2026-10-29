@@ -181,3 +181,37 @@ def test_a_reply_cut_off_by_max_output_tokens_keeps_its_billed_usage() -> None:
     )
     assert result.text == ""
     assert c.records[0].cost_usd > 0
+
+
+# A one-bit mask as the live API sends them: "!" marker, a full-precision c= confidence on both
+# tokens, x=0;y=0 on the mask, inclusive x2/y2 on the box. The 5x5 payload is the one-bit example
+# from the meta-sam-parser docs (the real payloads were not kept).
+ONE_BIT_TEXT = (
+    "<0f>0<|box;x1=10;y1=20;x2=14;y2=24;w=64;h=48;c=0.8439024686813354|>"
+    "<|mask;x=0;y=0;c=0.8439024686813354;data=5,5,!!!!!!(QO(0lu8?|>\n"
+).replace("!!!!!!(QO", "!!!!!(QO")
+
+
+@respx.mock
+def test_a_one_bit_mask_is_placed_at_the_box_with_inclusive_corners_made_half_open() -> None:
+    respx.post(RESPONSES_URL).respond(200, json=sam_reply(ONE_BIT_TEXT))
+
+    (mask,) = client().segment(segment_request(ImagePart(url=BLADE_URL), "car")).masks
+
+    assert mask.score == pytest.approx(0.8439024686813354)
+    assert mask.box == (10, 20, 15, 25)  # wire x2=14 / y2=24 are inclusive
+    assert (mask.width, mask.height) == (5, 5)  # the raster is exactly the box
+    assert (mask.frame_width, mask.frame_height) == (64, 48)  # w/h = source image size
+    assert mask.area == 10
+    assert mask.array().astype(int).tolist() == [
+        [1, 0, 0, 1, 0],
+        [0, 0, 1, 1, 0],
+        [0, 0, 0, 0, 0],
+        [1, 0, 1, 1, 1],
+        [1, 0, 0, 0, 1],
+    ]
+    frame = mask.frame_array()
+    assert frame.shape == (48, 64) and int(frame.sum()) == 10
+    assert frame[20:25, 10:15].astype(int).tolist() == mask.array().astype(int).tolist()
+    assert not frame[:20].any() and not frame[25:].any()
+    assert not frame[:, :10].any() and not frame[:, 15:].any()
