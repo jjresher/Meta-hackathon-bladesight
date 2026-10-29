@@ -8,7 +8,10 @@ in-process and never printed. Checks before the calls: `META_API_KEY` set, `BLAD
 was a miss, as expected. All images are public Wikimedia Commons photos, not dataset images.
 
 Costs are the documented prices (dev.meta.ai/docs) times the real usage; they are NOT checked
-against an invoice.
+against an invoice. The raw response bodies were not stored: the usage numbers, request ids and
+parsed masks are in `.spend/spend_log.jsonl` and the cache (both gitignored); fields such as the
+echoed `store` / `reasoning` values were read from the live replies during the session (their
+structure was captured by throwaway step scripts that are not committed).
 
 ## Calls and cost
 
@@ -20,7 +23,7 @@ against an invoice.
 | 2b-1. SAM "wind turbine", wind-farm photo (1280x960) | 1 / 0 / 0 | 0.002500 | OK, **6 masks**, confidence 0.863-0.949. `86010b75-292b-4f92-bdca-40d03e604990` |
 | 2b-2. SAM "rotor blade", same photo | 1 / 0 / 0 | 0.002500 | OK, **16 masks**, confidence 0.515-0.789. `cb9f94b3-d2a4-46a3-82b4-da6d5e3958d7` |
 | 2c. Muse Spark, same prompt/image as 1a, `reasoning.effort="low"`, `store=false` | 1 / 0 / 0 | 0.002406 | OK, both values accepted. 1143 in / 230 out (203 reasoning). `2e1608f3-f7ed-4b91-99c0-4e1ab5b5973d` |
-| Total | 7 / 0 / 0 | 0.016857 | Cap 0.10 USD not approached; no 400, no retry |
+| Total | 6 / 0 / 0 | 0.016857 | Cap 0.10 USD not approached; no 400, no retry |
 
 Images: 1a/1b/2c `.../thumb/4/44/Ice-at-rotor-blade-of-wind-turbine.jpg/1280px-...`; 2a
 `.../thumb/8/8a/Parked_cars_on_Howard_Street_-_geograph.org.uk_-_8382065.jpg/1280px-...`; 2b
@@ -44,14 +47,19 @@ Images: 1a/1b/2c `.../thumb/4/44/Ice-at-rotor-blade-of-wind-turbine.jpg/1280px-.
 - `reasoning: {"effort": "low"}` and `store: false` are both accepted and echoed back
   (`"store": false`, `"reasoning": {"effort": "low"}`). On the same prompt and image, output went
   from 711 to 230 tokens (reasoning 686 to 203) and the cost from 0.004450 to 0.002406 (-46%),
-  with a sensible one-sentence description. The default effort echoed a 4-character value; the
-  default `store` echoed `true`. Effort values below "low" were not tried.
+  (usage of call 2c: `input_tokens` 1143, `cached_tokens` 0, `output_tokens` 230,
+  `reasoning_tokens` 203). The one-sentence description it gave ("Snow and ice coat the edge of a
+  large red ramp on a snowy hillside") is fluent but does not mention a rotor blade; that is a
+  quality signal for #3, not a #2 finding. The default effort (call 1a) echoed a 4-character value
+  and the default `store` echoed `true`; both read from the live reply, raw body not stored. Effort
+  values below "low" were not tried.
 - SAM request accepted: one `input_text` (the concept) + one `input_image` (`image_url`), no
   `/v1/files` upload, `metadata {"mask_encoding": "one_bit", "include_confidence": "true"}`,
   non-streaming. Reply: `status: "completed"`, one `message` item whose `output_text` is the
   special-token text. No match gives `output_text == ""` (call 1b). Usage: all token counts 0 and
   `"images_processed": 1` (the observed per-image count; per-image billing itself comes from Meta's
-  pricing page).
+  pricing page). The SAM reply also echoes `"store": true` (read from the live reply of call 1b; the
+  raw body was not stored, and `store` was not sent on SAM requests).
 - Real SAM masks (28 masks over 2a, 2b-1, 2b-2), as parsed by `meta-sam-parser`:
   - Each record is `id<|box;x1;y1;x2;y2;w;h;c|><|mask;x=0;y=0;c;data=H,W,!payload|>`: one-bit `!`
     payloads, a full-precision float confidence `c` on both tokens (e.g. `0.8439024686813354`).
