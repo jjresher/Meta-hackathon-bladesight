@@ -34,7 +34,9 @@ Decisions: `docs/decision_ledger.md`. Known gaps: `docs/limitations.md`.
    `docs/evidence/`. The agent never states a defect or a work order without a verified assessment.
 6. **Built during the hackathon only.** No code copied from earlier projects (including the EAFIT
    Grid patents work). Third-party libraries are fine; note notable ones in the README.
-7. **Language:** code, comments, docs, commits, PRs and UI are in **English**.
+7. **Language:** code, comments, docs, commits, PRs and UI are in **English**. The one exception
+   is the handoff report given to the human in chat (see Git workflow), which is in Spanish and is
+   never written to a file.
 8. **Pin dependencies exactly** (`uv add --bounds exact`, `npm install --save-exact`).
 9. Agents may make local commits, push them and open PRs, only from a branch named
    `i<issue>-<slug>` created from `main` (`git switch -c` is fine), never on `main`. Push only that
@@ -114,7 +116,8 @@ When an issue's work is done, in this order:
 4. End the report with the branch name, the list of commits on it, and the PR title and body
    (English, following `.github/pull_request_template.md`) you propose to use.
 
-Never say "ready" if any DoD item or blocking finding is open. Wait for the human's OK. After the
+Never say "ready" if any DoD item or blocking finding is open. Local commits may be made at any
+point (rule 9); only the push and the PR wait for the human's OK. After the
 OK: push the branch, open the PR with that title and body, and give the human the PR link. The
 human reviews and merges it.
 

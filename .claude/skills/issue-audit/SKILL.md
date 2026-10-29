@@ -5,7 +5,7 @@ description: Audit work in BladeSight - either one issue's PR against its Defini
 
 # Auditing
 
-## PR mode (before every merge)
+## PR mode (before every PR)
 
 1. Identify the issue number and branch. Run `uv run poe check` first; fix failures before
    auditing (an audit of red code is wasted).
@@ -14,8 +14,9 @@ description: Audit work in BladeSight - either one issue's PR against its Defini
    for it.
 3. STOP and give the human the handoff report defined in `AGENTS.md` ("Handoff before every PR":
    Spanish, in chat only), with the auditor's findings split into blocking and follow-up and,
-   for each, where it goes (fix now, `docs/limitations.md` line or new P2 issue). Do not fix
-   blocking findings, commit, push or open the PR until the human says OK.
+   for each, where it goes (fix now, `docs/limitations.md` line or new P2 issue). Local commits
+   may happen before the OK; only the push and the PR wait for it. Fix findings as the human
+   directs.
 4. After the human's OK and any fixes, re-run `poe check`. Re-run the auditor only if a blocking
    finding needed a non-trivial change, and give a new handoff report if the verdict changed.
 5. Open the PR only after the human's OK, pasting the final audit report (or a link to it) in the
