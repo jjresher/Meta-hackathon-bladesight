@@ -121,6 +121,12 @@ point (rule 9); only the push and the PR wait for the human's OK. After the
 OK: push the branch, open the PR with that title and body, and give the human the PR link. The
 human reviews and merges it.
 
+Final step, after opening the PR: wait for CI (`gh pr checks`), then tick the "CI green" box of the
+Definition of Done in the PR description and tell the human the result (with the CI run link). If
+`gh pr edit` fails (a Projects-classic GraphQL error), edit the body through the REST API
+(`gh api -X PATCH repos/<owner>/<repo>/pulls/<n> -F body=@<file>`). If CI fails, fix what is yours
+to fix on the same branch, push, and report. Never merge, approve or review the PR.
+
 ## Skills and agents
 
 | Name | Kind | When |
