@@ -15,7 +15,6 @@ from collections.abc import Iterable
 import numpy as np
 from PIL import Image
 
-from .errors import MetaError
 from .models import (
     ChatRequest,
     ChatResult,
@@ -38,7 +37,7 @@ class StubProvider:
         *,
         chat_responses: Iterable[ChatResult] = (),
         segment_responses: Iterable[SegmentResult] = (),
-        failures: Iterable[MetaError] = (),
+        failures: Iterable[BaseException] = (),
         delay: float = 0.0,
     ) -> None:
         """`failures` are raised first, one per call. `delay` widens race windows in tests."""

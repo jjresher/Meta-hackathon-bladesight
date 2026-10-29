@@ -78,8 +78,12 @@ def main(argv: list[str] | None = None) -> int:
         help="output cap; Muse Spark's default reasoning alone used 686 tokens for a short answer",
     )
     chat.add_argument(
-        "--reasoning-effort",
-        help="sent as reasoning.effort (Meta documents 'high'; others unconfirmed)",
+        "--reasoning-effort", help="sent as reasoning.effort; overrides META_REASONING_EFFORT"
+    )
+    chat.add_argument(
+        "--store",
+        choices=["true", "false"],
+        help="sent as store on Meta Responses; overrides META_STORE",
     )
 
     seg = sub.add_parser("segment", help="one SAM 3.1 call (or stub)")
@@ -112,6 +116,7 @@ def main(argv: list[str] | None = None) -> int:
                 messages=[ChatMessage.user(args.prompt, *images)],
                 max_tokens=args.max_tokens,
                 reasoning_effort=args.reasoning_effort,
+                store=None if args.store is None else args.store == "true",
             )
             result = client.chat(request)
             print(result.text[:500])

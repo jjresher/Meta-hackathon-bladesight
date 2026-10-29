@@ -20,10 +20,10 @@ class Usage(BaseModel):
     response had `cached_tokens == 0`, so it did not settle this.
     """
 
-    input_tokens: int = 0
-    cached_input_tokens: int = 0
-    output_tokens: int = 0
-    calls: int = 1
+    input_tokens: int = Field(default=0, ge=0)
+    cached_input_tokens: int = Field(default=0, ge=0)
+    output_tokens: int = Field(default=0, ge=0)
+    calls: int = Field(default=1, ge=0)
 
 
 class TextPart(BaseModel):
@@ -131,6 +131,7 @@ class ChatRequest(BaseModel):
     tools: list[ToolSpec] = Field(default_factory=list)
     temperature: float | None = None  # omitted from the request when None
     reasoning_effort: str | None = None  # sent as {"reasoning": {"effort": ...}} when set
+    store: bool | None = None  # sent as "store" on Responses when not None (Meta stores by default)
     max_tokens: int = 1024  # sent as max_output_tokens; reasoning tokens count toward it
 
     def images(self) -> list[ImagePart]:
@@ -142,6 +143,7 @@ class ChatRequest(BaseModel):
             "tools": [t.model_dump() for t in self.tools],
             "temperature": self.temperature,
             "reasoning_effort": self.reasoning_effort,
+            "store": self.store,
             "max_tokens": self.max_tokens,
         }
 
@@ -152,6 +154,9 @@ class ChatResult(BaseModel):
     usage: Usage = Field(default_factory=Usage)
     model: str = ""
     request_id: str | None = None
+    # The provider's response status. Only "completed" replies are cached: an "incomplete" one
+    # (e.g. reasoning ate the whole output budget) is returned and billed but must not be replayed.
+    status: str = "completed"
 
 
 class SegmentRequest(BaseModel):
@@ -259,6 +264,7 @@ class SegmentResult(BaseModel):
     usage: Usage = Field(default_factory=Usage)
     model: str = ""
     request_id: str | None = None
+    status: str = "completed"  # a zero-match reply with status "completed" is cacheable
 
 
 class CallRecord(BaseModel):

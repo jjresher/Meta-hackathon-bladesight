@@ -246,17 +246,18 @@ class HttpProvider:
             if not texts and not tool_calls and body.get("status") != "incomplete":
                 raise ValueError("output has no message or function call")
             usage = body.get("usage") or {}
-            cached = (usage.get("input_tokens_details") or {}).get("cached_tokens", 0)
             return ChatResult(
                 text="".join(texts),
                 tool_calls=tool_calls,
-                usage=Usage(
-                    input_tokens=int(usage.get("input_tokens", 0)),
-                    cached_input_tokens=int(cached or 0),
-                    output_tokens=int(usage.get("output_tokens", 0)),
+                usage=_token_usage(
+                    usage,
+                    "input_tokens",
+                    "output_tokens",
+                    (usage.get("input_tokens_details") or {}).get("cached_tokens"),
                 ),
                 model=str(body.get("model") or model),
                 request_id=request_id,
+                status=str(body.get("status") or "completed"),
             )
         except (KeyError, TypeError, AttributeError, ValueError, ValidationError):
             raise MetaInvalidResponseError(
@@ -277,14 +278,14 @@ class HttpProvider:
                 for c in message.get("tool_calls") or []
             ]
             usage = body.get("usage") or {}
-            cached = (usage.get("prompt_tokens_details") or {}).get("cached_tokens", 0)
             return ChatResult(
                 text=message.get("content") or "",
                 tool_calls=tool_calls,
-                usage=Usage(
-                    input_tokens=int(usage.get("prompt_tokens", 0)),
-                    cached_input_tokens=int(cached or 0),
-                    output_tokens=int(usage.get("completion_tokens", 0)),  # includes reasoning
+                usage=_token_usage(
+                    usage,
+                    "prompt_tokens",
+                    "completion_tokens",  # includes reasoning
+                    (usage.get("prompt_tokens_details") or {}).get("cached_tokens"),
                 ),
                 model=str(body.get("model") or model),
                 request_id=request_id,
@@ -338,17 +339,48 @@ class HttpProvider:
                 request_id=request_id,
             ) from None
         # Zero matches is normal: an empty output_text gives an empty list, not an error.
-        # SAM reports no tokens; its billing unit is `usage.images_processed` (confirmed live).
-        images = (body.get("usage") or {}).get("images_processed")
-        calls = (
-            images if isinstance(images, int) and not isinstance(images, bool) and images > 0 else 1
-        )
+        # SAM reports no tokens; `usage.images_processed` is the per-image count (observed live as
+        # 1; per-image billing itself comes from Meta's pricing page). Odd values fall back to 1.
+        images = _count((body.get("usage") or {}).get("images_processed"))
         return SegmentResult(
             masks=masks,
-            usage=Usage(calls=calls),
+            usage=Usage(calls=images if images else 1),
             model=str(body.get("model") or request.model),
             request_id=request_id,
+            status=str(body.get("status") or "completed"),
         )
+
+
+def _count(value: object) -> int | None:
+    """A non-negative whole number, or None for anything else (negative, bool, string, 2.5)."""
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, int):
+        return value if value >= 0 else None
+    if isinstance(value, float) and value.is_integer() and value >= 0:
+        return int(value)
+    return None
+
+
+def _token_usage(usage: dict[str, Any], input_key: str, output_key: str, cached: object) -> Usage:
+    """Token usage from a response. A field that is present but not a non-negative whole number
+    makes the whole usage unknown (all zero), so the client settles the call at its reservation
+    estimate instead of trusting, or being broken by, a hostile or garbled value."""
+    raws = (("input", usage.get(input_key)), ("output", usage.get(output_key)), ("cached", cached))
+    values: dict[str, int] = {}
+    for name, raw in raws:
+        if raw is None:
+            values[name] = 0
+            continue
+        counted = _count(raw)
+        if counted is None:
+            return Usage()
+        values[name] = counted
+    return Usage(
+        input_tokens=values["input"],
+        cached_input_tokens=min(values["cached"], values["input"]),
+        output_tokens=values["output"],
+    )
 
 
 def _output_items(body: dict[str, Any]) -> list[dict[str, Any]]:
@@ -437,6 +469,8 @@ def _responses_payload(request: ChatRequest) -> dict[str, Any]:
         payload["temperature"] = request.temperature
     if request.reasoning_effort is not None:
         payload["reasoning"] = {"effort": request.reasoning_effort}
+    if request.store is not None:
+        payload["store"] = request.store
     if request.tools:
         payload["tools"] = [
             {

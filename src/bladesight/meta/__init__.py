@@ -4,7 +4,7 @@ Every model call goes through `MetaClient`: disk cache, hard spend cap, retries 
 """
 
 from .cache import DiskCache, cache_key
-from .client import MetaClient, build_client
+from .client import ChatDefaults, MetaClient, build_client
 from .config import (
     MUSE_SPARK_MODEL,
     MUSE_SPARK_OPEN_MODEL,
@@ -53,6 +53,7 @@ __all__ = [
     "SAM_MODEL",
     "CacheMissError",
     "CallRecord",
+    "ChatDefaults",
     "ChatMessage",
     "ChatRequest",
     "ChatResult",

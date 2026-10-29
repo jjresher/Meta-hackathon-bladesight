@@ -25,7 +25,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from .errors import SpendCapExceededError, SpendLogError
+from .errors import MetaConfigError, SpendCapExceededError, SpendLogError
 from .models import ChatRequest, Usage
 
 try:  # POSIX only; without it the cap is still enforced per process (documented limitation).
@@ -115,6 +115,8 @@ class SpendTracker:
     def __init__(
         self, limit_usd: float, *, provider: str, log_path: Path | str | None = None
     ) -> None:
+        if math.isnan(limit_usd) or limit_usd < 0:
+            raise MetaConfigError(f"{provider}: the spend limit must be a number >= 0")
         self.limit_usd = limit_usd
         self.provider = provider
         self.log_path = Path(log_path) if log_path else None
@@ -161,8 +163,12 @@ class SpendTracker:
         request_id: str | None,
     ) -> None:
         """Replace the reservation with the actual cost. `simulated_cost` is stub-only."""
-        if not math.isfinite(cost) or not math.isfinite(simulated_cost):
-            log.warning("non-finite cost for %s; settling at the reservation estimate", model)
+        if (
+            not (math.isfinite(cost) and math.isfinite(simulated_cost))
+            or cost < 0
+            or simulated_cost < 0
+        ):
+            log.warning("invalid cost for %s; settling at the reservation estimate", model)
             cost, simulated_cost = (
                 (0.0, reservation.estimate_usd)
                 if simulated_cost

@@ -1,7 +1,8 @@
-"""Replies shaped exactly like the first real Meta responses (docs/evidence/meta-api-step1.md).
+"""Replies modelled on the first real Meta responses (docs/evidence/meta-api-step1.md).
 
-Only the structure and the numbers under `usage` come from the real calls; ids and text are made
-up. They pin the parser to what the API actually returns, not to what the docs suggest.
+The `usage` numbers and the overall structure come from the real calls (the raw replies were not
+kept, so the envelope fields are reconstructed from the observed shape); ids and text are made up.
+They pin the parser to what the API was seen to return, not to what the docs suggest.
 """
 
 import httpx

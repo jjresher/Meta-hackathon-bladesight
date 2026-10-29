@@ -44,6 +44,9 @@ class MetaSettings(BaseModel):
     meta_api_base_url: str = DEFAULT_META_BASE_URL
     chat_model: str = MUSE_SPARK_MODEL
     sam_model: str = SAM_MODEL
+    # Defaults the Meta client fills into a ChatRequest that leaves them as None.
+    store: bool | None = None  # META_STORE=true|false; unset: do not send the field
+    reasoning_effort: str | None = None  # META_REASONING_EFFORT; unset: Meta's own default
     baseten_api_key: SecretStr | None = None
     baseten_base_url: str = DEFAULT_BASETEN_BASE_URL
     spend_limit_usd: float = DEFAULT_SPEND_LIMIT_USD
@@ -95,6 +98,8 @@ class MetaSettings(BaseModel):
             meta_api_base_url=get("META_API_BASE_URL") or DEFAULT_META_BASE_URL,
             chat_model=get("META_CHAT_MODEL") or MUSE_SPARK_MODEL,
             sam_model=get("META_SAM_MODEL") or SAM_MODEL,
+            store=_optional_bool(get("META_STORE"), "META_STORE"),
+            reasoning_effort=get("META_REASONING_EFFORT"),
             baseten_api_key=SecretStr(baseten_key) if baseten_key else None,
             baseten_base_url=get("BASETEN_BASE_URL") or DEFAULT_BASETEN_BASE_URL,
             spend_limit_usd=limit,
@@ -125,6 +130,16 @@ class MetaSettings(BaseModel):
             "BASETEN_SPEND_LIMIT_USD": f"{self.baseten_spend_limit_usd:.2f}",
             "BLADESIGHT_MODE": self.mode,
         }
+
+
+def _optional_bool(raw: str | None, name: str) -> bool | None:
+    if raw is None:
+        return None
+    if raw.lower() in ("true", "1", "yes"):
+        return True
+    if raw.lower() in ("false", "0", "no"):
+        return False
+    raise MetaConfigError(f"{name} must be true or false")
 
 
 def _limit(raw: str | None, name: str, default: float) -> float:

@@ -7,6 +7,7 @@ import math
 import random
 import time
 from collections.abc import Callable
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Literal
 
@@ -37,6 +38,14 @@ from .stub import StubProvider
 log = logging.getLogger("bladesight.meta")
 
 
+@dataclass(frozen=True)
+class ChatDefaults:
+    """Values filled into a `ChatRequest` field that the caller left as None."""
+
+    store: bool | None = None
+    reasoning_effort: str | None = None
+
+
 class MetaClient:
     def __init__(
         self,
@@ -47,6 +56,7 @@ class MetaClient:
         retry: RetryPolicy | None = None,
         use_cache: bool = True,
         cache_only: bool = False,
+        chat_defaults: ChatDefaults | None = None,
         sleep: Callable[[float], None] = time.sleep,
         rng: Callable[[], float] = random.random,
     ) -> None:
@@ -61,11 +71,22 @@ class MetaClient:
         self.retry = retry or RetryPolicy()
         self.use_cache = use_cache
         self.cache_only = cache_only
+        self.chat_defaults = chat_defaults or ChatDefaults()
         self._sleep = sleep
         self._rng = rng
         self.records: list[CallRecord] = []
 
     def chat(self, request: ChatRequest) -> ChatResult:
+        fill = {
+            name: value
+            for name, value in (
+                ("store", self.chat_defaults.store),
+                ("reasoning_effort", self.chat_defaults.reasoning_effort),
+            )
+            if value is not None and getattr(request, name) is None
+        }
+        if fill:
+            request = request.model_copy(update=fill)
         return self._execute(
             "chat",
             request.model,
@@ -139,7 +160,9 @@ class MetaClient:
         reservation = self.spend.reserve(estimate)
         try:
             result, retried = call_with_retry(call, self.retry, sleep=self._sleep, rng=self._rng)
-        except BaseException:
+        except Exception:
+            # A failed call is released as free. A KeyboardInterrupt / SystemExit is deliberately
+            # NOT caught: the request may already be billed, so its reservation stays counted.
             self.spend.release(reservation)
             raise
         usage = result.usage
@@ -168,7 +191,7 @@ class MetaClient:
             attempts=attempts,
             request_id=result.request_id,
         )
-        if caching:
+        if caching and result.status == "completed":
             assert self.cache is not None
             self.cache.put(key, result)
         codes = [e.code for e in retried]
@@ -274,8 +297,14 @@ def build_client(
                 chat_format="chat_completions",
                 supports_segment=False,
             )
+    defaults = (
+        ChatDefaults(store=settings.store, reasoning_effort=settings.reasoning_effort)
+        if provider == "meta"
+        else ChatDefaults()
+    )
     return MetaClient(
         backend,
+        chat_defaults=defaults,
         spend=SpendTracker(limit, provider=provider, log_path=log_path),
         cache=DiskCache(Path(settings.cache_dir) / "responses"),
         retry=retry,
