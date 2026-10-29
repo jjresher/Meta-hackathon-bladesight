@@ -313,13 +313,16 @@ DoD: [ ] post live before submission · [ ] post link in the submission · [ ] r
 ## 9. Workflow and audit
 
 - One issue = one branch `i<n>-<slug>` = one PR, using the PR template (`Closes #n`).
-- Before opening the PR: `poe check`, then ask Claude Code to run the **auditor** agent on the
-  diff. It starts with no context, reads the issue's DoD, `AGENTS.md` and the diff, and returns
-  findings split into **blocking** and **follow-up**.
+- When the work is done: `poe check`, then Claude Code runs the **auditor** agent on the diff. It
+  starts with no context, reads the issue's DoD, `AGENTS.md` and the diff, and returns findings
+  split into **blocking** and **follow-up**. Claude Code then STOPS and gives the human a handoff
+  report in Spanish, in chat only (`AGENTS.md`, "Handoff before every PR"); after the human's OK it
+  pushes the branch and opens the PR. Local commits can happen earlier.
 - **Blocking rule** (learned from Verdict): a finding blocks only if it breaks the demo, breaks a
   rule in `AGENTS.md`, or supports a claim we cannot back. Everything else becomes a line in
   `docs/limitations.md` or a new P2 issue.
-- You review and merge (solo: the auditor's review stands in for a teammate's).
+- The human reviews and merges every PR (solo: the auditor's review stands in for a teammate's).
+  Agents never merge, close, approve or review PRs.
 - **Daily check (10 min, end of day)**: plan vs schedule, spend so far, cut order applied if
   behind, ledger updated. Claude Code can run it with the `issue-audit` skill in "day" mode.
 

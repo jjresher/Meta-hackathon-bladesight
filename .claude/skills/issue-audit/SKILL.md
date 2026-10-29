@@ -5,21 +5,27 @@ description: Audit work in BladeSight - either one issue's PR against its Defini
 
 # Auditing
 
-## PR mode (before every merge)
+## PR mode (before every PR)
 
 1. Identify the issue number and branch. Run `uv run poe check` first; fix failures before
    auditing (an audit of red code is wasted).
 2. Launch the `auditor` agent (`.claude/agents/auditor.md`) with: the issue number, the branch,
    and nothing else. It must start without the implementer's context; do not summarize the work
    for it.
-3. Give the human the auditor's report verbatim, then a short plan: which blocking findings you
-   will fix now, and where each follow-up goes (`docs/limitations.md` line or new P2 issue).
-4. After fixes, re-run `poe check`. Re-run the auditor only if a blocking finding needed a
-   non-trivial change.
-5. Paste the final report (or a link to it) in the PR description under "Audit".
+3. STOP and give the human the handoff report defined in `AGENTS.md` ("Handoff before every PR":
+   Spanish, in chat only), with the auditor's findings split into blocking and follow-up and,
+   for each, where it goes (fix now, `docs/limitations.md` line or new P2 issue). Local commits
+   may happen before the OK; only the push and the PR wait for it. Fix findings as the human
+   directs.
+4. After the human's OK and any fixes, re-run `poe check`. Re-run the auditor only if a blocking
+   finding needed a non-trivial change, and give a new handoff report if the verdict changed.
+5. Open the PR only after the human's OK, pasting the final audit report (or a link to it) in the
+   description under "Audit". The human reviews and merges it; an agent never merges, closes,
+   approves or reviews a PR.
 
 Blocking rule: a finding blocks only if it breaks the demo, breaks a rule in `AGENTS.md`, or
-supports a claim we cannot back.
+supports a claim we cannot back. Never report "ready" while a DoD item or a blocking finding is
+open.
 
 ## Day mode (end of each day, about 10 minutes)
 

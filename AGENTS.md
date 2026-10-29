@@ -34,9 +34,22 @@ Decisions: `docs/decision_ledger.md`. Known gaps: `docs/limitations.md`.
    `docs/evidence/`. The agent never states a defect or a work order without a verified assessment.
 6. **Built during the hackathon only.** No code copied from earlier projects (including the EAFIT
    Grid patents work). Third-party libraries are fine; note notable ones in the README.
-7. **Language:** code, comments, docs, commits, PRs and UI are in **English**.
+7. **Language:** code, comments, docs, commits, PRs and UI are in **English**. The one exception
+   is the handoff report given to the human in chat (see Git workflow), which is in Spanish and is
+   never written to a file.
 8. **Pin dependencies exactly** (`uv add --bounds exact`, `npm install --save-exact`).
-9. Do not commit, push, open PRs, merge or change GitHub settings unless the human asked for it.
+9. Agents may make local commits, push them and open PRs, only from a branch named
+   `i<issue>-<slug>` created from `main` (`git switch -c` is fine), never on `main`. Push only that
+   branch to origin (`git push -u origin <branch>`); never force-push (no `-f`, no `--force`, no
+   `--force-with-lease`), never push to `main`, never push tags. An agent opens a PR (`gh pr create`,
+   using `.github/pull_request_template.md`) only after the human has read the handoff report and
+   said OK. Agents never merge, close, approve or review PRs, never delete branches, and never
+   change GitHub settings: the human merges every PR. Commits use the human's git identity from the
+   existing git config; agents never change `user.name` or `user.email`, never use `--author`,
+   never use `--no-verify`, and never `--amend` commits already pushed. Make small logical
+   Conventional Commits as the work progresses, each with an issue reference. Staging with
+   `git add` is allowed. Do not change the commit attribution settings or trailers; leave Claude
+   Code's defaults as they are.
 10. The dataset licence is **CC BY-NC 4.0**: keep attribution in `DATA.md` and the README.
 
 ## Commands
@@ -77,17 +90,42 @@ scripts/                repo tooling and hooks
 - Trade-offs: one line in `docs/decision_ledger.md` (skill `write-decision`); known gaps in
   `docs/limitations.md` with the issue number.
 - The PR was reviewed by the `auditor` agent and its blocking findings are resolved.
+- The human read the handoff report (see Git workflow) and said OK before the PR was opened; the
+  human reviews and merges every PR.
 - No TODO without an issue number, e.g. `# TODO(#9): report IoU 0.5 as well`.
 
 ## Git workflow
 
 - Branch from `main`: `i<issue>-<short-slug>` (e.g. `i5-sam-detection`). One issue per PR.
 - Conventional commits in English: `feat(detect): merge overlapping SAM masks`.
-- Open PRs with `.github/pull_request_template.md`. Never force-push `main`.
-- Before opening a PR, run the `auditor` agent on the diff (skill `issue-audit`).
+- Open PRs with `.github/pull_request_template.md`, only after the handoff below (rule 9).
 - **Blocking rule:** a review finding blocks a merge only if it breaks the demo, breaks a rule in
   this file, or supports a claim we cannot back. Everything else becomes a line in
   `docs/limitations.md` or a new P2 issue.
+
+### Handoff before every PR
+
+When an issue's work is done, in this order:
+
+1. Run `uv run poe check`.
+2. Run the `auditor` agent on the branch diff against the issue's DoD (skill `issue-audit`).
+3. **STOP** and give the human a handoff report **in Spanish, in chat only** (do not write it to a
+   file) with these sections: What was done; DoD status item by item with evidence; What is
+   missing; What could be improved; Auditor findings (blocking vs follow-up); Real spend this
+   session in USD; Verdict (ready for PR / not ready).
+4. End the report with the branch name, the list of commits on it, and the PR title and body
+   (English, following `.github/pull_request_template.md`) you propose to use.
+
+Never say "ready" if any DoD item or blocking finding is open. Local commits may be made at any
+point (rule 9); only the push and the PR wait for the human's OK. After the
+OK: push the branch, open the PR with that title and body, and give the human the PR link. The
+human reviews and merges it.
+
+Final step, after opening the PR: wait for CI (`gh pr checks`), then tick the "CI green" box of the
+Definition of Done in the PR description and tell the human the result (with the CI run link). If
+`gh pr edit` fails (a Projects-classic GraphQL error), edit the body through the REST API
+(`gh api -X PATCH repos/<owner>/<repo>/pulls/<n> -F body=@<file>`). If CI fails, fix what is yours
+to fix on the same branch, push, and report. Never merge, approve or review the PR.
 
 ## Skills and agents
 
