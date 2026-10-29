@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+.pyright/
+*.egg-info/
+dist/
+build/
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Data, caches, outputs (AGENTS.md rules 2-3)
+data/
+eval/heldout/
+.cache/
+cache/
+outputs/
+runs/
+*.jpg
+*.jpeg
+*.tif
+*.tiff
+*.mp4
+*.pt
+*.pth
+*.onnx
+*.safetensors
+
+# Web
+web/node_modules/
+web/dist/
+web/test-results/
+web/playwright-report/
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
