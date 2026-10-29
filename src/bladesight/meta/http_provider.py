@@ -10,9 +10,14 @@ Baseten (docs.baseten.co) uses the OpenAI Chat Completions format at
 `https://inference.baseten.co/v1`; its reasoning is always on and counts as output tokens, and its
 429/529 responses are retried with backoff while 402 (payment required) is permanent.
 
-Still unconfirmed until a real call: `max_output_tokens` and `temperature` on Meta Responses, the
-tool-call item shapes, and the IMAGE INPUT FORMAT for Baseten (we send an OpenAI-style `image_url`
-data URL) (docs/limitations.md, #2).
+Confirmed by the first real calls (docs/evidence/meta-api-step1.md): the Muse Spark request and
+`usage` shape (reasoning tokens are inside `output_tokens`), `max_output_tokens`, public image
+URLs, non-streaming SAM, and SAM's zero-match reply (`output_text == ""`) and `images_processed`
+billing unit.
+
+Still unconfirmed: `temperature` and the tool-call item shapes on Meta Responses, whether
+`input_tokens` includes the cached tokens, a real SAM mask on the wire, and the IMAGE INPUT FORMAT
+for Baseten (we send an OpenAI-style `image_url` data URL) (docs/limitations.md, #2).
 """
 
 from __future__ import annotations
@@ -333,9 +338,14 @@ class HttpProvider:
                 request_id=request_id,
             ) from None
         # Zero matches is normal: an empty output_text gives an empty list, not an error.
+        # SAM reports no tokens; its billing unit is `usage.images_processed` (confirmed live).
+        images = (body.get("usage") or {}).get("images_processed")
+        calls = (
+            images if isinstance(images, int) and not isinstance(images, bool) and images > 0 else 1
+        )
         return SegmentResult(
             masks=masks,
-            usage=Usage(calls=1),
+            usage=Usage(calls=calls),
             model=str(body.get("model") or request.model),
             request_id=request_id,
         )

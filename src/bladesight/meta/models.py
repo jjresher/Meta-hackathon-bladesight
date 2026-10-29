@@ -13,10 +13,11 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 class Usage(BaseModel):
     """Token counts as the provider reports them.
 
-    ASSUMPTIONS, UNCONFIRMED until a real response is checked: `input_tokens` includes
+    `output_tokens` includes reasoning tokens (confirmed on a real Muse Spark response: 711 output
+    tokens of which 686 were reasoning). ASSUMPTION, UNCONFIRMED: `input_tokens` includes
     `cached_input_tokens` (the cost math bills the cached part at the cached rate and the rest at
-    the input rate; if the API reports them separately, cost is understated), and `output_tokens`
-    includes reasoning tokens (Meta's docs say reasoning is billed as output).
+    the input rate; if the API reports them separately, cost is understated). The first real
+    response had `cached_tokens == 0`, so it did not settle this.
     """
 
     input_tokens: int = 0
