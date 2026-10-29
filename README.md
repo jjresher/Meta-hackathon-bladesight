@@ -23,6 +23,12 @@ Drone inspection images of wind turbine blades from DTU (Shihavuddin & Chen, 201
 DOI 10.17632/hd96prn3nc.2); the annotated derivative is licensed CC BY-NC 4.0. No data is stored
 in this repository; it is downloaded by script (see `DATA.md`, issue #4).
 
+## Third-party libraries
+
+- [`meta-sam-parser`](https://pypi.org/project/meta-sam-parser/) (Meta Platforms, SAM License) decodes
+  SAM 3.1 segmentation output. It is a dependency, not vendored; its licence text ships with the
+  package.
+
 ## License
 
 Code: MIT (see `LICENSE`). Data: see above.

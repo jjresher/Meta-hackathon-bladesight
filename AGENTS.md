@@ -63,6 +63,7 @@ Python 3.12 managed by uv. Tasks run through poethepoet: `uv run poe <task>`.
 | `uv run poe check` | **Definition-of-Done gate**: ruff lint + format check + pyright + pytest |
 | `uv run poe fmt` | auto-format and auto-fix |
 | `uv run poe secrets-scan` | run every pre-commit hook on the whole repo |
+| `uv run python -m bladesight.meta status` | step 0 of `meta-api-check`: `set`/`missing` per variable, no network (`chat` and `segment` subcommands make one call; `--provider stub` spends nothing) |
 
 Later issues add `data`, `detect`, `eval`, `serve`, `web-*` tasks; keep this table current.
 
