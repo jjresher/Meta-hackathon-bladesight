@@ -7,7 +7,19 @@
       "Read(./data/heldout/**)",
       "Bash(git push --force:*)",
       "Bash(git push -f:*)",
-      "Bash(git commit --no-verify:*)"
+      "Bash(git push --force-with-lease:*)",
+      "Bash(git push origin main:*)",
+      "Bash(git push origin HEAD:main:*)",
+      "Bash(git push --tags:*)",
+      "Bash(git push origin --delete:*)",
+      "Bash(git commit --no-verify:*)",
+      "Bash(gh pr merge:*)",
+      "Bash(gh pr close:*)",
+      "Bash(gh pr review:*)",
+      "Bash(gh repo edit:*)",
+      "Bash(git push -u origin main:*)",
+      "Bash(git push --set-upstream origin main:*)",
+      "Bash(git branch -D:*)"
     ]
   }
 }
