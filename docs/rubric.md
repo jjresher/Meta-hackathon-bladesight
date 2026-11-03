@@ -13,8 +13,8 @@ Severity is graded per detected defect, from a close crop and a wider context cr
 | 1 | Cosmetic | Dirt, stains, streaks, light discolouration. Surface and paint intact. No action. |
 | 2 | Minor wear | Small surface wear or tiny paint chips; coating intact around it; no exposed laminate. Monitor at the next inspection. |
 | 3 | Moderate | Visible paint or coating loss or erosion over a patch, or a short hairline mark; substrate may show but no fibres and no open crack. Schedule a repair. |
-| 4 | Serious | A crack that is clearly open or long relative to the visible chord, delamination, or exposed laminate and fibres. Repair soon. |
-| 5 | Critical | Deep or large structural damage: a crack across a large share of the chord, missing material, a hole, damage that could let the blade fail. Stop and repair. |
+| 4 | Serious | A crack that is clearly open or long relative to the visible blade width, delamination, or exposed laminate and fibres. Repair soon. |
+| 5 | Critical | Deep or large structural damage: a crack across a large share of the blade width, missing material, a hole, damage that could let the blade fail. Stop and repair. |
 
 Rules of thumb (not extra levels):
 
