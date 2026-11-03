@@ -35,6 +35,8 @@ def main(argv: list[str] | None = None) -> int:
     rows: list[dict[str, object]] = []
     try:
         for tile_id in args.tiles:
+            if len(rows) >= args.max:
+                break  # before detect_tile: a cache miss there is a paid call
             TileLabel.parse_tile_id(tile_id)
             png = image_path(tile_id, "dev", args.data_dir).read_bytes()
             detection = detect_tile(client, settings, tile_id, png)
@@ -63,13 +65,13 @@ def main(argv: list[str] | None = None) -> int:
         print(f"error: {error}", file=sys.stderr)
         return 1
     finally:
+        (args.out / "assessments.json").write_text(json.dumps(rows, indent=1), encoding="utf-8")
         print(
             f"calls: live={sum(r.source == 'live' for r in client.records)} "
             f"cached={sum(r.source == 'cache' for r in client.records)} "
             f"cost_usd={sum(r.cost_usd for r in client.records):.4f} "
             f"all_runs_usd={client.spend.spent_usd:.4f} limit_usd={client.spend.limit_usd:.2f}"
         )
-    (args.out / "assessments.json").write_text(json.dumps(rows, indent=1), encoding="utf-8")
     for row in rows:
         a = row.get("assessment")
         d = row["defect"]
