@@ -57,4 +57,5 @@ check = ["lint", "format-check", "typecheck", "test"]
 data = "python -m bladesight.data"
 detect = "python -m bladesight.detect"
 eval = "python -m bladesight.eval"
+gold = "python -m bladesight.eval.gold"
 contract = "python -m bladesight.contract_examples"
