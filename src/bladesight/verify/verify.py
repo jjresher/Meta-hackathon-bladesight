@@ -19,7 +19,7 @@ from importlib import resources
 from ..assess.assess import RUBRIC_VERSION, AssessError, parse_assessment
 from ..assess.crops import crop_png
 from ..contracts import Assessment, Check, Defect, Measurement, Verification
-from ..meta import ChatMessage, ChatRequest, ImagePart, MetaClient, MetaSettings
+from ..meta import ChatMessage, ChatRequest, ImagePart, MetaClient, MetaError, MetaSettings
 
 THRESHOLDS = {
     "ok_confidence": 0.5,  # combined confidence below this is never `ok`
@@ -198,6 +198,6 @@ def verify_defect(
     try:
         second = second_look(client, settings, png, defect, provider=provider)
         error = None
-    except AssessError as exc:
+    except (AssessError, MetaError) as exc:  # an API failure abstains instead of crashing
         second, error = None, str(exc)
     return decide(assessment, second, checks, error)
