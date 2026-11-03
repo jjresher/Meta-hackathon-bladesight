@@ -430,12 +430,14 @@ def _frame_size(text: str, image: ImagePart) -> tuple[int, int] | None:
 def _to_mask(
     record: SegmentationMaskRecord, concept: str, frame_size: tuple[int, int] | None
 ) -> SegmentMask:
+    """Build a `SegmentMask`; `object_id` is the id of the prompted box it answers."""
     mask = record.mask
     raster = np.frombuffer(decode_mask_to_raster(mask), dtype=np.uint8)
     raster = raster.reshape(mask.height, mask.width).astype(bool)
     bounds = record.bounds
     box = (int(bounds.left), int(bounds.top), int(bounds.right), int(bounds.bottom))
-    return SegmentMask.from_raster(concept, record.confidence, raster, box, frame_size)
+    made = SegmentMask.from_raster(concept, record.confidence, raster, box, frame_size)
+    return made.model_copy(update={"object_id": str(record.object_id)})
 
 
 def _responses_payload(request: ChatRequest) -> dict[str, Any]:
@@ -487,8 +489,27 @@ def _responses_payload(request: ChatRequest) -> dict[str, Any]:
     return payload
 
 
+def box_prompt_text(request: SegmentRequest) -> str:
+    """`<0f>1<|box;x1=..;y1=..;x2=..;y2=..;w=..;h=..|>,2<|box...|>`: ids are 1..n in order."""
+    size = request.frame_size or _local_size(request.image)
+    if size is None:
+        raise MetaConfigError("box prompts need the image size: pass frame_size or image bytes")
+    w, h = size
+    parts = []
+    for i, (x1, y1, x2, y2) in enumerate(request.boxes, start=1):
+        x1, y1 = max(0, min(x1, w - 1)), max(0, min(y1, h - 1))
+        x2, y2 = max(x1, min(x2, w - 1)), max(y1, min(y2, h - 1))
+        parts.append(f"{i}<|box;x1={x1};y1={y1};x2={x2};y2={y2};w={w};h={h}|>")
+    return "<0f>" + ",".join(parts)
+
+
+def _local_size(image: ImagePart) -> tuple[int, int] | None:
+    return _frame_size("", image)
+
+
 def _segment_payload(request: SegmentRequest) -> dict[str, Any]:
-    """SAM 3.1 body: ONE concept as `input_text` plus the image as `image_url` (no file upload)."""
+    """SAM 3.1 body: ONE concept (or the box prompts) as `input_text` plus the image."""
+    prompt = box_prompt_text(request) if request.boxes else request.concept
     return {
         "model": request.model,
         "input": [
@@ -496,7 +517,7 @@ def _segment_payload(request: SegmentRequest) -> dict[str, Any]:
                 "type": "message",
                 "role": "user",
                 "content": [
-                    {"type": "input_text", "text": request.concept},
+                    {"type": "input_text", "text": prompt},
                     {"type": "input_image", "image_url": request.image.image_url()},
                 ],
             }
