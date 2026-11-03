@@ -28,7 +28,7 @@ per request, from Meta's "segmenting with prompts" page) were accepted and retur
 
 Truth: 67 damage boxes (and 1 dirt box: **dirt cannot be evaluated** with this sample).
 
-| Concept | Masks (conf >= 0.5, the API returns nothing below) |
+| Concept | Masks kept (the 0.3 and 0.5 thresholds gave identical sets) |
 |---|---|
 | `crack` | 1 |
 | `leading edge erosion` | 0 |
@@ -36,7 +36,7 @@ Truth: 67 damage boxes (and 1 dirt box: **dirt cannot be evaluated** with this s
 | `dirt` | 1 |
 
 Damage boxes found at IoU 0.1 / 0.3 / 0.5: **9% / 6% / 6%**. Damaged tiles with any damage mask:
-**6 of 20**. Clean tiles with a damage mask: 0 of 5. The API already filters at 0.5, so the
+**6 of 20**. Clean tiles with a damage mask: 0 of 5. The 0.3 and 0.5 thresholds returned the same masks, so the
 0.3/0.5/0.7 sweep only differs at 0.7 (1 mask left). `wind turbine blade` found no blade in 5 of 5
 tiles (tiles are 586x371 close-ups; `rotor blade` was not retried on tiles).
 
