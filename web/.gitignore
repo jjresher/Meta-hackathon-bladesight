@@ -1,0 +1,11 @@
+# Build output and dependencies (also covered by the repo-root .gitignore).
+node_modules/
+dist/
+
+# TypeScript incremental build info.
+*.tsbuildinfo
+
+# Test and browser artifacts.
+test-results/
+playwright-report/
+playwright/.cache/
