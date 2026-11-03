@@ -57,7 +57,7 @@ def test_counts_precision_recall_f1() -> None:
 
 def test_iou_levels_change_the_match() -> None:
     loose = _tile("loose", [("damage", A)], [("damage", 0.7, (5.0, 0.0, 25.0, 10.0))])
-    assert tile_counts(loose, "damage", 0.3).tp == 0  # IoU 1/3 < ... see below
+    assert tile_counts(loose, "damage", 0.3).tp == 0  # IoU is 0.2
     assert tile_counts(loose, "damage", 0.1).tp == 1
 
 

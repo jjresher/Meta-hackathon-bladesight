@@ -20,6 +20,8 @@ from .metrics import (
 )
 
 MAX_IDS_PER_CAUSE = 12
+BOOTSTRAP_N = 1000
+BOOTSTRAP_SEED = 20261029
 
 
 def _class_metrics(
@@ -55,7 +57,7 @@ def build_report(
     *,
     cost_usd: float,
     evidence_path: str,
-    n_boot: int = 1000,
+    n_boot: int = BOOTSTRAP_N,
     needs_review_share: float | None = None,
 ) -> EvalReport:
     damage = image_level(results, "damage")
@@ -137,6 +139,7 @@ def render_markdown(
     title: str,
     command: str,
     notes: Sequence[str] = (),
+    svg_name: str = "sweep.svg",
 ) -> str:
     damage = image_level(results, "damage")
     gallery = error_gallery(results, "damage")
@@ -168,7 +171,9 @@ def render_markdown(
         )
     lines += [
         "",
-        "Intervals: bootstrap over tiles (1000 resamples, seed 20261029).",
+        f"Intervals: bootstrap over tiles ({BOOTSTRAP_N} resamples, seed {BOOTSTRAP_SEED}); tiles of "
+        "one photo are correlated, so the intervals are probably a little too narrow. Precision is "
+        "reported as 0 when there are no predictions.",
         "",
         "## Image level and lenient overlap (damage)",
         "",
@@ -189,9 +194,7 @@ def render_markdown(
             for p in report.sweep
         ],
         "",
-        "![Damage recall vs false alarms](eval_dev_sweep.svg)"
-        if report.split == "dev"
-        else "![Damage recall vs false alarms](eval_heldout_sweep.svg)",
+        f"![Damage recall vs false alarms]({svg_name})",
         "",
         "## Error gallery (tile ids, damage; crops are never committed)",
         "",
