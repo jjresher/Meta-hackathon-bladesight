@@ -171,9 +171,9 @@ def render_markdown(
         )
     lines += [
         "",
-        f"Intervals: bootstrap over tiles ({BOOTSTRAP_N} resamples, seed {BOOTSTRAP_SEED}); tiles of "
-        "one photo are correlated, so the intervals are probably a little too narrow. Precision is "
-        "reported as 0 when there are no predictions.",
+        f"Intervals: bootstrap over tiles ({BOOTSTRAP_N} resamples, seed {BOOTSTRAP_SEED}); "
+        "tiles of one photo are correlated, so the intervals are probably a little too narrow. "
+        "Precision is reported as 0 when there are no predictions.",
         "",
         "## Image level and lenient overlap (damage)",
         "",
