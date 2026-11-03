@@ -54,3 +54,4 @@ fmt = [{ cmd = "ruff format ." }, { cmd = "ruff check --fix ." }]
 hooks = "pre-commit install"
 secrets-scan = "pre-commit run --all-files"
 check = ["lint", "format-check", "typecheck", "test"]
+data = "python -m bladesight.data"
