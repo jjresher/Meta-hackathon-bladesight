@@ -14,6 +14,7 @@ from ..detect.pipeline import TileDetection
 ROOT_END = 1 / 3
 TIP_START = 2 / 3
 MIN_BLADE_PX = 200
+MIN_INSIDE_FOR_POSITION = 0.5  # a defect mostly off the blade gets no root/mid/tip
 
 
 def _principal_axis(points: np.ndarray) -> np.ndarray:
@@ -77,7 +78,7 @@ def measure_mask(defect_id: str, mask: np.ndarray, blade: np.ndarray | None = No
         found = blade_axis(blade)
         if found is not None:
             direction, _, t_min, t_max = found
-            if t_max > t_min:
+            if t_max > t_min and inside >= MIN_INSIDE_FOR_POSITION:
                 projection = float(points.mean(axis=0) @ direction)
                 position_t = min(max((projection - t_min) / (t_max - t_min), 0.0), 1.0)
                 position = (
