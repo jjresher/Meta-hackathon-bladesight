@@ -79,7 +79,10 @@ def mask_outline(mask: np.ndarray, step: int = OUTLINE_STEP) -> list[tuple[float
 def _bbox(mask: np.ndarray) -> BBox:
     rows, cols = np.where(mask)
     return BBox(
-        x1=float(cols.min()), y1=float(rows.min()), x2=float(cols.max() + 1), y2=float(rows.max() + 1)
+        x1=float(cols.min()),
+        y1=float(rows.min()),
+        x2=float(cols.max() + 1),
+        y2=float(rows.max() + 1),
     )
 
 
@@ -159,7 +162,9 @@ def detect_tile(
 
     merged = merge_overlapping(candidates)
     if blade_mask is not None:
-        merged = [d for d in merged if (d.mask & blade_mask).sum() / d.mask.sum() >= MIN_INSIDE_BLADE]
+        merged = [
+            d for d in merged if (d.mask & blade_mask).sum() / d.mask.sum() >= MIN_INSIDE_BLADE
+        ]
     merged.sort(key=lambda d: (d.defect.bbox.y1, d.defect.bbox.x1))
     for number, det in enumerate(merged, start=1):
         frame = det.mask

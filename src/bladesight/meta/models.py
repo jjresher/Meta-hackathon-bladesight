@@ -185,6 +185,7 @@ class SegmentRequest(BaseModel):
         payload: dict[str, Any] = {"image": self.image.cache_payload(), "concept": self.concept}
         if self.boxes:  # text requests keep their old cache keys
             payload["boxes"] = [list(b) for b in self.boxes]
+            payload["frame_size"] = list(self.frame_size) if self.frame_size else None
         return payload
 
 
@@ -197,7 +198,7 @@ class SegmentMask(BaseModel):
 
     concept: str
     score: float | None
-    object_id: str | None = None  # id of the prompted box this mask answers (box prompts only)
+    object_id: str | None = None  # id of the prompt this mask answers (1-based)
     box: tuple[int, int, int, int]
     width: int
     height: int
