@@ -1,0 +1,27 @@
+{
+  "source": "Dataset Ninja export of YOLO Annotated Wind Turbine Surface Damage",
+  "archive": "yolo-annotated-wind-turbine-surface-damage-DatasetNinja.tar",
+  "archive_sha256": "fd68128874320cde1f26381ab1e71f34457a10b65bd8efd748e2302ec173d029",
+  "seed": 20261029,
+  "heldout_fraction_of_photos": 0.15,
+  "grouping": "source photo (DJI_xxxx), stratified by photo has-damage",
+  "manifest_sha256": "890b3e5582c71a8d2640052a3d40548579b96d3dad3db0ed99c7893d251e5338",
+  "counts": {
+    "dev": {
+      "tiles": 11442,
+      "photos": 475,
+      "labeled_tiles": 2535,
+      "damage_tiles": 2159,
+      "damage_boxes": 7456,
+      "dirt_boxes": 474
+    },
+    "heldout": {
+      "tiles": 2028,
+      "photos": 83,
+      "labeled_tiles": 460,
+      "damage_tiles": 368,
+      "damage_boxes": 1314,
+      "dirt_boxes": 107
+    }
+  }
+}

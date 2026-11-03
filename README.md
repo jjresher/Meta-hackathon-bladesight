@@ -19,9 +19,11 @@ cp .env.example .env  # then fill in your keys; never commit .env
 
 ## Data
 
-Drone inspection images of wind turbine blades from DTU (Shihavuddin & Chen, 2018,
-DOI 10.17632/hd96prn3nc.2); the annotated derivative is licensed CC BY-NC 4.0. No data is stored
-in this repository; it is downloaded by script (see `DATA.md`, issue #4).
+Drone inspection photos of the DTU Nordtank wind turbine (Shihavuddin & Chen, 2018, Mendeley Data,
+DOI [10.17632/hd96prn3nc.2](https://doi.org/10.17632/hd96prn3nc.2), CC BY-NC 3.0), as annotated
+tiles from *YOLO Annotated Wind Turbine Surface Damage* (Foster et al., 2022, CC BY-NC 4.0). No
+data is stored in this repository: `uv run poe data` downloads and splits it. Sources, citations,
+the licence note and the sealed held-out split: [`DATA.md`](DATA.md).
 
 ## Third-party libraries
 

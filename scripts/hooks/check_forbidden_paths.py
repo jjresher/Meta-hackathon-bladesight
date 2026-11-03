@@ -48,7 +48,7 @@ def is_forbidden(path: str) -> str | None:
     name = p.name
     if name in FORBIDDEN_NAMES or (name.startswith(".env.") and name != ".env.example"):
         return "secret file"
-    if any(path.startswith(d) for d in FORBIDDEN_DIRS):
+    if any(path.startswith(d) or path == d.rstrip("/") for d in FORBIDDEN_DIRS):
         return "data or held-out directory"
     suffix = p.suffix.lower()
     if suffix in FORBIDDEN_SUFFIXES:
