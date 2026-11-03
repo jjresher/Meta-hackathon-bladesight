@@ -1,4 +1,4 @@
-"""Read the dev split; refuse the sealed held-out split unless `ALLOW_HELDOUT=1` (issue #16 only)."""
+"""Read the dev split; refuse the sealed held-out split unless `ALLOW_HELDOUT=1` (#16 only)."""
 
 from __future__ import annotations
 

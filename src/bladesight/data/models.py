@@ -41,8 +41,8 @@ class TileLabel(BaseModel):
     col: int
     width: int
     height: int
-    # The YOLO derivative does not say which inspection (2017 or 2018) a tile comes from, and the
-    # original DTU file names (DJI_xxxx) do not either: year stays unknown (docs/decision_ledger.md).
+    # The YOLO derivative does not say which inspection (2017 or 2018) a tile comes from, and
+    # the original DTU file names (DJI_xxxx) do not either: year stays unknown (DATA.md).
     year: int | None = None
     boxes: list[Box] = Field(default_factory=list)
 

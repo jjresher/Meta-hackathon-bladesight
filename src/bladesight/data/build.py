@@ -74,7 +74,8 @@ def download(
                 handle.write(block)
     if part.stat().st_size != expected_bytes:
         raise DataBuildError(
-            f"download incomplete: {part.stat().st_size} of {expected_bytes} bytes; re-run to resume"
+            f"download incomplete: {part.stat().st_size} of {expected_bytes} bytes; "
+            "re-run to resume"
         )
     part.replace(dest)
     return dest
