@@ -24,6 +24,13 @@ No retries, no 4xx. SAM box prompts (`<0f>1<|box;x1=..;y1=..;x2=..;y2=..;w=..;h=
 per request, from Meta's "segmenting with prompts" page) were accepted and returned one mask per box
 (`object_id` = prompt id).
 
+Reproduction: tiles are the first n of the seed-3 order (the 18-tile comparison is the first 14
+damaged and first 4 clean). The per-method counts come from \`spike.py\` and \`spike_boxes.py\`; the
+SAM-text recall on the 18-tile subset, "truth boxes touched", the union row and the box-area
+statistics were computed with throwaway scripts that are not versioned (they re-read the cached
+raw outputs); #9 turns them into a tested helper. The grading remarks in section 3 are a reading
+of 5 replies, not a measurement.
+
 ## 1. SAM text concepts alone (20 damaged + 5 clean tiles)
 
 Truth: 67 damage boxes (and 1 dirt box: **dirt cannot be evaluated** with this sample).
