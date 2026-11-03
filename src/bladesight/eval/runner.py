@@ -62,4 +62,7 @@ def evaluate_tiles(
 
 def load_tiles(split: Split, data_dir: Path) -> list[TileLabel]:
     """Refuses the held-out split unless ALLOW_HELDOUT=1 (issue #16 only)."""
-    return load_split(split, data_dir)
+    try:
+        return load_split(split, data_dir)
+    except FileNotFoundError as error:
+        raise SystemExit(f"{error}: run `uv run poe data` first (see DATA.md)") from None
