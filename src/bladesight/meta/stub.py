@@ -80,6 +80,16 @@ class StubProvider:
                 width, height = image.size
         else:
             width, height = URL_IMAGE_SIZE
+        if request.boxes:  # box prompts: one mask per box, filling the box, answering its id
+            boxed = []
+            for i, (x1, y1, x2, y2) in enumerate(request.boxes, start=1):
+                frame = np.zeros((height, width), dtype=bool)
+                frame[y1 : y2 + 1, x1 : x2 + 1] = True
+                mask = SegmentMask.from_frame_array(request.concept, 0.9, frame)
+                boxed.append(mask.model_copy(update={"object_id": str(i)}))
+            return SegmentResult(
+                masks=boxed, usage=Usage(calls=1), model=request.model, request_id=STUB_REQUEST_ID
+            )
         frame = np.zeros((height, width), dtype=bool)
         frame[height // 4 : 3 * height // 4, width // 4 : 3 * width // 4] = True
         mask = SegmentMask.from_frame_array(request.concept, 0.9, frame)
