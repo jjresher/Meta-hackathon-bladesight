@@ -48,8 +48,8 @@ RUN_ID = "run-example-001"
 TILE_W, TILE_H = 586, 371
 
 
-def _box_outline(b: BBox) -> list[tuple[float, float]]:
-    return [(b.x1, b.y1), (b.x2, b.y1), (b.x2, b.y2), (b.x1, b.y2)]
+def _box_outline(b: BBox) -> list[list[tuple[float, float]]]:
+    return [[(b.x1, b.y1), (b.x2, b.y1), (b.x2, b.y2), (b.x1, b.y2)]]
 
 
 def _defect(
@@ -182,7 +182,7 @@ def inspection_example() -> Inspection:
             reasons=["looks disagree by 2 levels", "severity 4 but small relative size"],
         ),
     ]
-    blade = [(0.0, 90.0), (586.0, 40.0), (586.0, 360.0), (0.0, 371.0)]
+    blade = [[(0.0, 90.0), (586.0, 40.0), (586.0, 360.0), (0.0, 371.0)]]
     images = [
         InspectionImage(
             id=img,
@@ -208,44 +208,70 @@ def inspection_example() -> Inspection:
     return Inspection(summary=summary, images=images)
 
 
+def _summary(rng: random.Random, tid: str, year: int) -> InspectionSummary:
+    n_defects = rng.choice([0, 0, 1, 2, 3, 5])
+    review = min(n_defects, rng.randint(0, 1))
+    return InspectionSummary(
+        id=f"{tid}-{year}",
+        turbine_id=tid,
+        year=year,
+        n_images=rng.randint(6, 14),
+        n_defects=n_defects,
+        max_severity=rng.randint(1, 3) if n_defects else None,
+        n_needs_review=review,
+        n_reinspect=min(n_defects - review, rng.randint(0, 1)),
+    )
+
+
 def fleet_example() -> Fleet:
+    """T03 matches `inspection_example()`, the work orders and the run; the rest are filler."""
     rng = random.Random(3)
-    turbines: list[Turbine] = []
-    for i in range(1, 13):
+    latest = inspection_example().summary
+    t03_2017 = latest.model_copy(
+        update={
+            "id": "T03-2017",
+            "year": 2017,
+            "n_defects": 2,
+            "max_severity": 2,
+            "n_needs_review": 0,
+            "n_reinspect": 0,
+        }
+    )
+    turbines = [
+        Turbine(
+            id="T03",
+            name="Turbine 03",
+            rank=1,
+            priority_score=92.5,
+            status="critical",
+            trend="worse",
+            inspections=[t03_2017, latest],
+            open_work_orders=len(work_orders_example()),
+            reason="Example: verified severity 4 in 2018 (2 in 2017), one re-inspection",
+        )
+    ]
+    for i in [n for n in range(1, 13) if n != 3]:
         tid = f"T{i:02d}"
-        sev = [rng.choice([None, 1, 2, 3, 4, 5]) for _ in range(2)]
-        inspections = [
-            InspectionSummary(
-                id=f"{tid}-{year}",
-                turbine_id=tid,
-                year=year,
-                n_images=rng.randint(6, 14),
-                n_defects=rng.randint(0, 9),
-                max_severity=s,
-                n_needs_review=rng.randint(0, 2),
-                n_reinspect=rng.randint(0, 1),
-            )
-            for year, s in zip((2017, 2018), sev, strict=True)
-        ]
-        before, after = (s or 0 for s in sev)
-        trend = "worse" if after > before else "better" if after < before else "same"
+        before, after = _summary(rng, tid, 2017), _summary(rng, tid, 2018)
+        b, a = before.max_severity or 0, after.max_severity or 0
+        trend = "worse" if a > b else "better" if a < b else "same"
+        status = "needs_review" if after.n_needs_review else "attention" if a == 3 else "ok"
         turbines.append(
             Turbine(
                 id=tid,
                 name=f"Turbine {i:02d}",
                 rank=1,
-                priority_score=round((after * 20) + rng.random() * 10, 1),
-                status="critical" if after >= 4 else "attention" if after == 3 else "ok",
+                priority_score=round(a * 15 + after.n_defects * 2 + rng.random() * 5, 1),
+                status=status,
                 trend=trend,
-                inspections=inspections,
-                open_work_orders=rng.randint(0, 3),
-                reason=f"Example: max severity {after or 'none'} in 2018, trend {trend}",
+                inspections=[before, after],
+                open_work_orders=0,
+                reason=f"Example: max severity {a or 'none'} in 2018, trend {trend}",
             )
         )
     turbines.sort(key=lambda t: -t.priority_score)
     for rank, t in enumerate(turbines, start=1):
         t.rank = rank
-    turbines[2].status = "needs_review"
     return Fleet(
         farm="Example farm (fixture)",
         note=f"{NOTE}. Real fleet: synthetic farm of real DTU photos.",
@@ -419,7 +445,7 @@ def fixtures() -> dict[str, Any]:
 def schema() -> dict[str, Any]:
     defs: dict[str, Any] = {}
     for name, model in EXPORTED.items():
-        model_schema = model.model_json_schema(ref_template="#/$defs/{model}")
+        model_schema = model.model_json_schema(ref_template="#/$defs/{model}", mode="serialization")
         defs.update(model_schema.pop("$defs", {}))
         defs[name] = model_schema
     return {

@@ -66,3 +66,40 @@ def test_verdicts_are_closed() -> None:
         Verification.model_validate(
             {"defect_id": "x", "verdict": "probably_fine", "agreement": 1, "reasons": ["r"]}
         )
+
+
+def test_verification_reasons_cannot_be_empty() -> None:
+    with pytest.raises(ValidationError):
+        Verification.model_validate(
+            {"defect_id": "x", "verdict": "ok", "agreement": 1, "reasons": []}
+        )
+
+
+def test_fixtures_agree_with_each_other() -> None:
+    data = fixtures()
+    fleet = Fleet.model_validate(data["fleet.json"])
+    inspection = Inspection.model_validate(data["inspection_T03-2018.json"])
+    orders = TypeAdapter(list[WorkOrder]).validate_python(data["work_orders.json"])
+    run = AgentRun.model_validate(data["run_run-example-001.json"])
+    report = Report.model_validate(data["report_latest.json"])
+
+    defect_ids = {d.defect.id for img in inspection.images for d in img.defects}
+    assert all(set(o.defect_ids) <= defect_ids for o in orders)
+    assert run.work_order_ids == [o.id for o in orders] == report.work_order_ids
+    assert report.run_id == run.id == fleet.run_id
+    assert [t.rank for t in fleet.turbines] == list(range(1, len(fleet.turbines) + 1))
+    t03 = next(t for t in fleet.turbines if t.id == "T03")
+    assert t03.rank == 1 and t03.inspections[-1] == inspection.summary
+    assert t03.open_work_orders == len(orders)
+    assert sum(t.open_work_orders for t in fleet.turbines) == len(orders)
+    summary = inspection.summary
+    assert summary.n_defects == len(defect_ids)
+    verdicts = [
+        d.verification.verdict for i in inspection.images for d in i.defects if d.verification
+    ]
+    assert summary.n_needs_review == verdicts.count("needs_review")
+    assert summary.n_reinspect == verdicts.count("reinspect")
+    for turbine in fleet.turbines:
+        for s in turbine.inspections:
+            assert s.n_needs_review + s.n_reinspect <= s.n_defects
+            assert (s.max_severity is None) == (s.n_defects == 0)

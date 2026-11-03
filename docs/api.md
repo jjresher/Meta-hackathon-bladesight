@@ -32,11 +32,16 @@ Errors use FastAPI's default `{"detail": "..."}` with 404 for unknown ids.
 
 - Ids: `T03` turbine, `T03-2018` inspection, `T03-2018/DJI_0702_04_05` image,
   `T03-2018/DJI_0702_04_05/d1` defect, `WO-001` work order, `run-...` agent run.
-- Pixels: image coordinates, origin top-left; `outline` and `blade_outline` are closed polygons
-  (`[x, y]` pairs) for SVG overlays. Sizes are relative (pixels, share of blade), never mm.
+- Pixels: image coordinates, origin top-left; `outline` and `blade_outline` are lists of closed
+  polygons (one per mask part, `[x, y]` pairs) for SVG overlays. Sizes are relative (pixels,
+  share of blade), never mm.
 - `Inspection.summary.year` is a **synthetic grouping**: the DTU tiles carry no real year
   (`DATA.md`). The UI must label the fleet "synthetic farm of real DTU photos" (`Fleet.note`).
 - `Verification.verdict`: `ok`, `needs_review` (a human should look), `reinspect` (take new
   photos). Every verdict carries `reasons`. A `WorkOrder` always cites `defect_ids` and
   `evidence` (non-empty, enforced by the schema).
 - `EvalReport.evidence_path` points to the `docs/evidence/` file behind the numbers.
+- Image and defect ids contain `/`: in UI routes use `encodeURIComponent`; any future API route
+  taking them needs a `{id:path}` parameter.
+- The fixtures are for development only: the deployed web build must load data from the API, never
+  bundle `web/src/fixtures/` as a fallback (they are made-up values, `AGENTS.md` rule 5).

@@ -38,8 +38,12 @@ WorkOrderKind = Literal["repair", "monitor", "reinspect"]
 Priority = Literal["P1", "P2", "P3"]
 
 
+Polygon = list[tuple[float, float]]
+
+
 class Contract(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    # Fields with defaults are still always emitted, so the schema marks them required.
+    model_config = ConfigDict(extra="forbid", json_schema_serialization_defaults_required=True)
 
 
 # --- detection and measurement ----------------------------------------------------------------
@@ -57,13 +61,16 @@ class Defect(Contract):
 
     id: str
     image_id: str
-    concept: str = Field(description="SAM 3.1 text concept that produced the mask")
+    concept: str = Field(description="SAM 3.1 text concept (or the box label when box-prompted)")
+    source: Literal["concept", "box_prompt"] = Field(
+        default="concept", description="text-concept prompt, or the box-prompt fallback of #3"
+    )
     label: EvalLabel = Field(description="dataset class the concept maps to, used for evaluation")
     score: float = Field(ge=0, le=1, description="SAM 3.1 confidence")
     bbox: BBox
-    outline: list[tuple[float, float]] = Field(
+    outline: list[Polygon] = Field(
         default_factory=list,
-        description="mask outline as a closed polygon in image pixels, for drawing overlays",
+        description="mask outline as closed polygons (one per part) in image pixels, for overlays",
     )
     mask_area_px: float = Field(ge=0)
 
@@ -118,7 +125,7 @@ class Verification(Contract):
     agreement: float = Field(ge=0, le=1)
     second_severity: int | None = Field(default=None, ge=1, le=5)
     checks: list[Check] = Field(default_factory=list)
-    reasons: list[str] = Field(description="why this verdict; never empty")
+    reasons: list[str] = Field(min_length=1, description="why this verdict; never empty")
 
 
 class InspectedDefect(Contract):
@@ -126,6 +133,9 @@ class InspectedDefect(Contract):
     measurement: Measurement | None = None
     assessment: Assessment | None = None
     verification: Verification | None = None
+    error: str | None = Field(
+        default=None, description="why a stage is missing, e.g. invalid model JSON after retry"
+    )
 
 
 # --- fleet ------------------------------------------------------------------------------------
@@ -137,7 +147,7 @@ class InspectionImage(Contract):
     image_url: str = Field(description="relative URL served by the API, e.g. /images/<tile>.png")
     width: int
     height: int
-    blade_outline: list[tuple[float, float]] = Field(default_factory=list)
+    blade_outline: list[Polygon] = Field(default_factory=list)
     defects: list[InspectedDefect] = Field(default_factory=list)
 
 

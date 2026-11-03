@@ -97,7 +97,9 @@
         "started_at",
         "finished_at",
         "steps",
-        "total_cost_usd"
+        "total_cost_usd",
+        "work_order_ids",
+        "report_id"
       ],
       "title": "AgentRun",
       "type": "object"
@@ -177,9 +179,12 @@
       "required": [
         "index",
         "kind",
+        "tool",
+        "arguments",
         "content",
         "duration_ms",
-        "cost_usd"
+        "cost_usd",
+        "model"
       ],
       "title": "AgentStep",
       "type": "object"
@@ -374,7 +379,9 @@
         "fn",
         "precision",
         "recall",
-        "f1"
+        "f1",
+        "precision_ci",
+        "recall_ci"
       ],
       "title": "ClassMetrics",
       "type": "object"
@@ -392,8 +399,18 @@
           "type": "string"
         },
         "concept": {
-          "description": "SAM 3.1 text concept that produced the mask",
+          "description": "SAM 3.1 text concept (or the box label when box-prompted)",
           "title": "Concept",
+          "type": "string"
+        },
+        "source": {
+          "default": "concept",
+          "description": "text-concept prompt, or the box-prompt fallback of #3",
+          "enum": [
+            "concept",
+            "box_prompt"
+          ],
+          "title": "Source",
           "type": "string"
         },
         "label": {
@@ -416,18 +433,21 @@
           "$ref": "#/$defs/BBox"
         },
         "outline": {
-          "description": "mask outline as a closed polygon in image pixels, for drawing overlays",
+          "description": "mask outline as closed polygons (one per part) in image pixels, for overlays",
           "items": {
-            "maxItems": 2,
-            "minItems": 2,
-            "prefixItems": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "number"
-              }
-            ],
+            "items": {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
             "type": "array"
           },
           "title": "Outline",
@@ -443,9 +463,11 @@
         "id",
         "image_id",
         "concept",
+        "source",
         "label",
         "score",
         "bbox",
+        "outline",
         "mask_area_px"
       ],
       "title": "Defect",
@@ -548,7 +570,12 @@
         "n_images",
         "iou_threshold",
         "classes",
+        "classes_iou50",
         "image_recall",
+        "sweep",
+        "needs_review_share",
+        "severity_kappa",
+        "prompt_versions",
         "cost_usd",
         "evidence_path",
         "generated_at"
@@ -600,8 +627,10 @@
       },
       "required": [
         "farm",
+        "synthetic",
         "note",
         "turbines",
+        "run_id",
         "generated_at"
       ],
       "title": "Fleet",
@@ -636,7 +665,8 @@
       "required": [
         "status",
         "mode",
-        "version"
+        "version",
+        "schema_version"
       ],
       "title": "Health",
       "type": "object"
@@ -679,10 +709,27 @@
             }
           ],
           "default": null
+        },
+        "error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "why a stage is missing, e.g. invalid model JSON after retry",
+          "title": "Error"
         }
       },
       "required": [
-        "defect"
+        "defect",
+        "measurement",
+        "assessment",
+        "verification",
+        "error"
       ],
       "title": "InspectedDefect",
       "type": "object"
@@ -735,16 +782,19 @@
         },
         "blade_outline": {
           "items": {
-            "maxItems": 2,
-            "minItems": 2,
-            "prefixItems": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "number"
-              }
-            ],
+            "items": {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
             "type": "array"
           },
           "title": "Blade Outline",
@@ -763,7 +813,9 @@
         "tile_id",
         "image_url",
         "width",
-        "height"
+        "height",
+        "blade_outline",
+        "defects"
       ],
       "title": "InspectionImage",
       "type": "object"
@@ -821,6 +873,7 @@
         "year",
         "n_images",
         "n_defects",
+        "max_severity",
         "n_needs_review",
         "n_reinspect"
       ],
@@ -850,7 +903,8 @@
       },
       "required": [
         "low",
-        "high"
+        "high",
+        "method"
       ],
       "title": "Interval",
       "type": "object"
@@ -952,10 +1006,14 @@
       "required": [
         "defect_id",
         "area_px",
+        "blade_area_ratio",
         "length_px",
         "width_px",
         "elongation",
-        "position"
+        "inside_blade",
+        "position",
+        "position_t",
+        "units"
       ],
       "title": "Measurement",
       "type": "object"
@@ -1170,6 +1228,7 @@
           "items": {
             "type": "string"
           },
+          "minItems": 1,
           "title": "Reasons",
           "type": "array"
         }
@@ -1178,6 +1237,8 @@
         "defect_id",
         "verdict",
         "agreement",
+        "second_severity",
+        "checks",
         "reasons"
       ],
       "title": "Verification",
@@ -1279,7 +1340,9 @@
         "action",
         "rationale",
         "evidence",
-        "due_within_days"
+        "due_within_days",
+        "created_by",
+        "run_id"
       ],
       "title": "WorkOrder",
       "type": "object"

@@ -63,6 +63,7 @@ Python 3.12 managed by uv. Tasks run through poethepoet: `uv run poe <task>`.
 | `uv run poe check` | **Definition-of-Done gate**: ruff lint + format check + pyright + pytest |
 | `uv run poe fmt` | auto-format and auto-fix |
 | `uv run poe secrets-scan` | run every pre-commit hook on the whole repo |
+| `uv run poe contract` | regenerate `web/src/fixtures/*.json` (examples + JSON Schema) from `bladesight.contracts` (`docs/api.md`) |
 
 Later issues add `data`, `detect`, `eval`, `serve`, `web-*` tasks; keep this table current.
 
