@@ -16,9 +16,14 @@ real usage, not invoice-checked. Overlay PNGs were written to the gitignored `ou
 | DJI_0422_05_03 | 2 | 2 (1 dirt, 1 damage) | 2 box prompt | not found | 1 | 0.0025 | 1.4 |
 | DJI_0382_02_04 | 4 | 4 (damage) | 4 box prompt | not found | 2 | 0.0050 | 1.9 |
 
-- **Cost per image** (all calls live, from the #3 spike prices): Muse Spark box proposal and SAM
-  box refinement about 0.0074 USD, two SAM text concepts 0.0050, blade concept 0.0025: **about
-  0.015 USD per tile**. Dev evaluation on 300 tiles is therefore about 4.5 USD for detection alone.
+- **Cost per image** (all calls live): the Muse Spark box proposal plus SAM box refinement cost
+  0.1058 USD over 16 live Spark + SAM pairs in spike step 4 (`docs/evidence/spike.md`), i.e. about
+  0.0066 per tile; the two SAM text concepts 2 x 0.0025 = 0.0050; the blade concept 0.0025. That is
+  **about 0.014 USD per tile**; we budget 0.015. Dev evaluation on 300 tiles is therefore about 4.5
+  USD for detection alone.
+- **Why 1 live call per tile here**: adding `frame_size` to the box-request cache key (found by the
+  audit) changed the key of the spike's cached box-prompt SAM replies, so that call was repeated
+  live (0.0025 each); the Spark proposals and the text concepts were replayed from the #3 cache.
 - **Runtime**: 1.3 to 1.9 s per tile in the table, with one live call and four replayed from the
   cache; a fully cold run (five sequential calls) was not timed.
 - The blade concept found no blade on any of these 5 tiles (0/10 with the spike's 5), so the blade

@@ -82,3 +82,25 @@ def test_position_t_is_monotonic_and_a_defect_off_the_blade_is_reported() -> Non
 def test_a_tiny_blade_mask_gives_no_position() -> None:
     m = measure_mask("d", _rect(5, 5, 15, 15), _rect(0, 0, 5, 5))
     assert m.position == "unknown" and m.blade_area_ratio is not None
+
+
+def test_mirrored_blade_puts_the_root_on_the_right() -> None:
+    blade = _blade()[:, ::-1]  # wide end on the right
+    found = blade_axis(blade)
+    assert found is not None and found[0][0] < -0.9  # axis now points right -> left
+    assert measure_mask("d", _rect(280, 55, 292, 65), blade).position == "root"
+    assert measure_mask("d", _rect(5, 55, 17, 65), blade).position == "tip"
+
+
+def test_a_vertical_blade_works_the_same() -> None:
+    blade = _blade().T  # 300 x 120 -> tall, wide end at the top
+    height, width = blade.shape
+    top = np.zeros((height, width), dtype=bool)
+    top[5:17, 55:65] = True
+    m = measure_mask("d", top, blade)
+    assert m.position == "root"
+
+
+def test_a_defect_off_the_blade_has_no_position() -> None:
+    m = measure_mask("d", _rect(100, 0, 110, 8), _blade())
+    assert m.inside_blade == 0.0 and m.position == "unknown" and m.position_t is None
