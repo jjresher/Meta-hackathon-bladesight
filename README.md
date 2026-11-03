@@ -25,6 +25,12 @@ tiles from *YOLO Annotated Wind Turbine Surface Damage* (Foster et al., 2022, CC
 data is stored in this repository: `uv run poe data` downloads and splits it. Sources, citations,
 the licence note and the sealed held-out split: [`DATA.md`](DATA.md).
 
+## Third-party libraries
+
+- [`meta-sam-parser`](https://pypi.org/project/meta-sam-parser/) (Meta Platforms, SAM License) decodes
+  SAM 3.1 segmentation output. It is a dependency, not vendored; its licence text ships with the
+  package.
+
 ## License
 
 Code: MIT (see `LICENSE`). Data: see above.
