@@ -40,3 +40,6 @@ the README and the Evaluation page. See skill `write-decision`.
 - `poe detect` is a dev tool: a bad tile id or missing file ends in a traceback, and its held-out guard only checks the path for `heldout` — issue: #5
 
 - The blade root is guessed as the wider end of its principal axis (ties and bent or partial blades can flip it), a defect less than half inside the blade gets no position, `blade_area_ratio` can exceed 1 when the blade mask is a small fragment, and blade and defect masks are assumed to share the tile's size — issue: #6
+- Severity was graded on only 10 dev defects (none above 3) with a first-pass review by the agent, no human agreement yet: the rubric's serious end is untested and the grades are not a measured accuracy — issue: #7, #10
+- Tiny defects are graded from a close crop that enlarges a few pixels (`crops.MIN_SIDE` = 24 px); the model reports them as unreadable (confidence 0.15-0.35). A larger minimum crop was not tried because the spend cap was exhausted — impact: many small dataset-labelled damages will be graded `dirt` or `other` with low confidence — issue: #7, #8
+- Crops for grading are stretched to a square (distorting thin cracks and edge regions) and the context crop is roughly the whole tile; the grading CLI loses already-paid rows only if the process is killed — issue: #7
