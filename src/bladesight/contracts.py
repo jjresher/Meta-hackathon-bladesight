@@ -1,7 +1,8 @@
 """The API contract: every object the pipeline, the agent, the API and the web UI exchange.
 
-One place for these models (implementation plan, section 4). `python -m bladesight.contracts`
-exports the JSON Schema and example fixtures to `web/src/fixtures/`. Change a model here, bump
+One place for these models (implementation plan, section 4). `uv run poe contract`
+(`python -m bladesight.contract_examples`) exports the JSON Schema and example fixtures to
+`web/src/fixtures/`. Change a model here, bump
 `SCHEMA_VERSION` if the change is not backward compatible, and regenerate the fixtures.
 
 Conventions: pixel coordinates are in the source tile (586x371 for DTU tiles), origin top-left,

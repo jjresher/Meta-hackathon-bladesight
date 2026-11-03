@@ -10,6 +10,9 @@ uv run poe contract   # rewrite web/src/fixtures/*.json from the models
 `tests/test_contracts.py` fails if the committed fixtures drift from the code. The fixtures are
 **made-up values for UI development**, never results: do not quote them.
 
+`schema.json` is exported in serialization mode: it describes what the API sends, so fields with
+defaults are marked required.
+
 Schema version: `SCHEMA_VERSION` (currently `1.0`), also returned by `/api/health`.
 
 ## Endpoints (issue #12)

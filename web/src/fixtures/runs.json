@@ -55,7 +55,7 @@
         "kind": "tool_result",
         "tool": "compare_inspections",
         "arguments": null,
-        "content": "max severity 2 -> 4, one new defect",
+        "content": "max severity 2 -> 4, two new defects",
         "duration_ms": 40,
         "cost_usd": 0.0,
         "model": null

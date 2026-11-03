@@ -318,7 +318,7 @@ def run_example() -> AgentRun:
         ("tool_call", "list_turbines", {}, "list_turbines()"),
         ("tool_result", "list_turbines", None, "12 turbines, 24 inspections"),
         ("tool_call", "compare_inspections", {"turbine_id": "T03"}, "compare T03 2017 vs 2018"),
-        ("tool_result", "compare_inspections", None, "max severity 2 -> 4, one new defect"),
+        ("tool_result", "compare_inspections", None, "max severity 2 -> 4, two new defects"),
         (
             "tool_call",
             "create_work_order",
