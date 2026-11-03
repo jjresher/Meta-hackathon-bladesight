@@ -82,6 +82,7 @@ def _defect(
             "measurement": Measurement(
                 defect_id=defect_id,
                 area_px=area,
+                tile_area_ratio=round(area / (TILE_W * TILE_H), 5),
                 blade_area_ratio=round(area / 90_000, 4),
                 length_px=length,
                 width_px=width,

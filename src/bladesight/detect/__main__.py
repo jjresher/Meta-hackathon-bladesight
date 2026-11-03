@@ -13,6 +13,7 @@ import time
 from pathlib import Path
 
 from ..data import TileLabel, image_path
+from ..measure import measure_detection
 from ..meta import MetaError, MetaSettings, build_client
 from .overlay import render_overlay
 from .pipeline import detect_tile
@@ -54,12 +55,13 @@ def main(argv: list[str] | None = None) -> int:
         json.dumps([d.defect.model_dump(mode="json") for d in detection.defects], indent=1),
         encoding="utf-8",
     )
-    for det in detection.defects:
+    for det, m in zip(detection.defects, measure_detection(detection), strict=True):
         d = det.defect
         print(
             f"{d.id} label={d.label} source={d.source} score={d.score:.2f} "
             f"area_px={d.mask_area_px:.0f} bbox=({d.bbox.x1:.0f},{d.bbox.y1:.0f},"
-            f"{d.bbox.x2:.0f},{d.bbox.y2:.0f})"
+            f"{d.bbox.x2:.0f},{d.bbox.y2:.0f}) tile_share={m.tile_area_ratio:.4f} "
+            f"elongation={m.elongation:.2f} position={m.position}"
         )
     if not detection.defects:
         print("no defects (zero is a valid answer)")
