@@ -77,3 +77,83 @@ def test_the_page_never_mentions_model_grades() -> None:
     html = page().decode()
     assert "model" in html.lower()  # only to say the grades are hidden
     assert "/api/label" in html and "Backspace" in html
+
+
+def _serve(tmp_path: Path):
+    import io
+    import threading
+
+    from PIL import Image
+
+    from bladesight.eval.gold import make_server
+
+    csv_path = tmp_path / "severity.csv"
+    write_rows(select_gold(_tiles()), csv_path)
+    first = read_rows(csv_path)[0]
+    (tmp_path / "dev" / "img").mkdir(parents=True)
+    buffer = io.BytesIO()
+    Image.new("RGB", (586, 371), (90, 90, 90)).save(buffer, format="PNG")
+    (tmp_path / "dev" / "img" / f"{first['tile_id']}.png").write_bytes(buffer.getvalue())
+    server = make_server(tmp_path, csv_path, 0)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    return server, csv_path, first
+
+
+def _request(
+    server, method: str, path: str, body: bytes | None = None, headers: dict | None = None
+):
+    import http.client
+
+    port = server.server_address[1]
+    conn = http.client.HTTPConnection("127.0.0.1", port, timeout=5)
+    base = {"Host": f"127.0.0.1:{port}"}
+    conn.request(method, path, body=body, headers={**base, **(headers or {})})
+    response = conn.getresponse()
+    data = response.read()
+    conn.close()
+    return response.status, data
+
+
+def test_server_serves_crops_and_saves_labels_but_refuses_foreign_posts(tmp_path: Path) -> None:
+    import json
+
+    server, csv_path, first = _serve(tmp_path)
+    try:
+        assert _request(server, "GET", "/")[0] == 200
+        status, data = _request(server, "GET", "/crop/0/close")
+        assert status == 200 and data.startswith(b"\x89PNG")
+        assert _request(server, "GET", "/crop/-1/close")[0] == 404
+        assert _request(server, "GET", "/crop/0/other")[0] == 404
+        body = json.dumps({"crop_id": first["crop_id"], "severity": "4"}).encode()
+        json_headers = {"Content-Type": "application/json", "Content-Length": str(len(body))}
+        assert _request(server, "POST", "/api/label", body, json_headers)[0] == 200
+        assert read_rows(csv_path)[0]["severity"] == "4"
+        # a page on another site: wrong Origin, or a simple text/plain request, is refused
+        evil = {**json_headers, "Origin": "http://evil.example"}
+        assert _request(server, "POST", "/api/label", body, evil)[0] == 403
+        plain = {"Content-Type": "text/plain", "Content-Length": str(len(body))}
+        assert _request(server, "POST", "/api/label", body, plain)[0] == 403
+        rebinding = {**json_headers, "Host": "evil.example"}
+        assert _request(server, "POST", "/api/label", body, rebinding)[0] == 403
+        bad = json.dumps({"crop_id": first["crop_id"], "severity": "9"}).encode()
+        bad_headers = {"Content-Type": "application/json", "Content-Length": str(len(bad))}
+        assert _request(server, "POST", "/api/label", bad, bad_headers)[0] == 400
+        assert read_rows(csv_path)[0]["severity"] == "4"
+    finally:
+        server.shutdown()
+        server.server_close()
+
+
+def test_relabelling_keeps_a_hand_written_note(tmp_path: Path) -> None:
+    path = tmp_path / "severity.csv"
+    write_rows(select_gold(_tiles()), path)
+    crop = read_rows(path)[1]["crop_id"]
+    set_severity(path, crop, "3", 'looks like "paint", loss, \nsecond line')
+    set_severity(path, crop, "4")
+    row = read_rows(path)[1]
+    assert row["severity"] == "4" and row["note"] == 'looks like "paint", loss, \nsecond line'
+
+
+def test_select_gold_refuses_to_return_fewer_crops_than_asked() -> None:
+    with pytest.raises(ValueError):
+        select_gold(_tiles()[:20])
