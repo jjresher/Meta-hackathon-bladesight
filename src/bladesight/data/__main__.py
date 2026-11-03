@@ -39,7 +39,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"download: {archive}")
         download(archive)
         digest = sha256_file(archive)
-        if ARCHIVE_SHA256 != "PENDING" and digest != ARCHIVE_SHA256:
+        if digest != ARCHIVE_SHA256:
             raise DataBuildError(f"archive sha256 {digest} does not match {ARCHIVE_SHA256}")
         print(f"archive sha256: {digest}")
         result = build(archive, args.data_dir)
