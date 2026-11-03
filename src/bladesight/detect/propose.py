@@ -70,7 +70,7 @@ def refine_with_sam(
     boxes: list[tuple[int, int, int, int]],
     size: tuple[int, int],
 ) -> list[SegmentMask]:
-    """One SAM request for up to 16 boxes; `object_id` (1-based) points back into `boxes`."""
+    """SAM box prompts, 16 boxes per request; `object_id` is the 1-based index into `boxes`."""
     masks: list[SegmentMask] = []
     for i in range(0, len(boxes), 16):
         request = SegmentRequest(
@@ -81,5 +81,8 @@ def refine_with_sam(
             boxes=boxes[i : i + 16],
             frame_size=size,
         )
-        masks += client.segment(request).masks
+        for mask in client.segment(request).masks:
+            # SAM answers ids 1..16 per request; shift them so they index into `boxes`
+            shifted = int(mask.object_id or 0) + i
+            masks.append(mask.model_copy(update={"object_id": str(shifted)}))
     return masks
