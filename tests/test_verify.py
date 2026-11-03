@@ -172,4 +172,45 @@ def test_verify_defect_retries_the_second_look_once_then_abstains() -> None:
 
 
 def test_thresholds_are_the_documented_ones() -> None:
-    assert THRESHOLDS["ok_confidence"] == 0.5 and THRESHOLDS["reinspect_gap"] == 2
+    assert THRESHOLDS == {
+        "ok_confidence": 0.5,
+        "reinspect_confidence": 0.25,
+        "reinspect_gap": 2,
+        "min_detector_score": 0.5,
+        "min_inside_blade": 0.5,
+        "serious_min_tile_share": 0.0005,
+        "minor_max_tile_share": 0.05,
+    }
+
+
+def test_confidence_boundaries_are_strict_less_than() -> None:
+    assert decide(_assessment(3, 0.5), _assessment(3, 0.5), GOOD_CHECKS).verdict == "ok"
+    assert decide(_assessment(3, 0.25), _assessment(3, 0.25), GOOD_CHECKS).verdict == "needs_review"
+    assert decide(_assessment(3, 0.24), _assessment(3, 0.24), GOOD_CHECKS).verdict == "reinspect"
+    assert decide(_assessment(3, 0.2), _assessment(4, 0.2), GOOD_CHECKS).verdict == "reinspect"
+
+
+def test_size_check_boundaries_pass_exactly_at_the_threshold() -> None:
+    assert not [
+        c for c in rule_checks(_defect(), _measurement(0.0005), _assessment(4)) if not c.passed
+    ]
+    assert not [
+        c for c in rule_checks(_defect(), _measurement(0.05), _assessment(2)) if not c.passed
+    ]
+
+
+def test_reinspect_keeps_the_failed_check_reason() -> None:
+    failed = [Check(name="inside_blade", passed=False, detail="d")]
+    v = decide(_assessment(5), _assessment(1), failed)
+    assert v.verdict == "reinspect" and any("inside_blade" in r for r in v.reasons)
+
+
+def test_a_client_error_in_the_second_look_abstains() -> None:
+    from bladesight.meta import MetaServerError
+
+    stub = StubProvider(failures=[MetaServerError("boom")] * 5)
+    client = build_client(MetaSettings(), provider="stub", stub=stub)
+    verdict = verify_defect(
+        client, MetaSettings(), _png(), _defect(), _measurement(), _assessment(3), provider="stub"
+    )
+    assert verdict.verdict == "needs_review" and verdict.agreement == 0.0
