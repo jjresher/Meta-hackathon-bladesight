@@ -53,3 +53,13 @@ fmt = [{ cmd = "ruff format ." }, { cmd = "ruff check --fix ." }]
 hooks = "pre-commit install"
 secrets-scan = "pre-commit run --all-files"
 check = ["lint", "format-check", "typecheck", "test"]
+
+# Web UI tasks (issue #13). They shell into web/ via npm --prefix.
+web-install = { cmd = "npm --prefix web install" }
+web-dev = { cmd = "npm --prefix web run dev" }
+web-build = { cmd = "npm --prefix web run build" }
+web-check = [
+    { cmd = "npm --prefix web run typecheck" },
+    { cmd = "npm --prefix web run test" },
+    { cmd = "npm --prefix web run build" },
+]
