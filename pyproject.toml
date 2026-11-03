@@ -57,3 +57,5 @@ check = ["lint", "format-check", "typecheck", "test"]
 data = "python -m bladesight.data"
 detect = "python -m bladesight.detect"
 contract = "python -m bladesight.contract_examples"
+contract = "python -m bladesight.contract_examples"
+data = "python -m bladesight.data"
