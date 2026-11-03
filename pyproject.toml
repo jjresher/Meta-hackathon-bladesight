@@ -56,4 +56,5 @@ secrets-scan = "pre-commit run --all-files"
 check = ["lint", "format-check", "typecheck", "test"]
 data = "python -m bladesight.data"
 detect = "python -m bladesight.detect"
+eval = "python -m bladesight.eval"
 contract = "python -m bladesight.contract_examples"
