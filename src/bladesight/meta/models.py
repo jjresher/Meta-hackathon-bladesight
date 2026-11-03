@@ -166,6 +166,10 @@ class SegmentRequest(BaseModel):
     image: ImagePart
     concept: str = Field(min_length=1)
     threshold: float = 0.5  # applied to the model's confidence after the cache, not sent
+    # Box prompts (SAM "segmenting with prompts"): pixel boxes (x1, y1, x2, y2), x2/y2 inclusive,
+    # in the pixels of the image sent. Up to 16 per request; `concept` then only labels the masks.
+    boxes: list[tuple[int, int, int, int]] = Field(default_factory=list, max_length=16)
+    frame_size: tuple[int, int] | None = None  # (width, height); read from `image` when omitted
 
     @field_validator("concept")
     @classmethod
@@ -178,7 +182,10 @@ class SegmentRequest(BaseModel):
         return value
 
     def cache_payload(self) -> dict[str, Any]:
-        return {"image": self.image.cache_payload(), "concept": self.concept}
+        payload: dict[str, Any] = {"image": self.image.cache_payload(), "concept": self.concept}
+        if self.boxes:  # text requests keep their old cache keys
+            payload["boxes"] = [list(b) for b in self.boxes]
+        return payload
 
 
 class SegmentMask(BaseModel):
@@ -190,6 +197,7 @@ class SegmentMask(BaseModel):
 
     concept: str
     score: float | None
+    object_id: str | None = None  # id of the prompted box this mask answers (box prompts only)
     box: tuple[int, int, int, int]
     width: int
     height: int
