@@ -33,7 +33,7 @@ ARCHIVE_URL = (
 )
 ARCHIVE_NAME = "yolo-annotated-wind-turbine-surface-damage-DatasetNinja.tar"
 ARCHIVE_BYTES = 2_833_489_920
-ARCHIVE_SHA256 = "PENDING"
+ARCHIVE_SHA256 = "fd68128874320cde1f26381ab1e71f34457a10b65bd8efd748e2302ec173d029"
 
 SEED = 20261029
 HELDOUT_FRACTION = 0.15
@@ -74,7 +74,8 @@ def download(
                 handle.write(block)
     if part.stat().st_size != expected_bytes:
         raise DataBuildError(
-            f"download incomplete: {part.stat().st_size} of {expected_bytes} bytes; re-run to resume"
+            f"download incomplete: {part.stat().st_size} of {expected_bytes} bytes; "
+            "re-run to resume"
         )
     part.replace(dest)
     return dest
