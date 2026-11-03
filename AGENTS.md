@@ -65,6 +65,7 @@ Python 3.12 managed by uv. Tasks run through poethepoet: `uv run poe <task>`.
 | `uv run poe secrets-scan` | run every pre-commit hook on the whole repo |
 | `uv run python -m bladesight.meta status` | step 0 of `meta-api-check`: `set`/`missing` per variable, no network (`chat` and `segment` subcommands make one call; `--provider stub` spends nothing) |
 | `uv run poe data` | download the DTU tiles (2.8 GB), split by photo, seal `data/heldout/`, verify `eval/heldout_manifest.sha256` (`DATA.md`) |
+| `uv run poe contract` | regenerate `web/src/fixtures/*.json` (examples + JSON Schema) from `bladesight.contracts` (`docs/api.md`) |
 
 Later issues add `data`, `detect`, `eval`, `serve`, `web-*` tasks; keep this table current.
 
