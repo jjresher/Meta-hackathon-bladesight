@@ -1,0 +1,70 @@
+[
+  {
+    "split": "dev",
+    "n_images": 300,
+    "iou_threshold": 0.3,
+    "classes": [
+      {
+        "label": "damage",
+        "tp": 60,
+        "fp": 40,
+        "fn": 30,
+        "precision": 0.6,
+        "recall": 0.667,
+        "f1": 0.632,
+        "precision_ci": null,
+        "recall_ci": {
+          "low": 0.617,
+          "high": 0.717,
+          "method": "bootstrap"
+        }
+      },
+      {
+        "label": "dirt",
+        "tp": 30,
+        "fp": 30,
+        "fn": 30,
+        "precision": 0.5,
+        "recall": 0.5,
+        "f1": 0.5,
+        "precision_ci": null,
+        "recall_ci": {
+          "low": 0.45,
+          "high": 0.55,
+          "method": "bootstrap"
+        }
+      }
+    ],
+    "classes_iou50": [],
+    "image_recall": 0.8,
+    "sweep": [
+      {
+        "threshold": 0.3,
+        "recall": 0.8,
+        "precision": 0.4,
+        "false_alarms_per_image": 1.2
+      },
+      {
+        "threshold": 0.5,
+        "recall": 0.67,
+        "precision": 0.6,
+        "false_alarms_per_image": 0.5
+      },
+      {
+        "threshold": 0.7,
+        "recall": 0.4,
+        "precision": 0.8,
+        "false_alarms_per_image": 0.1
+      }
+    ],
+    "needs_review_share": 0.22,
+    "severity_kappa": null,
+    "prompt_versions": {
+      "assess": "v1",
+      "verify": "v1"
+    },
+    "cost_usd": 0.0,
+    "evidence_path": "fixture: not a result",
+    "generated_at": "2026-11-03T12:00:00Z"
+  }
+]

@@ -1,0 +1,1351 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "bladesight-api-1.0",
+  "title": "BladeSight API contract",
+  "description": "Generated from src/bladesight/contracts.py; do not edit by hand.",
+  "$defs": {
+    "AgentRun": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "completed",
+            "step_limit",
+            "budget_exceeded",
+            "error"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "replay": {
+          "description": "true when served from recorded results, no live call",
+          "title": "Replay",
+          "type": "boolean"
+        },
+        "model": {
+          "title": "Model",
+          "type": "string"
+        },
+        "provider": {
+          "enum": [
+            "meta",
+            "baseten",
+            "stub"
+          ],
+          "title": "Provider",
+          "type": "string"
+        },
+        "started_at": {
+          "format": "date-time",
+          "title": "Started At",
+          "type": "string"
+        },
+        "finished_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Finished At"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/AgentStep"
+          },
+          "title": "Steps",
+          "type": "array"
+        },
+        "total_cost_usd": {
+          "minimum": 0,
+          "title": "Total Cost Usd",
+          "type": "number"
+        },
+        "work_order_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Work Order Ids",
+          "type": "array"
+        },
+        "report_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Report Id"
+        }
+      },
+      "required": [
+        "id",
+        "status",
+        "replay",
+        "model",
+        "provider",
+        "started_at",
+        "finished_at",
+        "steps",
+        "total_cost_usd",
+        "work_order_ids",
+        "report_id"
+      ],
+      "title": "AgentRun",
+      "type": "object"
+    },
+    "AgentStep": {
+      "additionalProperties": false,
+      "properties": {
+        "index": {
+          "minimum": 0,
+          "title": "Index",
+          "type": "integer"
+        },
+        "kind": {
+          "enum": [
+            "thought",
+            "tool_call",
+            "tool_result",
+            "final",
+            "error"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "tool": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tool"
+        },
+        "arguments": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Arguments"
+        },
+        "content": {
+          "description": "model text, tool result summary or error message",
+          "title": "Content",
+          "type": "string"
+        },
+        "duration_ms": {
+          "minimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "cost_usd": {
+          "minimum": 0,
+          "title": "Cost Usd",
+          "type": "number"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        }
+      },
+      "required": [
+        "index",
+        "kind",
+        "tool",
+        "arguments",
+        "content",
+        "duration_ms",
+        "cost_usd",
+        "model"
+      ],
+      "title": "AgentStep",
+      "type": "object"
+    },
+    "Assessment": {
+      "additionalProperties": false,
+      "description": "Muse Spark's grade of one defect against `docs/rubric.md`.",
+      "properties": {
+        "defect_id": {
+          "title": "Defect Id",
+          "type": "string"
+        },
+        "defect_type": {
+          "enum": [
+            "leading_edge_erosion",
+            "crack",
+            "lightning_damage",
+            "surface_damage",
+            "dirt",
+            "other"
+          ],
+          "title": "Defect Type",
+          "type": "string"
+        },
+        "severity": {
+          "maximum": 5,
+          "minimum": 1,
+          "title": "Severity",
+          "type": "integer"
+        },
+        "rationale": {
+          "title": "Rationale",
+          "type": "string"
+        },
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "rubric_version": {
+          "title": "Rubric Version",
+          "type": "string"
+        },
+        "prompt_version": {
+          "title": "Prompt Version",
+          "type": "string"
+        },
+        "model": {
+          "title": "Model",
+          "type": "string"
+        },
+        "provider": {
+          "enum": [
+            "meta",
+            "baseten",
+            "stub"
+          ],
+          "title": "Provider",
+          "type": "string"
+        }
+      },
+      "required": [
+        "defect_id",
+        "defect_type",
+        "severity",
+        "rationale",
+        "confidence",
+        "rubric_version",
+        "prompt_version",
+        "model",
+        "provider"
+      ],
+      "title": "Assessment",
+      "type": "object"
+    },
+    "BBox": {
+      "additionalProperties": false,
+      "properties": {
+        "x1": {
+          "title": "X1",
+          "type": "number"
+        },
+        "y1": {
+          "title": "Y1",
+          "type": "number"
+        },
+        "x2": {
+          "title": "X2",
+          "type": "number"
+        },
+        "y2": {
+          "title": "Y2",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x1",
+        "y1",
+        "x2",
+        "y2"
+      ],
+      "title": "BBox",
+      "type": "object"
+    },
+    "Check": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "passed": {
+          "title": "Passed",
+          "type": "boolean"
+        },
+        "detail": {
+          "title": "Detail",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "passed",
+        "detail"
+      ],
+      "title": "Check",
+      "type": "object"
+    },
+    "ClassMetrics": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "enum": [
+            "damage",
+            "dirt"
+          ],
+          "title": "Label",
+          "type": "string"
+        },
+        "tp": {
+          "title": "Tp",
+          "type": "integer"
+        },
+        "fp": {
+          "title": "Fp",
+          "type": "integer"
+        },
+        "fn": {
+          "title": "Fn",
+          "type": "integer"
+        },
+        "precision": {
+          "title": "Precision",
+          "type": "number"
+        },
+        "recall": {
+          "title": "Recall",
+          "type": "number"
+        },
+        "f1": {
+          "title": "F1",
+          "type": "number"
+        },
+        "precision_ci": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Interval"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "recall_ci": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Interval"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "label",
+        "tp",
+        "fp",
+        "fn",
+        "precision",
+        "recall",
+        "f1",
+        "precision_ci",
+        "recall_ci"
+      ],
+      "title": "ClassMetrics",
+      "type": "object"
+    },
+    "Defect": {
+      "additionalProperties": false,
+      "description": "One SAM 3.1 detection on one image.",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "image_id": {
+          "title": "Image Id",
+          "type": "string"
+        },
+        "concept": {
+          "description": "SAM 3.1 text concept (or the box label when box-prompted)",
+          "title": "Concept",
+          "type": "string"
+        },
+        "source": {
+          "default": "concept",
+          "description": "text-concept prompt, or the box-prompt fallback of #3",
+          "enum": [
+            "concept",
+            "box_prompt"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "label": {
+          "description": "dataset class the concept maps to, used for evaluation",
+          "enum": [
+            "damage",
+            "dirt"
+          ],
+          "title": "Label",
+          "type": "string"
+        },
+        "score": {
+          "description": "SAM 3.1 confidence",
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Score",
+          "type": "number"
+        },
+        "bbox": {
+          "$ref": "#/$defs/BBox"
+        },
+        "outline": {
+          "description": "mask outline as closed polygons (one per part) in image pixels, for overlays",
+          "items": {
+            "items": {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            "type": "array"
+          },
+          "title": "Outline",
+          "type": "array"
+        },
+        "mask_area_px": {
+          "minimum": 0,
+          "title": "Mask Area Px",
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "image_id",
+        "concept",
+        "source",
+        "label",
+        "score",
+        "bbox",
+        "outline",
+        "mask_area_px"
+      ],
+      "title": "Defect",
+      "type": "object"
+    },
+    "EvalReport": {
+      "additionalProperties": false,
+      "properties": {
+        "split": {
+          "enum": [
+            "dev",
+            "heldout"
+          ],
+          "title": "Split",
+          "type": "string"
+        },
+        "n_images": {
+          "title": "N Images",
+          "type": "integer"
+        },
+        "iou_threshold": {
+          "title": "Iou Threshold",
+          "type": "number"
+        },
+        "classes": {
+          "items": {
+            "$ref": "#/$defs/ClassMetrics"
+          },
+          "title": "Classes",
+          "type": "array"
+        },
+        "classes_iou50": {
+          "items": {
+            "$ref": "#/$defs/ClassMetrics"
+          },
+          "title": "Classes Iou50",
+          "type": "array"
+        },
+        "image_recall": {
+          "description": "share of damaged images with at least one hit",
+          "title": "Image Recall",
+          "type": "number"
+        },
+        "sweep": {
+          "items": {
+            "$ref": "#/$defs/SweepPoint"
+          },
+          "title": "Sweep",
+          "type": "array"
+        },
+        "needs_review_share": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Needs Review Share"
+        },
+        "severity_kappa": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Severity Kappa"
+        },
+        "prompt_versions": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Prompt Versions",
+          "type": "object"
+        },
+        "cost_usd": {
+          "minimum": 0,
+          "title": "Cost Usd",
+          "type": "number"
+        },
+        "evidence_path": {
+          "description": "docs/evidence/... file that backs these numbers",
+          "title": "Evidence Path",
+          "type": "string"
+        },
+        "generated_at": {
+          "format": "date-time",
+          "title": "Generated At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "split",
+        "n_images",
+        "iou_threshold",
+        "classes",
+        "classes_iou50",
+        "image_recall",
+        "sweep",
+        "needs_review_share",
+        "severity_kappa",
+        "prompt_versions",
+        "cost_usd",
+        "evidence_path",
+        "generated_at"
+      ],
+      "title": "EvalReport",
+      "type": "object"
+    },
+    "Fleet": {
+      "additionalProperties": false,
+      "properties": {
+        "farm": {
+          "title": "Farm",
+          "type": "string"
+        },
+        "synthetic": {
+          "const": true,
+          "default": true,
+          "title": "Synthetic",
+          "type": "boolean"
+        },
+        "note": {
+          "title": "Note",
+          "type": "string"
+        },
+        "turbines": {
+          "items": {
+            "$ref": "#/$defs/Turbine"
+          },
+          "title": "Turbines",
+          "type": "array"
+        },
+        "run_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Run Id"
+        },
+        "generated_at": {
+          "format": "date-time",
+          "title": "Generated At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "farm",
+        "synthetic",
+        "note",
+        "turbines",
+        "run_id",
+        "generated_at"
+      ],
+      "title": "Fleet",
+      "type": "object"
+    },
+    "Health": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "const": "ok",
+          "title": "Status",
+          "type": "string"
+        },
+        "mode": {
+          "enum": [
+            "replay",
+            "live"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "version": {
+          "title": "Version",
+          "type": "string"
+        },
+        "schema_version": {
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "mode",
+        "version",
+        "schema_version"
+      ],
+      "title": "Health",
+      "type": "object"
+    },
+    "InspectedDefect": {
+      "additionalProperties": false,
+      "properties": {
+        "defect": {
+          "$ref": "#/$defs/Defect"
+        },
+        "measurement": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Measurement"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "assessment": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Assessment"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "verification": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Verification"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "why a stage is missing, e.g. invalid model JSON after retry",
+          "title": "Error"
+        }
+      },
+      "required": [
+        "defect",
+        "measurement",
+        "assessment",
+        "verification",
+        "error"
+      ],
+      "title": "InspectedDefect",
+      "type": "object"
+    },
+    "Inspection": {
+      "additionalProperties": false,
+      "properties": {
+        "summary": {
+          "$ref": "#/$defs/InspectionSummary"
+        },
+        "images": {
+          "items": {
+            "$ref": "#/$defs/InspectionImage"
+          },
+          "title": "Images",
+          "type": "array"
+        }
+      },
+      "required": [
+        "summary",
+        "images"
+      ],
+      "title": "Inspection",
+      "type": "object"
+    },
+    "InspectionImage": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "tile_id": {
+          "description": "DTU tile id, e.g. DJI_0702_04_05",
+          "title": "Tile Id",
+          "type": "string"
+        },
+        "image_url": {
+          "description": "relative URL served by the API, e.g. /images/<tile>.png",
+          "title": "Image Url",
+          "type": "string"
+        },
+        "width": {
+          "title": "Width",
+          "type": "integer"
+        },
+        "height": {
+          "title": "Height",
+          "type": "integer"
+        },
+        "blade_outline": {
+          "items": {
+            "items": {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            "type": "array"
+          },
+          "title": "Blade Outline",
+          "type": "array"
+        },
+        "defects": {
+          "items": {
+            "$ref": "#/$defs/InspectedDefect"
+          },
+          "title": "Defects",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "tile_id",
+        "image_url",
+        "width",
+        "height",
+        "blade_outline",
+        "defects"
+      ],
+      "title": "InspectionImage",
+      "type": "object"
+    },
+    "InspectionSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "turbine_id": {
+          "title": "Turbine Id",
+          "type": "string"
+        },
+        "year": {
+          "description": "synthetic grouping: the DTU tiles carry no real year",
+          "title": "Year",
+          "type": "integer"
+        },
+        "n_images": {
+          "title": "N Images",
+          "type": "integer"
+        },
+        "n_defects": {
+          "title": "N Defects",
+          "type": "integer"
+        },
+        "max_severity": {
+          "anyOf": [
+            {
+              "maximum": 5,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Severity"
+        },
+        "n_needs_review": {
+          "title": "N Needs Review",
+          "type": "integer"
+        },
+        "n_reinspect": {
+          "title": "N Reinspect",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "turbine_id",
+        "year",
+        "n_images",
+        "n_defects",
+        "max_severity",
+        "n_needs_review",
+        "n_reinspect"
+      ],
+      "title": "InspectionSummary",
+      "type": "object"
+    },
+    "Interval": {
+      "additionalProperties": false,
+      "properties": {
+        "low": {
+          "title": "Low",
+          "type": "number"
+        },
+        "high": {
+          "title": "High",
+          "type": "number"
+        },
+        "method": {
+          "default": "bootstrap",
+          "enum": [
+            "bootstrap",
+            "wilson"
+          ],
+          "title": "Method",
+          "type": "string"
+        }
+      },
+      "required": [
+        "low",
+        "high",
+        "method"
+      ],
+      "title": "Interval",
+      "type": "object"
+    },
+    "Measurement": {
+      "additionalProperties": false,
+      "description": "Relative size and position of a defect (pixels, not millimetres).",
+      "properties": {
+        "defect_id": {
+          "title": "Defect Id",
+          "type": "string"
+        },
+        "area_px": {
+          "minimum": 0,
+          "title": "Area Px",
+          "type": "number"
+        },
+        "blade_area_ratio": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "defect area / blade area in the image; null if no blade",
+          "title": "Blade Area Ratio"
+        },
+        "length_px": {
+          "description": "extent along the defect's principal axis",
+          "minimum": 0,
+          "title": "Length Px",
+          "type": "number"
+        },
+        "width_px": {
+          "description": "extent across the defect's principal axis",
+          "minimum": 0,
+          "title": "Width Px",
+          "type": "number"
+        },
+        "elongation": {
+          "description": "1 - width/length; near 1 is crack-like",
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Elongation",
+          "type": "number"
+        },
+        "inside_blade": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "share of the defect inside the blade mask",
+          "title": "Inside Blade"
+        },
+        "position": {
+          "description": "along the visible blade segment, not the whole blade",
+          "enum": [
+            "root",
+            "mid",
+            "tip",
+            "unknown"
+          ],
+          "title": "Position",
+          "type": "string"
+        },
+        "position_t": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "0 root side, 1 tip",
+          "title": "Position T"
+        },
+        "units": {
+          "const": "pixels",
+          "default": "pixels",
+          "title": "Units",
+          "type": "string"
+        }
+      },
+      "required": [
+        "defect_id",
+        "area_px",
+        "blade_area_ratio",
+        "length_px",
+        "width_px",
+        "elongation",
+        "inside_blade",
+        "position",
+        "position_t",
+        "units"
+      ],
+      "title": "Measurement",
+      "type": "object"
+    },
+    "Report": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "run_id": {
+          "title": "Run Id",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "markdown": {
+          "title": "Markdown",
+          "type": "string"
+        },
+        "work_order_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Work Order Ids",
+          "type": "array"
+        },
+        "model": {
+          "title": "Model",
+          "type": "string"
+        },
+        "provider": {
+          "enum": [
+            "meta",
+            "baseten",
+            "stub"
+          ],
+          "title": "Provider",
+          "type": "string"
+        },
+        "generated_at": {
+          "format": "date-time",
+          "title": "Generated At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "run_id",
+        "title",
+        "markdown",
+        "work_order_ids",
+        "model",
+        "provider",
+        "generated_at"
+      ],
+      "title": "Report",
+      "type": "object"
+    },
+    "SweepPoint": {
+      "additionalProperties": false,
+      "properties": {
+        "threshold": {
+          "title": "Threshold",
+          "type": "number"
+        },
+        "recall": {
+          "title": "Recall",
+          "type": "number"
+        },
+        "precision": {
+          "title": "Precision",
+          "type": "number"
+        },
+        "false_alarms_per_image": {
+          "title": "False Alarms Per Image",
+          "type": "number"
+        }
+      },
+      "required": [
+        "threshold",
+        "recall",
+        "precision",
+        "false_alarms_per_image"
+      ],
+      "title": "SweepPoint",
+      "type": "object"
+    },
+    "Turbine": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "rank": {
+          "description": "1 = most urgent",
+          "minimum": 1,
+          "title": "Rank",
+          "type": "integer"
+        },
+        "priority_score": {
+          "minimum": 0,
+          "title": "Priority Score",
+          "type": "number"
+        },
+        "status": {
+          "enum": [
+            "critical",
+            "attention",
+            "ok",
+            "needs_review"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "trend": {
+          "description": "latest vs previous inspection",
+          "enum": [
+            "worse",
+            "same",
+            "better",
+            "new"
+          ],
+          "title": "Trend",
+          "type": "string"
+        },
+        "inspections": {
+          "items": {
+            "$ref": "#/$defs/InspectionSummary"
+          },
+          "title": "Inspections",
+          "type": "array"
+        },
+        "open_work_orders": {
+          "title": "Open Work Orders",
+          "type": "integer"
+        },
+        "reason": {
+          "description": "one line: why this rank",
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "rank",
+        "priority_score",
+        "status",
+        "trend",
+        "inspections",
+        "open_work_orders",
+        "reason"
+      ],
+      "title": "Turbine",
+      "type": "object"
+    },
+    "Verification": {
+      "additionalProperties": false,
+      "description": "Second look plus rule checks; low confidence becomes needs_review or reinspect.",
+      "properties": {
+        "defect_id": {
+          "title": "Defect Id",
+          "type": "string"
+        },
+        "verdict": {
+          "enum": [
+            "ok",
+            "needs_review",
+            "reinspect"
+          ],
+          "title": "Verdict",
+          "type": "string"
+        },
+        "agreement": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Agreement",
+          "type": "number"
+        },
+        "second_severity": {
+          "anyOf": [
+            {
+              "maximum": 5,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Second Severity"
+        },
+        "checks": {
+          "items": {
+            "$ref": "#/$defs/Check"
+          },
+          "title": "Checks",
+          "type": "array"
+        },
+        "reasons": {
+          "description": "why this verdict; never empty",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Reasons",
+          "type": "array"
+        }
+      },
+      "required": [
+        "defect_id",
+        "verdict",
+        "agreement",
+        "second_severity",
+        "checks",
+        "reasons"
+      ],
+      "title": "Verification",
+      "type": "object"
+    },
+    "WorkOrder": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "repair",
+            "monitor",
+            "reinspect"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "priority": {
+          "enum": [
+            "P1",
+            "P2",
+            "P3"
+          ],
+          "title": "Priority",
+          "type": "string"
+        },
+        "turbine_id": {
+          "title": "Turbine Id",
+          "type": "string"
+        },
+        "inspection_id": {
+          "title": "Inspection Id",
+          "type": "string"
+        },
+        "defect_ids": {
+          "description": "every order cites its defects",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Defect Ids",
+          "type": "array"
+        },
+        "action": {
+          "title": "Action",
+          "type": "string"
+        },
+        "rationale": {
+          "title": "Rationale",
+          "type": "string"
+        },
+        "evidence": {
+          "description": "verified assessments cited, e.g. 'T03-2018/.../d1: severity 4'",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "due_within_days": {
+          "minimum": 0,
+          "title": "Due Within Days",
+          "type": "integer"
+        },
+        "created_by": {
+          "default": "agent",
+          "enum": [
+            "agent",
+            "human"
+          ],
+          "title": "Created By",
+          "type": "string"
+        },
+        "run_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Run Id"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "priority",
+        "turbine_id",
+        "inspection_id",
+        "defect_ids",
+        "action",
+        "rationale",
+        "evidence",
+        "due_within_days",
+        "created_by",
+        "run_id"
+      ],
+      "title": "WorkOrder",
+      "type": "object"
+    }
+  }
+}
