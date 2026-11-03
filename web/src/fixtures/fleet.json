@@ -1,0 +1,393 @@
+{
+  "farm": "Example farm (fixture)",
+  "synthetic": true,
+  "note": "EXAMPLE FIXTURE for UI development: made-up values, not results. Real fleet: synthetic farm of real DTU photos.",
+  "turbines": [
+    {
+      "id": "T02",
+      "name": "Turbine 02",
+      "rank": 1,
+      "priority_score": 108.7,
+      "status": "critical",
+      "trend": "worse",
+      "inspections": [
+        {
+          "id": "T02-2017",
+          "turbine_id": "T02",
+          "year": 2017,
+          "n_images": 13,
+          "n_defects": 8,
+          "max_severity": 1,
+          "n_needs_review": 2,
+          "n_reinspect": 1
+        },
+        {
+          "id": "T02-2018",
+          "turbine_id": "T02",
+          "year": 2018,
+          "n_images": 12,
+          "n_defects": 2,
+          "max_severity": 5,
+          "n_needs_review": 0,
+          "n_reinspect": 0
+        }
+      ],
+      "open_work_orders": 3,
+      "reason": "Example: max severity 5 in 2018, trend worse"
+    },
+    {
+      "id": "T10",
+      "name": "Turbine 10",
+      "rank": 2,
+      "priority_score": 89.0,
+      "status": "critical",
+      "trend": "worse",
+      "inspections": [
+        {
+          "id": "T10-2017",
+          "turbine_id": "T10",
+          "year": 2017,
+          "n_images": 10,
+          "n_defects": 2,
+          "max_severity": 2,
+          "n_needs_review": 2,
+          "n_reinspect": 0
+        },
+        {
+          "id": "T10-2018",
+          "turbine_id": "T10",
+          "year": 2018,
+          "n_images": 11,
+          "n_defects": 5,
+          "max_severity": 4,
+          "n_needs_review": 1,
+          "n_reinspect": 0
+        }
+      ],
+      "open_work_orders": 3,
+      "reason": "Example: max severity 4 in 2018, trend worse"
+    },
+    {
+      "id": "T07",
+      "name": "Turbine 07",
+      "rank": 3,
+      "priority_score": 88.0,
+      "status": "needs_review",
+      "trend": "better",
+      "inspections": [
+        {
+          "id": "T07-2017",
+          "turbine_id": "T07",
+          "year": 2017,
+          "n_images": 10,
+          "n_defects": 4,
+          "max_severity": 5,
+          "n_needs_review": 0,
+          "n_reinspect": 0
+        },
+        {
+          "id": "T07-2018",
+          "turbine_id": "T07",
+          "year": 2018,
+          "n_images": 13,
+          "n_defects": 7,
+          "max_severity": 4,
+          "n_needs_review": 0,
+          "n_reinspect": 1
+        }
+      ],
+      "open_work_orders": 3,
+      "reason": "Example: max severity 4 in 2018, trend better"
+    },
+    {
+      "id": "T12",
+      "name": "Turbine 12",
+      "rank": 4,
+      "priority_score": 83.8,
+      "status": "critical",
+      "trend": "worse",
+      "inspections": [
+        {
+          "id": "T12-2017",
+          "turbine_id": "T12",
+          "year": 2017,
+          "n_images": 10,
+          "n_defects": 8,
+          "max_severity": 2,
+          "n_needs_review": 1,
+          "n_reinspect": 0
+        },
+        {
+          "id": "T12-2018",
+          "turbine_id": "T12",
+          "year": 2018,
+          "n_images": 12,
+          "n_defects": 9,
+          "max_severity": 4,
+          "n_needs_review": 1,
+          "n_reinspect": 0
+        }
+      ],
+      "open_work_orders": 1,
+      "reason": "Example: max severity 4 in 2018, trend worse"
+    },
+    {
+      "id": "T01",
+      "name": "Turbine 01",
+      "rank": 5,
+      "priority_score": 82.6,
+      "status": "critical",
+      "trend": "worse",
+      "inspections": [
+        {
+          "id": "T01-2017",
+          "turbine_id": "T01",
+          "year": 2017,
+          "n_images": 14,
+          "n_defects": 2,
+          "max_severity": 1,
+          "n_needs_review": 1,
+          "n_reinspect": 1
+        },
+        {
+          "id": "T01-2018",
+          "turbine_id": "T01",
+          "year": 2018,
+          "n_images": 7,
+          "n_defects": 9,
+          "max_severity": 4,
+          "n_needs_review": 0,
+          "n_reinspect": 1
+        }
+      ],
+      "open_work_orders": 1,
+      "reason": "Example: max severity 4 in 2018, trend worse"
+    },
+    {
+      "id": "T11",
+      "name": "Turbine 11",
+      "rank": 6,
+      "priority_score": 69.4,
+      "status": "attention",
+      "trend": "same",
+      "inspections": [
+        {
+          "id": "T11-2017",
+          "turbine_id": "T11",
+          "year": 2017,
+          "n_images": 14,
+          "n_defects": 6,
+          "max_severity": 3,
+          "n_needs_review": 2,
+          "n_reinspect": 0
+        },
+        {
+          "id": "T11-2018",
+          "turbine_id": "T11",
+          "year": 2018,
+          "n_images": 14,
+          "n_defects": 4,
+          "max_severity": 3,
+          "n_needs_review": 1,
+          "n_reinspect": 0
+        }
+      ],
+      "open_work_orders": 3,
+      "reason": "Example: max severity 3 in 2018, trend same"
+    },
+    {
+      "id": "T05",
+      "name": "Turbine 05",
+      "rank": 7,
+      "priority_score": 65.8,
+      "status": "attention",
+      "trend": "better",
+      "inspections": [
+        {
+          "id": "T05-2017",
+          "turbine_id": "T05",
+          "year": 2017,
+          "n_images": 10,
+          "n_defects": 6,
+          "max_severity": 5,
+          "n_needs_review": 2,
+          "n_reinspect": 1
+        },
+        {
+          "id": "T05-2018",
+          "turbine_id": "T05",
+          "year": 2018,
+          "n_images": 11,
+          "n_defects": 8,
+          "max_severity": 3,
+          "n_needs_review": 2,
+          "n_reinspect": 1
+        }
+      ],
+      "open_work_orders": 2,
+      "reason": "Example: max severity 3 in 2018, trend better"
+    },
+    {
+      "id": "T04",
+      "name": "Turbine 04",
+      "rank": 8,
+      "priority_score": 64.9,
+      "status": "attention",
+      "trend": "better",
+      "inspections": [
+        {
+          "id": "T04-2017",
+          "turbine_id": "T04",
+          "year": 2017,
+          "n_images": 12,
+          "n_defects": 9,
+          "max_severity": 5,
+          "n_needs_review": 1,
+          "n_reinspect": 0
+        },
+        {
+          "id": "T04-2018",
+          "turbine_id": "T04",
+          "year": 2018,
+          "n_images": 11,
+          "n_defects": 1,
+          "max_severity": 3,
+          "n_needs_review": 0,
+          "n_reinspect": 0
+        }
+      ],
+      "open_work_orders": 2,
+      "reason": "Example: max severity 3 in 2018, trend better"
+    },
+    {
+      "id": "T09",
+      "name": "Turbine 09",
+      "rank": 9,
+      "priority_score": 49.5,
+      "status": "ok",
+      "trend": "better",
+      "inspections": [
+        {
+          "id": "T09-2017",
+          "turbine_id": "T09",
+          "year": 2017,
+          "n_images": 14,
+          "n_defects": 3,
+          "max_severity": 4,
+          "n_needs_review": 0,
+          "n_reinspect": 1
+        },
+        {
+          "id": "T09-2018",
+          "turbine_id": "T09",
+          "year": 2018,
+          "n_images": 6,
+          "n_defects": 1,
+          "max_severity": 2,
+          "n_needs_review": 0,
+          "n_reinspect": 0
+        }
+      ],
+      "open_work_orders": 3,
+      "reason": "Example: max severity 2 in 2018, trend better"
+    },
+    {
+      "id": "T06",
+      "name": "Turbine 06",
+      "rank": 10,
+      "priority_score": 7.1,
+      "status": "ok",
+      "trend": "better",
+      "inspections": [
+        {
+          "id": "T06-2017",
+          "turbine_id": "T06",
+          "year": 2017,
+          "n_images": 10,
+          "n_defects": 9,
+          "max_severity": 5,
+          "n_needs_review": 2,
+          "n_reinspect": 0
+        },
+        {
+          "id": "T06-2018",
+          "turbine_id": "T06",
+          "year": 2018,
+          "n_images": 11,
+          "n_defects": 8,
+          "max_severity": null,
+          "n_needs_review": 2,
+          "n_reinspect": 0
+        }
+      ],
+      "open_work_orders": 1,
+      "reason": "Example: max severity none in 2018, trend better"
+    },
+    {
+      "id": "T03",
+      "name": "Turbine 03",
+      "rank": 11,
+      "priority_score": 5.9,
+      "status": "ok",
+      "trend": "better",
+      "inspections": [
+        {
+          "id": "T03-2017",
+          "turbine_id": "T03",
+          "year": 2017,
+          "n_images": 7,
+          "n_defects": 2,
+          "max_severity": 5,
+          "n_needs_review": 2,
+          "n_reinspect": 0
+        },
+        {
+          "id": "T03-2018",
+          "turbine_id": "T03",
+          "year": 2018,
+          "n_images": 10,
+          "n_defects": 0,
+          "max_severity": null,
+          "n_needs_review": 1,
+          "n_reinspect": 1
+        }
+      ],
+      "open_work_orders": 3,
+      "reason": "Example: max severity none in 2018, trend better"
+    },
+    {
+      "id": "T08",
+      "name": "Turbine 08",
+      "rank": 12,
+      "priority_score": 3.8,
+      "status": "ok",
+      "trend": "better",
+      "inspections": [
+        {
+          "id": "T08-2017",
+          "turbine_id": "T08",
+          "year": 2017,
+          "n_images": 10,
+          "n_defects": 6,
+          "max_severity": 1,
+          "n_needs_review": 1,
+          "n_reinspect": 0
+        },
+        {
+          "id": "T08-2018",
+          "turbine_id": "T08",
+          "year": 2018,
+          "n_images": 6,
+          "n_defects": 9,
+          "max_severity": null,
+          "n_needs_review": 2,
+          "n_reinspect": 0
+        }
+      ],
+      "open_work_orders": 2,
+      "reason": "Example: max severity none in 2018, trend better"
+    }
+  ],
+  "run_id": "run-example-001",
+  "generated_at": "2026-11-03T12:00:00Z"
+}
