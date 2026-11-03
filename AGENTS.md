@@ -66,6 +66,7 @@ Python 3.12 managed by uv. Tasks run through poethepoet: `uv run poe <task>`.
 | `uv run python -m bladesight.meta status` | step 0 of `meta-api-check`: `set`/`missing` per variable, no network (`chat` and `segment` subcommands make one call; `--provider stub` spends nothing) |
 | `uv run poe data` | download the DTU tiles (2.8 GB), split by photo, seal `data/heldout/`, verify `eval/heldout_manifest.sha256` (`DATA.md`) |
 | `uv run poe detect <tile id>` | detect defects on one dev tile and write an overlay PNG under `outputs/detect/` (`BLADESIGHT_MODE=live` for real calls; `--provider stub` is free) |
+| `uv run poe eval --split dev --n 300` | detection metrics on a dev sample -> `docs/evidence/eval_dev.md` + SVG; refuses `--split heldout` unless `ALLOW_HELDOUT=1` (#16 only); `--provider stub` is a free smoke test |
 | `uv run poe contract` | regenerate `web/src/fixtures/*.json` (examples + JSON Schema) from `bladesight.contracts` (`docs/api.md`) |
 
 Later issues add `data`, `detect`, `eval`, `serve`, `web-*` tasks; keep this table current.
