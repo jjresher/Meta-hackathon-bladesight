@@ -76,6 +76,7 @@
           "measurement": {
             "defect_id": "T03-2018/DJI_0702_04_05/d1",
             "area_px": 5390.0,
+            "tile_area_ratio": 0.02479,
             "blade_area_ratio": 0.0599,
             "length_px": 110.0,
             "width_px": 70.0,
@@ -159,6 +160,7 @@
           "measurement": {
             "defect_id": "T03-2018/DJI_0702_04_05/d2",
             "area_px": 672.0,
+            "tile_area_ratio": 0.00309,
             "blade_area_ratio": 0.0075,
             "length_px": 80.0,
             "width_px": 12.0,
@@ -271,6 +273,7 @@
           "measurement": {
             "defect_id": "T03-2018/DJI_0688_04_03/d1",
             "area_px": 35910.0,
+            "tile_area_ratio": 0.16517,
             "blade_area_ratio": 0.399,
             "length_px": 270.0,
             "width_px": 190.0,
@@ -353,6 +356,7 @@
           "measurement": {
             "defect_id": "T03-2018/DJI_0688_04_03/d2",
             "area_px": 630.0,
+            "tile_area_ratio": 0.0029,
             "blade_area_ratio": 0.007,
             "length_px": 30.0,
             "width_px": 30.0,

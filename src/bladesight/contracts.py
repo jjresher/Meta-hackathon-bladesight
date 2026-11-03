@@ -81,6 +81,7 @@ class Measurement(Contract):
 
     defect_id: str
     area_px: float = Field(ge=0)
+    tile_area_ratio: float = Field(ge=0, le=1, description="defect area / image area, always known")
     blade_area_ratio: float | None = Field(
         default=None, ge=0, description="defect area / blade area in the image; null if no blade"
     )

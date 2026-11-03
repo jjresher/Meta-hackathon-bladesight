@@ -922,6 +922,13 @@
           "title": "Area Px",
           "type": "number"
         },
+        "tile_area_ratio": {
+          "description": "defect area / image area, always known",
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Tile Area Ratio",
+          "type": "number"
+        },
         "blade_area_ratio": {
           "anyOf": [
             {
@@ -1006,6 +1013,7 @@
       "required": [
         "defect_id",
         "area_px",
+        "tile_area_ratio",
         "blade_area_ratio",
         "length_px",
         "width_px",
