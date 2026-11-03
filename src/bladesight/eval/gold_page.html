@@ -27,10 +27,15 @@ function show(){const r=rows[i];document.getElementById('a').src='/crop/'+i+'/cl
  document.getElementById('cur').textContent=r.severity===''?'-':(r.severity==='0'?'unreadable':r.severity);
  document.getElementById('cid').textContent=r.crop_id;
  document.getElementById('pos').textContent='('+(i+1)+'/'+rows.length+', labelled '+rows.filter(x=>x.severity!=='').length+')'}
-async function save(v){const r=rows[i];
- const res=await fetch('/api/label',{method:'POST',body:JSON.stringify({crop_id:r.crop_id,severity:v})});
- if(res.ok){r.severity=v;show();if(v!==''&&i<rows.length-1){i++;show()}}}
+let busy=false;
+async function save(v){if(busy)return;busy=true;const r=rows[i];
+ try{const res=await fetch('/api/label',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({crop_id:r.crop_id,severity:v})});
+  if(res.ok){r.severity=v;show();if(v!==''&&i<rows.length-1){i++;show()}}
+  else alert('Save failed ('+res.status+'): the label was NOT stored')}
+ catch(e){alert('Save failed: '+e)}
+ busy=false}
 document.addEventListener('keydown',e=>{
+ if(e.repeat||e.ctrlKey||e.altKey||e.metaKey)return;
  if('012345'.includes(e.key)&&e.key!=='')save(e.key);
  else if(e.key==='Backspace')save('');
  else if(e.key==='ArrowRight'&&i<rows.length-1){i++;show()}

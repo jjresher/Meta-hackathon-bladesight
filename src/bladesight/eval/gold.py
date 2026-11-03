@@ -11,8 +11,12 @@ from __future__ import annotations
 import csv
 import io
 import json
+import os
 import random
+import tempfile
+import threading
 from dataclasses import dataclass
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from importlib import resources
 from pathlib import Path
 
@@ -58,6 +62,8 @@ def select_gold(tiles: list[TileLabel], n: int = N_CROPS, seed: int = SEED) -> l
         bucket = unique[lo:hi]
         rng.shuffle(bucket)
         chosen += bucket[:per]
+    if len(chosen) != per * 4:
+        raise ValueError(f"only {len(chosen)} crops available for n={n}")
     chosen.sort(key=lambda c: (c.tile.tile_id, c.index))
     rows = []
     for c in chosen:
@@ -85,7 +91,14 @@ def write_rows(rows: list[dict[str, str]], path: Path = GOLD_CSV) -> None:
     writer = csv.DictWriter(buffer, fieldnames=FIELDS, lineterminator="\n")
     writer.writeheader()
     writer.writerows(rows)
-    path.write_text(buffer.getvalue(), encoding="utf-8")
+    fd, tmp = tempfile.mkstemp(dir=path.parent, suffix=".tmp")  # atomic: never a half-written CSV
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8", newline="") as handle:
+            handle.write(buffer.getvalue())
+        os.replace(tmp, path)
+    except BaseException:
+        Path(tmp).unlink(missing_ok=True)
+        raise
 
 
 def read_rows(path: Path = GOLD_CSV) -> list[dict[str, str]]:
@@ -93,16 +106,22 @@ def read_rows(path: Path = GOLD_CSV) -> list[dict[str, str]]:
         return list(csv.DictReader(handle))
 
 
-def set_severity(path: Path, crop_id: str, severity: str, note: str = "") -> None:
+_LOCK = threading.Lock()
+
+
+def set_severity(path: Path, crop_id: str, severity: str, note: str | None = None) -> None:
     """Write one label (`""` clears it). Raises ValueError for unknown ids or values."""
     if severity != "" and severity not in SEVERITIES:
         raise ValueError(f"severity must be one of {sorted(SEVERITIES)} or empty")
-    rows = read_rows(path)
-    for row in rows:
-        if row["crop_id"] == crop_id:
-            row["severity"], row["note"] = severity, note
-            write_rows(rows, path)
-            return
+    with _LOCK:
+        rows = read_rows(path)
+        for row in rows:
+            if row["crop_id"] == crop_id:
+                row["severity"] = severity
+                if note is not None:  # a label change keeps a note typed by hand
+                    row["note"] = note
+                write_rows(rows, path)
+                return
     raise ValueError(f"unknown crop id {crop_id!r}")
 
 
@@ -116,8 +135,8 @@ def page() -> bytes:
     return resources.files("bladesight.eval").joinpath("gold_page.html").read_bytes()
 
 
-def serve(data_dir: Path, path: Path = GOLD_CSV, port: int = 8765) -> None:
-    from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+def make_server(data_dir: Path, path: Path = GOLD_CSV, port: int = 8765) -> ThreadingHTTPServer:
+    """The labelling server, bound to 127.0.0.1 (port 0 picks a free one)."""
 
     class Handler(BaseHTTPRequestHandler):
         def _send(self, body: bytes, kind: str, code: int = 200) -> None:
@@ -129,38 +148,64 @@ def serve(data_dir: Path, path: Path = GOLD_CSV, port: int = 8765) -> None:
             self.wfile.write(body)
 
         def do_GET(self) -> None:
-            if self.path == "/":
+            if not self._local():
+                self._send(b"forbidden", "text/plain", 403)
+            elif self.path == "/":
                 self._send(page(), "text/html; charset=utf-8")
             elif self.path == "/api/rows":
                 self._send(json.dumps(read_rows(path)).encode(), "application/json")
             elif self.path.startswith("/crop/"):
                 try:
                     _, _, index, kind = self.path.split("/")
+                    if kind not in ("close", "context") or not index.isdigit():
+                        raise ValueError("bad crop path")
                     row = read_rows(path)[int(index)]
                     pad = 0.4 if kind == "close" else 3.0
                     self._send(crop_for(row, data_dir, pad), "image/png")
-                except (ValueError, IndexError):
+                except (ValueError, IndexError, OSError):
                     self._send(b"not found", "text/plain", 404)
             else:
                 self._send(b"not found", "text/plain", 404)
+
+        def _local(self) -> bool:
+            """Same-origin only: a page on another site cannot write labels (CSRF / rebinding)."""
+            host = self.headers.get("Host", "")
+            origin = self.headers.get("Origin")
+            allowed = {f"127.0.0.1:{port}", f"localhost:{port}"}
+            return host in allowed and (origin is None or origin.split("//", 1)[-1] in allowed)
 
         def do_POST(self) -> None:
             if self.path != "/api/label":
                 self._send(b"not found", "text/plain", 404)
                 return
+            content_type = self.headers.get("Content-Type", "")
+            if not self._local() or not content_type.startswith("application/json"):
+                self._send(b"forbidden", "text/plain", 403)
+                return
             try:
                 size = int(self.headers.get("Content-Length", "0"))
+                if not 0 < size < 4096:
+                    raise ValueError("bad length")
                 data = json.loads(self.rfile.read(size))
                 set_severity(path, str(data["crop_id"]), str(data["severity"]))
                 self._send(b"{}", "application/json")
-            except (ValueError, KeyError):
+            except (ValueError, KeyError, TypeError):
                 self._send(b"bad request", "text/plain", 400)
 
         def log_message(self, format: str, *args: object) -> None:
             pass
 
     server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
-    print(f"Labelling at http://127.0.0.1:{port}/  (Ctrl+C to stop; saved to {path})")
+    port = server.server_address[1]  # the handler reads the real port for its Host check
+    return server
+
+
+def serve(data_dir: Path, path: Path = GOLD_CSV, port: int = 8765) -> None:
+    server = make_server(data_dir, path, port)
+    print(
+        f"Labelling at http://127.0.0.1:{server.server_address[1]}/ "
+        f"(Ctrl+C to stop; saved to {path})"
+    )
     try:
         server.serve_forever()
     except KeyboardInterrupt:
