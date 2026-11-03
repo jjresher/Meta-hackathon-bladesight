@@ -18,6 +18,7 @@ def test_blocks_data_images_and_secrets() -> None:
     assert hook.is_forbidden("eval/heldout/ids.txt")
     assert hook.is_forbidden("weights/yolo.pt")
     assert hook.is_forbidden("docs/evidence/crop_fn_01.png")
+    assert hook.is_forbidden("data")  # a symlink named data is not matched by the /data/ ignore
 
 
 def test_allows_code_docs_and_small_ui_assets() -> None:
@@ -26,6 +27,7 @@ def test_allows_code_docs_and_small_ui_assets() -> None:
     assert hook.is_forbidden("web/public/favicon.svg") is None
     assert hook.is_forbidden("docs/evidence/threshold_curve.svg") is None
     assert hook.is_forbidden("eval/heldout_manifest.sha256") is None
+    assert hook.is_forbidden("src/bladesight/data/build.py") is None
 
 
 def test_main_exit_code() -> None:

@@ -15,7 +15,9 @@ retries, caches and enforces a spend cap. Tests and CI use the stub (0 USD).
 - The human asked for the check or approved it. Say what will run and roughly what it costs.
 - Never open, print or copy `.env` (AGENTS.md rule 1). Load it into the process only, e.g.
   `uv run --env-file .env python -m ...`. Print `set` or `missing` for each key, never a value.
-- Set a hard cap far below the budget for the process: `META_SPEND_LIMIT_USD=0.10` (or lower).
+- Set a hard cap far below the budget: `META_SPEND_LIMIT_USD=0.10` (or lower). Caps are **cumulative
+  per provider across runs and processes** (summed from `.spend/spend_log.jsonl`), so earlier
+  spend counts against it; raising the cap is the human's decision.
 - Use dev images only. Never anything under `data/heldout/` (AGENTS.md rule 3).
 - Check whether the cache already has the answer (`--cache-only` dry run). A cache hit is free.
 

@@ -7,6 +7,7 @@ requires-python = ">=3.12"
 dependencies = [
     "fastapi==0.162.0",
     "httpx==0.28.1",
+    "meta-sam-parser==0.1.0",
     "numpy==2.5.4",
     "pillow==13.0.0",
     "pydantic==2.14.2",
@@ -54,3 +55,4 @@ hooks = "pre-commit install"
 secrets-scan = "pre-commit run --all-files"
 check = ["lint", "format-check", "typecheck", "test"]
 contract = "python -m bladesight.contract_examples"
+data = "python -m bladesight.data"
