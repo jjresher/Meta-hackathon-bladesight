@@ -55,3 +55,4 @@ hooks = "pre-commit install"
 secrets-scan = "pre-commit run --all-files"
 check = ["lint", "format-check", "typecheck", "test"]
 data = "python -m bladesight.data"
+contract = "python -m bladesight.contract_examples"

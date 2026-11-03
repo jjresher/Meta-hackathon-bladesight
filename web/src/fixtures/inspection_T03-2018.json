@@ -1,0 +1,403 @@
+{
+  "summary": {
+    "id": "T03-2018",
+    "turbine_id": "T03",
+    "year": 2018,
+    "n_images": 2,
+    "n_defects": 4,
+    "max_severity": 4,
+    "n_needs_review": 1,
+    "n_reinspect": 1
+  },
+  "images": [
+    {
+      "id": "T03-2018/DJI_0702_04_05",
+      "tile_id": "DJI_0702_04_05",
+      "image_url": "/images/DJI_0702_04_05.png",
+      "width": 586,
+      "height": 371,
+      "blade_outline": [
+        [
+          [
+            0.0,
+            90.0
+          ],
+          [
+            586.0,
+            40.0
+          ],
+          [
+            586.0,
+            360.0
+          ],
+          [
+            0.0,
+            371.0
+          ]
+        ]
+      ],
+      "defects": [
+        {
+          "defect": {
+            "id": "T03-2018/DJI_0702_04_05/d1",
+            "image_id": "T03-2018/DJI_0702_04_05",
+            "concept": "leading edge erosion",
+            "source": "concept",
+            "label": "damage",
+            "score": 0.81,
+            "bbox": {
+              "x1": 210.0,
+              "y1": 120.0,
+              "x2": 320.0,
+              "y2": 190.0
+            },
+            "outline": [
+              [
+                [
+                  210.0,
+                  120.0
+                ],
+                [
+                  320.0,
+                  120.0
+                ],
+                [
+                  320.0,
+                  190.0
+                ],
+                [
+                  210.0,
+                  190.0
+                ]
+              ]
+            ],
+            "mask_area_px": 5390.0
+          },
+          "measurement": {
+            "defect_id": "T03-2018/DJI_0702_04_05/d1",
+            "area_px": 5390.0,
+            "blade_area_ratio": 0.0599,
+            "length_px": 110.0,
+            "width_px": 70.0,
+            "elongation": 0.364,
+            "inside_blade": 0.98,
+            "position": "tip",
+            "position_t": 0.82,
+            "units": "pixels"
+          },
+          "assessment": {
+            "defect_id": "T03-2018/DJI_0702_04_05/d1",
+            "defect_type": "leading_edge_erosion",
+            "severity": 4,
+            "rationale": "Example rationale: exposed laminate at the leading edge, about a fifth of the visible chord.",
+            "confidence": 0.78,
+            "rubric_version": "v1",
+            "prompt_version": "assess/v1",
+            "model": "muse-spark-1.3",
+            "provider": "meta"
+          },
+          "verification": {
+            "defect_id": "T03-2018/DJI_0702_04_05/d1",
+            "verdict": "ok",
+            "agreement": 1.0,
+            "second_severity": 4,
+            "checks": [
+              {
+                "name": "inside_blade",
+                "passed": true,
+                "detail": "98% of the mask is on the blade"
+              },
+              {
+                "name": "severity_vs_size",
+                "passed": true,
+                "detail": "severity consistent with relative size"
+              }
+            ],
+            "reasons": [
+              "both looks agree on severity 4",
+              "all rule checks passed"
+            ]
+          },
+          "error": null
+        },
+        {
+          "defect": {
+            "id": "T03-2018/DJI_0702_04_05/d2",
+            "image_id": "T03-2018/DJI_0702_04_05",
+            "concept": "crack",
+            "source": "concept",
+            "label": "damage",
+            "score": 0.52,
+            "bbox": {
+              "x1": 400.0,
+              "y1": 60.0,
+              "x2": 412.0,
+              "y2": 140.0
+            },
+            "outline": [
+              [
+                [
+                  400.0,
+                  60.0
+                ],
+                [
+                  412.0,
+                  60.0
+                ],
+                [
+                  412.0,
+                  140.0
+                ],
+                [
+                  400.0,
+                  140.0
+                ]
+              ]
+            ],
+            "mask_area_px": 672.0
+          },
+          "measurement": {
+            "defect_id": "T03-2018/DJI_0702_04_05/d2",
+            "area_px": 672.0,
+            "blade_area_ratio": 0.0075,
+            "length_px": 80.0,
+            "width_px": 12.0,
+            "elongation": 0.85,
+            "inside_blade": 0.98,
+            "position": "tip",
+            "position_t": 0.82,
+            "units": "pixels"
+          },
+          "assessment": {
+            "defect_id": "T03-2018/DJI_0702_04_05/d2",
+            "defect_type": "crack",
+            "severity": 3,
+            "rationale": "Example rationale: exposed laminate at the leading edge, about a fifth of the visible chord.",
+            "confidence": 0.41,
+            "rubric_version": "v1",
+            "prompt_version": "assess/v1",
+            "model": "muse-spark-1.3",
+            "provider": "meta"
+          },
+          "verification": {
+            "defect_id": "T03-2018/DJI_0702_04_05/d2",
+            "verdict": "needs_review",
+            "agreement": 0.5,
+            "second_severity": 2,
+            "checks": [
+              {
+                "name": "inside_blade",
+                "passed": true,
+                "detail": "98% of the mask is on the blade"
+              },
+              {
+                "name": "severity_vs_size",
+                "passed": false,
+                "detail": "severity 4 but the defect covers <0.5% of the blade"
+              }
+            ],
+            "reasons": [
+              "second look graded 2, first 3",
+              "confidence 0.41 below 0.6"
+            ]
+          },
+          "error": null
+        }
+      ]
+    },
+    {
+      "id": "T03-2018/DJI_0688_04_03",
+      "tile_id": "DJI_0688_04_03",
+      "image_url": "/images/DJI_0688_04_03.png",
+      "width": 586,
+      "height": 371,
+      "blade_outline": [
+        [
+          [
+            0.0,
+            90.0
+          ],
+          [
+            586.0,
+            40.0
+          ],
+          [
+            586.0,
+            360.0
+          ],
+          [
+            0.0,
+            371.0
+          ]
+        ]
+      ],
+      "defects": [
+        {
+          "defect": {
+            "id": "T03-2018/DJI_0688_04_03/d1",
+            "image_id": "T03-2018/DJI_0688_04_03",
+            "concept": "dirt",
+            "source": "concept",
+            "label": "dirt",
+            "score": 0.81,
+            "bbox": {
+              "x1": 50.0,
+              "y1": 40.0,
+              "x2": 240.0,
+              "y2": 310.0
+            },
+            "outline": [
+              [
+                [
+                  50.0,
+                  40.0
+                ],
+                [
+                  240.0,
+                  40.0
+                ],
+                [
+                  240.0,
+                  310.0
+                ],
+                [
+                  50.0,
+                  310.0
+                ]
+              ]
+            ],
+            "mask_area_px": 35910.0
+          },
+          "measurement": {
+            "defect_id": "T03-2018/DJI_0688_04_03/d1",
+            "area_px": 35910.0,
+            "blade_area_ratio": 0.399,
+            "length_px": 270.0,
+            "width_px": 190.0,
+            "elongation": 0.296,
+            "inside_blade": 0.98,
+            "position": "tip",
+            "position_t": 0.82,
+            "units": "pixels"
+          },
+          "assessment": {
+            "defect_id": "T03-2018/DJI_0688_04_03/d1",
+            "defect_type": "dirt",
+            "severity": 1,
+            "rationale": "Example rationale: exposed laminate at the leading edge, about a fifth of the visible chord.",
+            "confidence": 0.78,
+            "rubric_version": "v1",
+            "prompt_version": "assess/v1",
+            "model": "muse-spark-1.3",
+            "provider": "meta"
+          },
+          "verification": {
+            "defect_id": "T03-2018/DJI_0688_04_03/d1",
+            "verdict": "ok",
+            "agreement": 1.0,
+            "second_severity": 1,
+            "checks": [
+              {
+                "name": "inside_blade",
+                "passed": true,
+                "detail": "98% of the mask is on the blade"
+              },
+              {
+                "name": "severity_vs_size",
+                "passed": true,
+                "detail": "severity consistent with relative size"
+              }
+            ],
+            "reasons": [
+              "both looks agree on severity 1"
+            ]
+          },
+          "error": null
+        },
+        {
+          "defect": {
+            "id": "T03-2018/DJI_0688_04_03/d2",
+            "image_id": "T03-2018/DJI_0688_04_03",
+            "concept": "surface damage",
+            "source": "concept",
+            "label": "damage",
+            "score": 0.52,
+            "bbox": {
+              "x1": 500.0,
+              "y1": 300.0,
+              "x2": 530.0,
+              "y2": 330.0
+            },
+            "outline": [
+              [
+                [
+                  500.0,
+                  300.0
+                ],
+                [
+                  530.0,
+                  300.0
+                ],
+                [
+                  530.0,
+                  330.0
+                ],
+                [
+                  500.0,
+                  330.0
+                ]
+              ]
+            ],
+            "mask_area_px": 630.0
+          },
+          "measurement": {
+            "defect_id": "T03-2018/DJI_0688_04_03/d2",
+            "area_px": 630.0,
+            "blade_area_ratio": 0.007,
+            "length_px": 30.0,
+            "width_px": 30.0,
+            "elongation": 0.0,
+            "inside_blade": 0.98,
+            "position": "tip",
+            "position_t": 0.82,
+            "units": "pixels"
+          },
+          "assessment": {
+            "defect_id": "T03-2018/DJI_0688_04_03/d2",
+            "defect_type": "surface_damage",
+            "severity": 4,
+            "rationale": "Example rationale: exposed laminate at the leading edge, about a fifth of the visible chord.",
+            "confidence": 0.41,
+            "rubric_version": "v1",
+            "prompt_version": "assess/v1",
+            "model": "muse-spark-1.3",
+            "provider": "meta"
+          },
+          "verification": {
+            "defect_id": "T03-2018/DJI_0688_04_03/d2",
+            "verdict": "reinspect",
+            "agreement": 0.5,
+            "second_severity": 2,
+            "checks": [
+              {
+                "name": "inside_blade",
+                "passed": true,
+                "detail": "98% of the mask is on the blade"
+              },
+              {
+                "name": "severity_vs_size",
+                "passed": false,
+                "detail": "severity 4 but the defect covers <0.5% of the blade"
+              }
+            ],
+            "reasons": [
+              "looks disagree by 2 levels",
+              "severity 4 but small relative size"
+            ]
+          },
+          "error": null
+        }
+      ]
+    }
+  ]
+}
