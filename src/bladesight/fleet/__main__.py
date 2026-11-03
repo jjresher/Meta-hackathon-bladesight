@@ -76,7 +76,8 @@ def main(argv: list[str] | None = None) -> int:
             )
             print(
                 f"run {run.id}: {run.status}, {len(run.steps)} steps, "
-                f"{len(run.work_order_ids)} work orders, report={run.report_id}, replay={run.replay}"
+                f"{len(run.work_order_ids)} work orders, report={run.report_id}, "
+                f"replay={run.replay}"
             )
     except MetaError as error:
         print(f"error: {error}", file=sys.stderr)
