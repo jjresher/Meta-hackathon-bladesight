@@ -63,6 +63,15 @@ Python 3.12 managed by uv. Tasks run through poethepoet: `uv run poe <task>`.
 | `uv run poe check` | **Definition-of-Done gate**: ruff lint + format check + pyright + pytest |
 | `uv run poe fmt` | auto-format and auto-fix |
 | `uv run poe secrets-scan` | run every pre-commit hook on the whole repo |
+| `uv run python -m bladesight.meta status` | step 0 of `meta-api-check`: `set`/`missing` per variable, no network (`chat` and `segment` subcommands make one call; `--provider stub` spends nothing) |
+| `uv run poe data` | download the DTU tiles (2.8 GB), split by photo, seal `data/heldout/`, verify `eval/heldout_manifest.sha256` (`DATA.md`) |
+| `uv run poe detect <tile id>` | detect defects on one dev tile and write an overlay PNG under `outputs/detect/` (`BLADESIGHT_MODE=live` for real calls; `--provider stub` is free) |
+| `uv run poe eval --split dev --n 300` | detection metrics on a dev sample -> `docs/evidence/eval_dev.md` + SVG; refuses `--split heldout` unless `ALLOW_HELDOUT=1` (#16 only); `--provider stub` is a free smoke test |
+| `uv run poe gold prepare` / `label` / `status` | severity gold set (#10): write 40 dev crop ids to `eval/gold/severity.csv`, label them locally in a browser page (keys 1-5, blind to the model), count labels |
+| `uv run poe fleet build/process/run/status` | the synthetic farm (#11): write the layout, run the vision pipeline over it (live: ~0.04 USD per tile), run the agent, show the replay store `replay/` |
+| `uv run poe serve` | the API on 127.0.0.1:8000 (replay mode by default; serves `web/dist` at `/` when built) |
+| `uv run python -m bladesight.api.smoke <url>` | post-deploy smoke check: health, fleet, one inspection, one image, the home page |
+| `uv run poe contract` | regenerate `web/src/fixtures/*.json` (examples + JSON Schema) from `bladesight.contracts` (`docs/api.md`) |
 
 Later issues add `data`, `detect`, `eval`, `serve`, `web-*` tasks; keep this table current.
 

@@ -15,12 +15,13 @@ build/
 !.env.example
 
 # Data, caches, outputs (AGENTS.md rules 2-3)
-data/
+/data/
 eval/heldout/
 .cache/
-cache/
-outputs/
-runs/
+.spend/
+/cache/
+/outputs/
+/runs/
 *.jpg
 *.jpeg
 *.tif

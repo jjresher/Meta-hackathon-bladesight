@@ -7,6 +7,7 @@ requires-python = ">=3.12"
 dependencies = [
     "fastapi==0.162.0",
     "httpx==0.28.1",
+    "meta-sam-parser==0.1.0",
     "numpy==2.5.4",
     "pillow==13.0.0",
     "pydantic==2.14.2",
@@ -53,6 +54,13 @@ fmt = [{ cmd = "ruff format ." }, { cmd = "ruff check --fix ." }]
 hooks = "pre-commit install"
 secrets-scan = "pre-commit run --all-files"
 check = ["lint", "format-check", "typecheck", "test"]
+data = "python -m bladesight.data"
+fleet = "python -m bladesight.fleet"
+serve = "uvicorn bladesight.api:app --host 127.0.0.1 --port 8000"
+detect = "python -m bladesight.detect"
+eval = "python -m bladesight.eval"
+gold = "python -m bladesight.eval.gold"
+contract = "python -m bladesight.contract_examples"
 
 # Web UI tasks (issue #13). They shell into web/ via npm --prefix.
 web-install = { cmd = "npm --prefix web install" }

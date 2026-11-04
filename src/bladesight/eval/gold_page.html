@@ -1,0 +1,44 @@
+<!doctype html><meta charset="utf-8"><title>Severity labelling</title>
+<style>
+body{font:15px system-ui;margin:16px auto;max-width:980px;padding:0 16px;color:#1a1a1a}
+.row{display:flex;gap:16px;flex-wrap:wrap}img{width:380px;height:380px;image-rendering:auto;
+border:1px solid #888}table{border-collapse:collapse;font-size:13px}td,th{border:1px solid #ccc;
+padding:3px 6px;text-align:left;vertical-align:top}kbd{background:#eee;padding:1px 6px;
+border-radius:3px;border:1px solid #bbb}#bar{margin:8px 0}
+</style>
+<h3>Label the severity <small id=pos></small></h3>
+<p id=bar>Keys: <kbd>1</kbd>-<kbd>5</kbd> severity, <kbd>0</kbd> unreadable, <kbd>Backspace</kbd>
+clear, <kbd>&larr;</kbd>/<kbd>&rarr;</kbd> previous/next. Saved to the CSV at once. You do not see
+the model's grades.</p>
+<div class=row><div>Close crop<br><img id=a></div><div>Context<br><img id=b></div></div>
+<p>Current label: <b id=cur>-</b> &nbsp; crop <code id=cid></code></p>
+<table><tr><th>1 Cosmetic</th><td>dirt, stains, light discolouration; surface and paint intact</td></tr>
+<tr><th>2 Minor wear</th><td>small wear or tiny paint chips; coating intact around; no exposed laminate</td></tr>
+<tr><th>3 Moderate</th><td>visible paint/coating loss or erosion over a patch, or a short hairline mark; no fibres, no open crack</td></tr>
+<tr><th>4 Serious</th><td>clearly open or long crack vs the visible blade width, delamination, exposed laminate/fibres</td></tr>
+<tr><th>5 Critical</th><td>deep or large structural damage, crack across much of the blade width, missing material, a hole</td></tr>
+</table><p>Full rubric: docs/rubric.md. Judge relative size and appearance (no scale in the photos).</p>
+<script>
+let rows=[],i=0;
+async function load(){rows=await (await fetch('/api/rows')).json();
+ i=Math.max(0,rows.findIndex(r=>!r.severity));show()}
+function show(){const r=rows[i];document.getElementById('a').src='/crop/'+i+'/close';
+ document.getElementById('b').src='/crop/'+i+'/context';
+ document.getElementById('cur').textContent=r.severity===''?'-':(r.severity==='0'?'unreadable':r.severity);
+ document.getElementById('cid').textContent=r.crop_id;
+ document.getElementById('pos').textContent='('+(i+1)+'/'+rows.length+', labelled '+rows.filter(x=>x.severity!=='').length+')'}
+let busy=false;
+async function save(v){if(busy)return;busy=true;const r=rows[i];
+ try{const res=await fetch('/api/label',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({crop_id:r.crop_id,severity:v})});
+  if(res.ok){r.severity=v;show();if(v!==''&&i<rows.length-1){i++;show()}}
+  else alert('Save failed ('+res.status+'): the label was NOT stored')}
+ catch(e){alert('Save failed: '+e)}
+ busy=false}
+document.addEventListener('keydown',e=>{
+ if(e.repeat||e.ctrlKey||e.altKey||e.metaKey)return;
+ if('012345'.includes(e.key)&&e.key!=='')save(e.key);
+ else if(e.key==='Backspace')save('');
+ else if(e.key==='ArrowRight'&&i<rows.length-1){i++;show()}
+ else if(e.key==='ArrowLeft'&&i>0){i--;show()}});
+load();
+</script>
