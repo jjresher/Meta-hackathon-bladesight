@@ -1,6 +1,7 @@
 import { NavLink, Route, Routes } from "react-router-dom";
 
 import { api } from "./api/client";
+import { BrandMark } from "./components/icons";
 import EvalScreen from "./screens/EvalScreen";
 import FleetScreen from "./screens/FleetScreen";
 import InspectionScreen from "./screens/InspectionScreen";
@@ -15,20 +16,21 @@ const NAV = [
 ];
 
 /**
- * Application shell and router. Screen bodies are built out in later features;
- * this shell wires all five routes and the honest farm label.
+ * Application shell and router. Carries the honest farm tagline in the header
+ * and wires the five screens. The theme and all screen bodies are built out to
+ * demo quality in FEAT-002.
  */
 export default function App() {
+  const farmLabel = api.getFarmLabel();
+
   return (
     <div className="app-shell">
       <header className="app-header">
         <div className="app-brand">
-          <span className="app-brand__mark" aria-hidden="true">
-            BS
-          </span>
-          <div>
+          <BrandMark size={34} />
+          <div className="app-brand__text">
             <p className="app-brand__name">BladeSight</p>
-            <p className="app-brand__tagline">{api.getFarmLabel()}</p>
+            <p className="app-brand__tagline">{farmLabel}</p>
           </div>
         </div>
         <nav className="app-nav" aria-label="Primary">
@@ -57,6 +59,10 @@ export default function App() {
           <Route path="*" element={<FleetScreen />} />
         </Routes>
       </main>
+
+      <footer className="app-footer">
+        BladeSight · zero-shot blade inspection · {farmLabel}
+      </footer>
     </div>
   );
 }
