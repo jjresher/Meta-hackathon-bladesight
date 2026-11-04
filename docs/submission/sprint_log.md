@@ -76,13 +76,11 @@ Render deploy; the table above belongs to the other session.
 - 22:45 P2 from the audit fixed (PR #45, auditor MERGE, CI green, merged): verdict glyph (check, diamond, triangle) on the photo tags and the
   legend, `--text-faint` raised to 5.06:1 on the lightest surface. Zoom is not planned. Auditor follow-up: the legend has no entry for the `?` tag (a defect with no
   verification); not fixed.
-- Open: held-out results into the README, the held-out tab (the UI reads `docs/evidence/eval_heldout.json`
-  from the API, nothing to build), close #16.
-- 22:51 The held-out run finished (resumed from the cache after the 21:46 interruption). Result, deviations
+- 22:51 The held-out run finished at 22:51:11 (resumed from the cache after the 21:46 interruption). Result, deviations
   and the cost correction (8.0727 USD in total, two probe calls included) are in
   `docs/evidence/eval_heldout.md` and `eval/preregistration.md`. PR #46 (auditor: two text fixes, applied;
-  CI green) merged and closed #16.
-- 22:55 PR #48 (held-out false-alarm rate beside image-level recall; auditor MERGE) merged.
+  CI green) merged at 22:57 and closed #16.
+- 22:59 PR #48 (held-out false-alarm rate beside image-level recall; auditor MERGE) merged.
 - 23:00 Render redeployed: `/api/eval` serves `dev` and `heldout`. Public smoke OK again and the Playwright
   smoke passed at 1280 and 390 px.
 - Open follow-ups (not done, by instruction): legend has no entry for the `?` tag; the caption says
