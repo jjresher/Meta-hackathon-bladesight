@@ -3,10 +3,9 @@ services:
   - type: web
     name: bladesight
     runtime: docker
-    plan: starter            # PAID (about 7 USD/month at list price): no sleep during judging
-                             # (Nov 5-16); downgrade or delete the service after Nov 16
+    plan: free                 # sleeps after ~15 min without traffic, ~1 min to wake (docs/limitations.md)
     healthCheckPath: /api/health
-    autoDeploy: false        # merging does not redeploy: trigger deploys by hand
+    autoDeployTrigger: commit  # redeploy on every push to the linked branch (current form of the deprecated autoDeploy)
     envVars:
       - key: BLADESIGHT_MODE
         value: replay
