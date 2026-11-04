@@ -6,7 +6,7 @@ import RangeBar from "../components/RangeBar";
 import SweepChart from "../components/SweepChart";
 import { InfoIcon } from "../components/icons";
 import { useAsyncData } from "../hooks/useAsyncData";
-import { DEV_FALSE_ALARM_RATE, SEVERITY_AGREEMENT, evidenceUrl } from "../evidence";
+import { FALSE_ALARM_RATE, SEVERITY_AGREEMENT, evidenceUrl } from "../evidence";
 import { pct, usd } from "../lib/format";
 import type { ClassMetrics, EvalReport, Interval } from "../types";
 
@@ -109,14 +109,8 @@ function Detection({ report }: { report: EvalReport }) {
           <p className="headline__caption" data-testid="image-recall-caption">
             Damaged photos with at least one damage prediction, <strong>wherever it is</strong>: it does not check the
             location, and a detector that fired on every photo would score 100%.{" "}
-            {report.split === "dev" ? (
-              <>
-                On the {DEV_FALSE_ALARM_RATE.cleanTiles} dev photos with no dataset box,{" "}
-                {pct(DEV_FALSE_ALARM_RATE.rate)} still got a damage prediction.
-              </>
-            ) : (
-              <>Read it with the false-alarm rate on photos with no dataset box, in the evidence file below.</>
-            )}
+            On the {FALSE_ALARM_RATE[report.split].cleanTiles} {report.split === "dev" ? "dev" : "held-out"} photos with
+            no dataset box, {pct(FALSE_ALARM_RATE[report.split].rate)} still got a damage prediction.
           </p>
         </div>
       </div>

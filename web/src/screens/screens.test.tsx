@@ -163,6 +163,17 @@ describe("real stored data", () => {
     expect(screen.getAllByText(/95% interval 18%–26%/).length).toBeGreaterThan(0);
   });
 
+  it("renders docs/evidence/eval_heldout.json with its own false-alarm rate, held-out tab first", async () => {
+    const dev = read("docs/evidence/eval_dev.json");
+    const held = read("docs/evidence/eval_heldout.json");
+    open("/eval", { "/api/eval": () => ({ body: [dev, held] }) });
+    expect(await screen.findByTestId("tab-heldout")).toHaveAttribute("aria-pressed", "true");
+    const damage = held.classes.find((c: { label: string }) => c.label === "damage");
+    expect((await screen.findAllByText(`${(damage.recall * 100).toFixed(1)}%`)).length).toBeGreaterThan(0);
+    expect(screen.getByTestId("image-recall-caption")).toHaveTextContent(/300 held-out photos[\s\S]*24%/);
+    expect(screen.queryByTestId("heldout-pending")).toBeNull();
+  });
+
   it("renders a replay inspection (empty blade outline, unknown position) with its photo and masks", async () => {
     const real = read("replay/inspections/T01-2018.json");
     open("/inspections/T01-2018", { "/api/inspections/T01-2018": () => ({ body: real }) });

@@ -19,11 +19,10 @@ export const SEVERITY_AGREEMENT = {
   meanModelMinusHuman: -1.3,
 } as const;
 
-/** Dev split, damage class: tiles with no dataset box that still got a damage prediction. */
-export const DEV_FALSE_ALARM_RATE = {
-  file: "docs/evidence/eval_dev.md",
-  rate: 0.21,
-  cleanTiles: 100,
+/** Damage class: tiles with no dataset box that still got a damage prediction, per split. */
+export const FALSE_ALARM_RATE = {
+  dev: { file: "docs/evidence/eval_dev.md", rate: 0.21, cleanTiles: 100 },
+  heldout: { file: "docs/evidence/eval_heldout.md", rate: 0.24, cleanTiles: 300 },
 } as const;
 
 export const evidenceUrl = (path: string): string => `${EVIDENCE_BASE_URL}${path}`;
