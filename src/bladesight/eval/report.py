@@ -232,5 +232,5 @@ def write_outputs(
         ),
         "utf-8",
     )
-    svg.write_text(sweep_svg(report.sweep), encoding="utf-8")
+    svg.write_text(sweep_svg(report.sweep) + "\n", encoding="utf-8")
     return md, svg
