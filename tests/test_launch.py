@@ -1,4 +1,4 @@
-"""The launch texts (#21): the X posts fit, carry the hashtag and only use placeholders for links."""
+"""The launch texts (#21): the X posts fit, carry the hashtag and cite real evidence files."""
 
 from __future__ import annotations
 
