@@ -33,30 +33,30 @@ export const evidenceUrl = (path: string): string => `${EVIDENCE_BASE_URL}${path
  */
 export const OPEN_WEIGHTS_FARM = {
   file: "docs/evidence/open_weights_farm.md",
-  defects: 96,
-  sameSeverity: 74,
-  sameSeverityPct: 77,
-  withinOne: 85,
-  withinOnePct: 89,
-  sameVerdict: 63,
-  sameVerdictPct: 66,
+  defects: 98,
+  sameSeverity: 78,
+  sameSeverityPct: 80,
+  withinOne: 89,
+  withinOnePct: 91,
+  sameVerdict: 64,
+  sameVerdictPct: 65,
   /** Verdict counts per run. */
   verdicts: {
-    meta: { ok: 33, needs_review: 50, reinspect: 13 },
-    baseten: { ok: 22, needs_review: 60, reinspect: 14 },
+    meta: { ok: 35, needs_review: 50, reinspect: 13 },
+    baseten: { ok: 25, needs_review: 59, reinspect: 14 },
   },
   /** Rows: Meta verdict ok / needs_review / reinspect; columns: Open verdict, same order. */
   verdictMatrix: [
-    [17, 11, 5],
-    [3, 42, 5],
-    [2, 7, 4],
+    [18, 13, 4],
+    [4, 41, 5],
+    [3, 5, 5],
   ],
   turbines: 12,
-  spearman: 0.77,
+  spearman: 0.62,
   topSixInBoth: 4,
-  orders: { meta: 9, baseten: 8, metaRun: "run-final", openRun: "run-open-weights" },
-  repairDefects: { both: 2, union: 5, meta: 4, baseten: 3 },
-  reinspectDefects: { both: 16, union: 30, meta: 19, baseten: 27 },
+  orders: { meta: 11, baseten: 9, metaRun: "run-final", openRun: "run-open-weights" },
+  repairDefects: { both: 2, union: 7, meta: 6, baseten: 3 },
+  reinspectDefects: { both: 14, union: 27, meta: 19, baseten: 22 },
 } as const;
 
 /**
