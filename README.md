@@ -69,14 +69,15 @@ Replay mode (the default: no API key, no model call) serves the stored results i
 ```bash
 uv sync
 uv run python -m bladesight.data.demo     # streams the 2.8 GB archive, keeps only the demo tiles
-[ -f web/package.json ] && (cd web && npm ci && npm run build)   # the web UI (issue #13), when present
+(cd web && npm ci && npm run build)       # the web UI (issue #13)
 uv run poe serve                          # API at http://127.0.0.1:8000 (interactive docs at /docs)
 uv run python -m bladesight.api.smoke http://127.0.0.1:8000
 ```
 
-Without the tiles the API still works and images answer 404. The UI is served at `/` when
-`web/dist/index.html` exists; without it (the UI is built on a separate branch, issue #13, and may
-not be merged) `/` answers 404 and the API lives under `/api` and `/docs`.
+Without the tiles the API still works and images answer 404 (the UI then shows "Photo unavailable"
+and keeps the defect data). The UI is served at `/` when `web/dist/index.html` exists; without a
+build `/` answers 404 and the API lives under `/api` and `/docs`. For UI development run the API
+(`uv run poe serve`) and `uv run poe web-dev` (Vite on port 5173 proxies `/api` and `/images`).
 Endpoints: [`docs/api.md`](docs/api.md).
 
 Live mode spends money; follow [`meta-api-check`](.claude/skills/meta-api-check/SKILL.md):
@@ -113,10 +114,12 @@ the licence note and the sealed held-out split: [`DATA.md`](DATA.md).
 ## Built during the hackathon
 
 All code, prompts, rubric, evaluation and documentation here were written during the event. Notable
-third-party libraries: FastAPI, pydantic, httpx, NumPy, Pillow, and
+third-party libraries: FastAPI, pydantic, httpx, NumPy, Pillow, React, Vite, React Router, Vitest,
+Playwright (web UI), and
 [`meta-sam-parser`](https://pypi.org/project/meta-sam-parser/) (Meta Platforms, SAM License) to decode
 SAM 3.1 output (a dependency, not vendored; its licence text ships with the package). The code was
-written with Claude Code; the decisions, the labels and the review are the author's, and every
+written with Claude Code (the first scaffold of the web UI with Kiro, then rebuilt against the real
+API); the decisions, the labels and the review are the author's, and every
 decision, spend and cut is in [`docs/decision_ledger.md`](docs/decision_ledger.md).
 
 ## Models

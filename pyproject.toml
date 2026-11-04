@@ -61,3 +61,14 @@ detect = "python -m bladesight.detect"
 eval = "python -m bladesight.eval"
 gold = "python -m bladesight.eval.gold"
 contract = "python -m bladesight.contract_examples"
+
+# Web UI tasks (issue #13). They shell into web/ via npm --prefix.
+web-install = { cmd = "npm --prefix web install" }
+web-dev = { cmd = "npm --prefix web run dev" }
+web-build = { cmd = "npm --prefix web run build" }
+web-e2e = { cmd = "npm --prefix web run test:e2e" }
+web-check = [
+    { cmd = "npm --prefix web run typecheck" },
+    { cmd = "npm --prefix web run test" },
+    { cmd = "npm --prefix web run build" },
+]
