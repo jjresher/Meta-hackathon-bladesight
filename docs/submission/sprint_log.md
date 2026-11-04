@@ -68,7 +68,13 @@ Render deploy; the table above belongs to the other session.
 - 22:35 Public smoke against https://bladesight.onrender.com (Free plan, auto-deploy from `main`):
   `smoke --api-only` OK in 1.5 s, full smoke OK in 1.8 s, Playwright fleet -> inspection -> work order
   at 1280 and 390 px with real photos, no console or network errors.
-- 22:45 P2 from the audit fixed: verdict glyph (check, diamond, triangle) on the photo tags and the
-  legend, `--text-faint` raised to 5.06:1 on the lightest surface. Zoom is not planned.
+- 22:51 Cold-start measurement: after about 17 minutes with no requests from this session, the first
+  request to `/api/health` answered 200 in 0.43 s. No cold start was observed, so the wake-up time stays
+  unmeasured (other traffic may have kept the instance awake, or Render's idle limit is longer than
+  the documented ~15 minutes). The "about 1 minute" in `docs/limitations.md` remains Render's
+  documented figure, not ours.
+- 22:45 P2 from the audit fixed (PR #45, auditor MERGE, CI green, merged): verdict glyph (check, diamond, triangle) on the photo tags and the
+  legend, `--text-faint` raised to 5.06:1 on the lightest surface. Zoom is not planned. Auditor follow-up: the legend has no entry for the `?` tag (a defect with no
+  verification); not fixed.
 - Open: held-out results into the README, the held-out tab (the UI reads `docs/evidence/eval_heldout.json`
   from the API, nothing to build), close #16.

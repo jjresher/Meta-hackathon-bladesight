@@ -11,7 +11,7 @@ beside it. Items marked **human** need the author (accounts, links, the X post).
 | Track | Indie Developer (solo) |
 | Challenge | Push the Frontier (energy) |
 | Repo (public) | https://github.com/jjresher/Meta-hackathon-bladesight |
-| Live URL | **human:** the Render URL after the deploy (`render.yaml`), checked from a phone |
+| Live URL | https://bladesight.onrender.com (Render Free plan, auto-deploy on commit from `main`). Smoke on Nov 3, 22:35 UTC-5: `smoke --api-only` OK in 1.5 s, full smoke OK in 1.8 s, Playwright fleet -> inspection -> work order at 1280 and 390 px with real photos, no console or network errors. **human:** check it from a phone. Cold start: not measured (see `docs/submission/sprint_log.md`); open it once and wait before recording or sharing |
 | Video | **human:** link of the 3:00 video (`docs/submission/video_script.md`) |
 | X post | **human:** link of the post with #MetaAIHackathon (issue #21) |
 | Bonus: Best Agentic Use-Case | yes: fleet agent with tools, verification and abstention (`docs/evidence/fleet_run.md`) |
