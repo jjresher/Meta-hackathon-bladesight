@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { imageUrl } from "../api/client";
-import { shortDefectId } from "../lib/format";
+import { DEFECT_TYPE_LABEL, shortDefectId } from "../lib/format";
 import type { InspectedDefect, InspectionImage, Polygon } from "../types";
 import { ImageOffIcon } from "./icons";
 
@@ -16,6 +16,9 @@ interface PhotoViewerProps {
   layers: Layers;
   selectedId: string | null;
   onSelect: (defectId: string | null) => void;
+  /** Defect under the pointer or keyboard focus, here or in the defect list. */
+  hoverId?: string | null;
+  onHover?: (defectId: string | null) => void;
 }
 
 /** SVG path for a set of closed polygons in image pixels. */
@@ -26,19 +29,37 @@ function outlinePath(polygons: Polygon[]): string {
     .join(" ");
 }
 
-function verdictOf(item: InspectedDefect): string {
+export type OverlayVerdict = "ok" | "needs_review" | "reinspect" | "unverified";
+
+function verdictOf(item: InspectedDefect): OverlayVerdict {
   return item.verification?.verdict ?? "unverified";
 }
 
-/** Same shapes as the verdict chips (check, diamond, triangle), so the overlay is not colour alone. */
-const GLYPH: Record<string, string> = { ok: "✓", needs_review: "◆", reinspect: "▲", unverified: "?" };
+/**
+ * Shapes paired with the verdict colours, so the overlay is not colour alone. "?" marks a defect
+ * with no verification result (a stage failed): it was never checked, so it is neither verified
+ * nor flagged. The legend under the photo explains every glyph.
+ */
+export const GLYPH: Record<OverlayVerdict, string> = { ok: "✓", needs_review: "◆", reinspect: "▲", unverified: "?" };
+
+export const VERDICT_TEXT: Record<OverlayVerdict, string> = {
+  ok: "Verified",
+  needs_review: "Needs review",
+  reinspect: "Reinspect",
+  unverified: "Unverified",
+};
+
+function overlayTitle(item: InspectedDefect): string {
+  const what = item.assessment ? DEFECT_TYPE_LABEL[item.assessment.defect_type] : item.defect.concept;
+  return `${shortDefectId(item.defect.id)} ${what}: ${VERDICT_TEXT[verdictOf(item)]}`;
+}
 
 /**
  * The real tile streamed by the API, with the SAM masks and boxes drawn on top as SVG in image
  * pixel coordinates. Masks and boxes are separate layers. If the photo cannot be loaded the
  * viewer says so and draws nothing over a blank: geometry without its photo would mislead.
  */
-export default function PhotoViewer({ image, layers, selectedId, onSelect }: PhotoViewerProps) {
+export default function PhotoViewer({ image, layers, selectedId, onSelect, hoverId = null, onHover }: PhotoViewerProps) {
   const src = imageUrl(image.image_url);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
   const [attempt, setAttempt] = useState(0);
@@ -58,16 +79,26 @@ export default function PhotoViewer({ image, layers, selectedId, onSelect }: Pho
     (a, b) => Number(a.defect.id === selectedId) - Number(b.defect.id === selectedId),
   );
   const bladePath = outlinePath(image.blade_outline);
+  const hovered = hoverId != null && defects.some((d) => d.defect.id === hoverId);
+  const state = (id: string) => `${id === selectedId ? " is-selected" : ""}${id === hoverId ? " is-hover" : ""}`;
+  const pointer = (id: string) => ({
+    onMouseEnter: () => onHover?.(id),
+    onMouseLeave: () => onHover?.(null),
+    onClick: (event: React.MouseEvent) => {
+      event.stopPropagation();
+      onSelect(id);
+    },
+  });
 
   return (
-    <div className="photo" style={{ aspectRatio: `${width} / ${height}` }} data-testid="photo-viewer">
+    <div className={`photo${hovered ? " has-hover" : ""}`} style={{ aspectRatio: `${width} / ${height}` }} data-testid="photo-viewer">
       {status !== "error" && (
         <img
           key={`${src}#${attempt}`}
           ref={imgRef}
           className={`photo__img${status === "ready" ? " is-ready" : ""}`}
           src={attempt > 0 ? `${src}${src.includes("?") ? "&" : "?"}retry=${attempt}` : src}
-          alt={`Drone photo ${image.tile_id} with ${defects.length} detected defect${defects.length === 1 ? "" : "s"}`}
+          alt={`Drone photo tile ${image.tile_id} with ${defects.length} detected defect${defects.length === 1 ? "" : "s"}`}
           width={width}
           height={height}
           decoding="async"
@@ -107,28 +138,26 @@ export default function PhotoViewer({ image, layers, selectedId, onSelect }: Pho
               <path d={bladePath} className="ov-blade" vectorEffect="non-scaling-stroke" data-testid="blade-outline" />
             )}
             {layers.masks &&
-              ordered.map(({ defect, verification }) => {
+              ordered.map((item) => {
+                const { defect } = item;
                 const d = outlinePath(defect.outline);
                 if (!d) return null;
-                const selected = defect.id === selectedId;
                 return (
                   <path
                     key={defect.id}
                     d={d}
-                    className={`ov-mask ov-mask--${verification?.verdict ?? "unverified"}${selected ? " is-selected" : ""}`}
+                    className={`ov-mask ov-mask--${verdictOf(item)}${state(defect.id)}`}
                     vectorEffect="non-scaling-stroke"
                     data-testid="mask"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      onSelect(defect.id);
-                    }}
-                  />
+                    {...pointer(defect.id)}
+                  >
+                    <title>{overlayTitle(item)}</title>
+                  </path>
                 );
               })}
             {layers.boxes &&
               ordered.map((item) => {
                 const { defect } = item;
-                const selected = defect.id === selectedId;
                 return (
                   <rect
                     key={defect.id}
@@ -136,14 +165,13 @@ export default function PhotoViewer({ image, layers, selectedId, onSelect }: Pho
                     y={defect.bbox.y1}
                     width={defect.bbox.x2 - defect.bbox.x1}
                     height={defect.bbox.y2 - defect.bbox.y1}
-                    className={`ov-box ov-box--${verdictOf(item)}${selected ? " is-selected" : ""}`}
+                    className={`ov-box ov-box--${verdictOf(item)}${state(defect.id)}`}
                     vectorEffect="non-scaling-stroke"
                     data-testid="box"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      onSelect(defect.id);
-                    }}
-                  />
+                    {...pointer(defect.id)}
+                  >
+                    <title>{overlayTitle(item)}</title>
+                  </rect>
                 );
               })}
           </svg>
@@ -155,7 +183,7 @@ export default function PhotoViewer({ image, layers, selectedId, onSelect }: Pho
               return (
                 <span
                   key={defect.id}
-                  className={`photo__tag photo__tag--${verdictOf(item)}${defect.id === selectedId ? " is-selected" : ""}${inside ? " is-inside" : ""}`}
+                  className={`photo__tag photo__tag--${verdictOf(item)}${state(defect.id)}${inside ? " is-inside" : ""}`}
                   style={{
                     left: `${(defect.bbox.x1 / width) * 100}%`,
                     top: `${(defect.bbox.y1 / height) * 100}%`,

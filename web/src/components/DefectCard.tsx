@@ -1,6 +1,8 @@
+import { Link } from "react-router-dom";
+
 import { DEFECT_TYPE_LABEL, conceptLabel, pct, shortDefectId } from "../lib/format";
 import type { InspectedDefect, Provider } from "../types";
-import { VerdictChip } from "./Chips";
+import { ModelBadge, UnverifiedChip, VerdictChip } from "./Chips";
 import SeverityScale from "./SeverityScale";
 import { ToneGlyph } from "./icons";
 
@@ -23,23 +25,37 @@ interface DefectCardProps {
   item: InspectedDefect;
   selected: boolean;
   onSelect: () => void;
+  /** Its overlay is under the pointer (or this card has focus): both light up together. */
+  hovered?: boolean;
+  onHover?: (on: boolean) => void;
+  /** Work orders that cite this defect. */
+  workOrders?: string[];
 }
 
 /**
  * One defect: detection, measurement, Muse Spark's assessment and the verification verdict with
- * its reasons. Collapsed it is one line; selected it opens everything the agent knows.
+ * its reasons. Collapsed it shows severity, verdict and why in three short lines; selected it
+ * opens everything the agent knows.
  */
-export default function DefectCard({ item, selected, onSelect }: DefectCardProps) {
+export default function DefectCard({ item, selected, onSelect, hovered, onHover, workOrders = [] }: DefectCardProps) {
   const { defect, measurement, assessment, verification, error } = item;
   const verdict = verification?.verdict;
   const title = assessment ? DEFECT_TYPE_LABEL[assessment.defect_type] : defect.concept;
+  const id = shortDefectId(defect.id);
+  // Why a defect is flagged comes first: it is what a person has to act on.
+  const flag = verdict && verdict !== "ok" ? verification?.reasons[0] : undefined;
+  const why = assessment?.rationale ?? error ?? undefined;
 
   return (
     <article
-      className={`dcard${selected ? " is-selected" : ""}${verdict ? ` dcard--${verdict}` : ""}`}
+      className={`dcard${selected ? " is-selected" : ""}${hovered ? " is-hover" : ""} dcard--${verdict ?? "unverified"}`}
       data-testid="defect-card"
       data-defect-id={defect.id}
       data-selected={selected}
+      onMouseEnter={() => onHover?.(true)}
+      onMouseLeave={() => onHover?.(false)}
+      onFocus={() => onHover?.(true)}
+      onBlur={() => onHover?.(false)}
     >
       <button
         type="button"
@@ -48,10 +64,21 @@ export default function DefectCard({ item, selected, onSelect }: DefectCardProps
         aria-expanded={selected}
         aria-controls={selected ? `dcard-${defect.id}` : undefined}
       >
-        <span className="dcard__id">{shortDefectId(defect.id)}</span>
-        <span className="dcard__title">{title}</span>
-        <SeverityScale value={assessment?.severity} />
-        {verdict ? <VerdictChip verdict={verdict} small /> : <span className="chip chip--sm">Unverified</span>}
+        <span className="dcard__line">
+          <span className="dcard__id">{id}</span>
+          <span className="dcard__title">{title}</span>
+          {verdict ? <VerdictChip verdict={verdict} small /> : <UnverifiedChip small />}
+        </span>
+        <span className="dcard__line dcard__line--meta">
+          <SeverityScale value={assessment?.severity} />
+          {assessment && <ModelBadge model={assessment.model} provider={assessment.provider} />}
+        </span>
+        {!selected && (flag || why) && (
+          <span className="dcard__why">
+            {flag && <span className={`dcard__flag dcard__flag--${verdict}`}>{flag}</span>}
+            {why && <span className={`dcard__gist${flag ? " is-short" : ""}`}>{why}</span>}
+          </span>
+        )}
       </button>
 
       {selected && (
@@ -129,7 +156,7 @@ export default function DefectCard({ item, selected, onSelect }: DefectCardProps
               {measurement && (
                 <>
                   <Row label="Size">
-                    <span className="num">{pct(measurement.tile_area_ratio, 2)}</span> of the photo ·{" "}
+                    <span className="num">{pct(measurement.tile_area_ratio, 2)}</span> of the tile ·{" "}
                     <span className="num">
                       {Math.round(measurement.length_px)} × {Math.round(measurement.width_px)} px
                     </span>
@@ -154,6 +181,17 @@ export default function DefectCard({ item, selected, onSelect }: DefectCardProps
             </dl>
             <p className="dsec__foot">Sizes are relative (pixels), never millimetres.</p>
           </section>
+
+          {workOrders.length > 0 && (
+            <p className="dcard__cites">
+              Cited by
+              {workOrders.map((order) => (
+                <Link key={order} to={`/work-orders#${order}`} className="year-chip">
+                  {order}
+                </Link>
+              ))}
+            </p>
+          )}
         </div>
       )}
     </article>

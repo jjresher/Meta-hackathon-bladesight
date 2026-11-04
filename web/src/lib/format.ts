@@ -63,6 +63,9 @@ export const worseVerdict = (a: Verdict, b: Verdict): Verdict =>
 
 export const defectsLabel = (n: number): string => `${n} defect${n === 1 ? "" : "s"}`;
 
+/** Count of 586x371 dataset tiles (the unit the pipeline sees), not of source drone photos. */
+export const tilesLabel = (n: number): string => `${n} tile${n === 1 ? "" : "s"}`;
+
 /** Detector confidence band of a SAM defect, for the card header. */
 export const conceptLabel = (defect: Defect): string =>
   defect.source === "box_prompt" ? `${defect.concept} · box prompt` : defect.concept;

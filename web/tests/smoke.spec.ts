@@ -95,6 +95,20 @@ test("fleet -> inspection -> work order, with no console or network errors", asy
   await page.getByTestId("toggle-masks").check({ force: true });
   await expect(photo.getByTestId("mask").first()).toBeVisible();
 
+  // The overlay key explains every glyph, "?" (never verified) included
+  await expect(page.getByTestId("legend-unverified")).toContainText("Unverified");
+  // Keyboard: a defect card opens with Enter, Escape closes it
+  const head = page.getByTestId("defect-card").first().getByRole("button").first();
+  await head.focus();
+  await page.keyboard.press("Enter");
+  await expect(head).toHaveAttribute("aria-expanded", "true");
+  await page.keyboard.press("Escape");
+  await expect(head).toHaveAttribute("aria-expanded", "false");
+  // No horizontal scroll at 1280 or at phone width
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+    page.viewportSize()!.width,
+  );
+
   // Work order
   await page.getByTestId("wo-link").first().click();
   await expect(page).toHaveURL(/\/work-orders#/);
