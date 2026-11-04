@@ -26,7 +26,7 @@ concurrency:
 jobs:
   ping:
     runs-on: ubuntu-latest
-    timeout-minutes: 6
+    timeout-minutes: 10
     env:
       HEALTH_URL: https://bladesight.onrender.com/api/health
     steps:
@@ -37,14 +37,14 @@ jobs:
           for attempt in 1 2 3 4 5; do
             started=$(date +%s)
             code=$(curl --silent --show-error --max-time 90 --output body.json \
-              --write-out '%{http_code}' "$HEALTH_URL" || echo "000")
+              --write-out '%{http_code}' "$HEALTH_URL" || true)
             elapsed=$(( $(date +%s) - started ))
             echo "attempt ${attempt}: HTTP ${code} in ${elapsed}s"
             if [ "$code" = "200" ] && grep -q '"status":"ok"' body.json; then
               cat body.json; echo
               exit 0
             fi
-            sleep 15
+            if [ "$attempt" -lt 5 ]; then sleep 15; fi
           done
           echo "::error::${HEALTH_URL} did not answer 200 with status ok after 5 attempts"
           exit 1
