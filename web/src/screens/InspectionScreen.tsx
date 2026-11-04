@@ -103,6 +103,7 @@ function InspectionBody({ inspection, fleet, orders }: { inspection: Inspection;
     const onKey = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
       if (target && /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName)) return;
+      if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
       if (event.key === "Escape" && image) setSelection(image.id, null);
       if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
       const at = images.findIndex((i) => i.id === image?.id);
@@ -226,7 +227,10 @@ function InspectionBody({ inspection, fleet, orders }: { inspection: Inspection;
             <span className="legend__item legend__item--ok">Verified</span>
             <span className="legend__item legend__item--needs_review">Needs review</span>
             <span className="legend__item legend__item--reinspect">Reinspect</span>
-            <span className="legend__hint">SAM 3.1 masks and boxes, coloured by verification verdict. ← → switch photo.</span>
+            <span className="legend__hint">
+              SAM 3.1 masks and boxes, coloured by verdict. <strong>Verified</strong> means two looks agreed and the rule checks
+              passed, not that the defect is confirmed on the blade. ← → switch photo.
+            </span>
           </div>
 
           <ul className="filmstrip" aria-label="Photos in this inspection">

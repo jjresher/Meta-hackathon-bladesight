@@ -12,8 +12,8 @@ import type { Fleet, Turbine } from "../types";
 function Stat({ value, label, tone }: { value: number | string; label: string; tone?: "alert" | "review" }) {
   return (
     <div className={`stat${tone ? ` stat--${tone}` : ""}`}>
-      <dd className="stat__value num">{value}</dd>
       <dt className="stat__label">{label}</dt>
+      <dd className="stat__value num">{value}</dd>
     </div>
   );
 }
@@ -99,8 +99,9 @@ function FleetBody({ fleet }: { fleet: Fleet }) {
         <p className="eyebrow">Fleet</p>
         <h1>{turbines.length} turbines, ranked by what needs a person first</h1>
         <p className="lede">
-          The agent ranks turbines from <em>verified</em> assessments only: a defect that did not survive the second look
-          never raises a turbine's rank by itself, it asks for a review or new photos.
+          Only <em>verified</em> defects (two looks agreed, rule checks passed) set a turbine's status and severity. A
+          defect that needs review adds a quarter of its weight to the priority score; one that needs reinspection adds
+          nothing. Both ask for a person or new photos.
         </p>
       </header>
 
@@ -115,7 +116,7 @@ function FleetBody({ fleet }: { fleet: Fleet }) {
         <Stat value={count("critical")} label="critical" tone="alert" />
         <Stat value={count("attention")} label="attention" tone="review" />
         <Stat value={count("needs_review")} label="need review" tone="review" />
-        <Stat value={count("ok")} label="ok" />
+        <Stat value={count("ok")} label="no verified issue" />
         <Stat value={orders} label="open work orders" />
       </dl>
 

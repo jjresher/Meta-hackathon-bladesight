@@ -3,6 +3,7 @@ import { NavLink, Route, Routes } from "react-router-dom";
 import { api, SCHEMA_VERSION } from "./api/client";
 import { BrandMark } from "./components/icons";
 import { useAsyncData } from "./hooks/useAsyncData";
+import ErrorBoundary from "./components/ErrorBoundary";
 import EvalScreen from "./screens/EvalScreen";
 import FleetScreen from "./screens/FleetScreen";
 import InspectionScreen from "./screens/InspectionScreen";
@@ -73,6 +74,7 @@ export default function App() {
       </header>
 
       <main id="main" className="app-main">
+        <ErrorBoundary>
         <Routes>
           <Route path="/" element={<FleetScreen />} />
           <Route path="/inspections/:id" element={<InspectionScreen />} />
@@ -82,6 +84,7 @@ export default function App() {
           <Route path="/eval" element={<EvalScreen />} />
           <Route path="*" element={<FleetScreen />} />
         </Routes>
+        </ErrorBoundary>
       </main>
 
       <footer className="app-footer">

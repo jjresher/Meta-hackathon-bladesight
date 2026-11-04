@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
@@ -128,12 +131,39 @@ describe("Evaluation", () => {
     expect(screen.getByTestId("kappa")).toHaveTextContent(/advisory/);
     expect(screen.getByTestId("tab-heldout")).toHaveTextContent(/pending/);
     expect(screen.getByTestId("sweep-chart")).toBeInTheDocument();
+    // image-level recall never appears without its caveat
+    expect(screen.getByTestId("image-recall-caption")).toHaveTextContent(/wherever it is/);
+    expect(screen.getByTestId("image-recall-caption")).toHaveTextContent(/21%/);
   });
 
   it("puts the held-out report first once the API serves it", async () => {
     const heldout = { ...evalReports[0], split: "heldout" };
     open("/eval", { "/api/eval": () => ({ body: [evalReports[0], heldout] }) });
-    expect(await screen.findByTestId("tab-heldout")).toHaveAttribute("aria-selected", "true");
+    expect(await screen.findByTestId("tab-heldout")).toHaveAttribute("aria-pressed", "true");
     await waitFor(() => expect(screen.queryByTestId("heldout-pending")).toBeNull());
+  });
+});
+
+/** The real stored results (not the made-up fixtures) go through the same screens. */
+describe("real stored data", () => {
+  const read = (path: string) => JSON.parse(readFileSync(resolve(process.cwd(), "..", path), "utf8"));
+
+  it("renders docs/evidence/eval_dev.json as measured", async () => {
+    const dev = read("docs/evidence/eval_dev.json");
+    open("/eval", { "/api/eval": () => ({ body: [{ sample_note: null, severity_kappa: null, ...dev }] }) });
+    const damage = dev.classes.find((c: { label: string }) => c.label === "damage");
+    expect((await screen.findAllByText(`${(damage.recall * 100).toFixed(1)}%`)).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(`${(damage.precision * 100).toFixed(1)}%`).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/95% interval 18%–26%/).length).toBeGreaterThan(0);
+  });
+
+  it("renders a replay inspection (empty blade outline, unknown position) with its photo and masks", async () => {
+    const real = read("replay/inspections/T01-2018.json");
+    open("/inspections/T01-2018", { "/api/inspections/T01-2018": () => ({ body: real }) });
+    const photo = await screen.findByTestId("photo-viewer");
+    fireEvent.load(within(photo).getByRole("img", { name: /Drone photo/ }));
+    expect((await within(photo).findAllByTestId("mask")).length).toBeGreaterThan(0);
+    expect(screen.getByTestId("toggle-blade")).toBeDisabled();
+    expect(screen.getAllByText(/not determined \(no blade mask\)/).length).toBeGreaterThan(0);
   });
 });

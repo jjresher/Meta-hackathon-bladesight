@@ -26,7 +26,7 @@ const TURBINE: Record<TurbineStatus, { tone: Tone; label: string }> = {
   critical: { tone: "alert", label: "Critical" },
   attention: { tone: "review", label: "Attention" },
   needs_review: { tone: "review", label: "Needs review" },
-  ok: { tone: "ok", label: "OK" },
+  ok: { tone: "ok", label: "No verified issue" },
 };
 
 export function TurbineStatusChip({ status, small }: { status: TurbineStatus; small?: boolean }) {

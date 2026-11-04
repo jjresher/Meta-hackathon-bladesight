@@ -102,7 +102,13 @@ function Body({ orders, report }: { orders: WorkOrder[]; report: AsyncState<Repo
   // Deep links (#WO-001) from the viewer or the fleet.
   useEffect(() => {
     if (!hash) return;
-    document.getElementById(decodeURIComponent(hash.slice(1)))?.scrollIntoView({ block: "center" });
+    let id = hash.slice(1);
+    try {
+      id = decodeURIComponent(id);
+    } catch {
+      // a malformed hash just does not match any order
+    }
+    document.getElementById(id)?.scrollIntoView({ block: "center" });
   }, [hash, orders]);
 
   return (

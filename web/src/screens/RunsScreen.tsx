@@ -94,8 +94,8 @@ function RunBody({ run }: { run: AgentRun }) {
           {calls.length} tool calls, one report, {run.work_order_ids.length} work orders
         </h1>
         <p className="lede">
-          Every ranking, work order and sentence in the report comes from these steps. Nothing is written without a tool
-          result behind it.
+          The ranking is a fixed score, not a model opinion. Work orders are created only through tools that refuse an
+          unverified defect, and the report can only cite work orders that exist. The report's wording is the model's.
         </p>
       </header>
 
@@ -111,24 +111,24 @@ function RunBody({ run }: { run: AgentRun }) {
 
       <dl className="stats stats--run">
         <div className="stat">
-          <dd className="stat__value">{STATUS_LABEL[run.status]}</dd>
           <dt className="stat__label">status</dt>
+          <dd className="stat__value">{STATUS_LABEL[run.status]}</dd>
         </div>
         <div className="stat">
-          <dd className="stat__value num">{run.model}</dd>
           <dt className="stat__label">{run.provider === "meta" ? "Meta Model API" : run.provider}</dt>
+          <dd className="stat__value num">{run.model}</dd>
         </div>
         <div className="stat">
-          <dd className="stat__value num">{usd(run.total_cost_usd)}</dd>
           <dt className="stat__label">run cost (USD)</dt>
+          <dd className="stat__value num">{usd(run.total_cost_usd)}</dd>
         </div>
         <div className="stat">
-          <dd className="stat__value num">{wallMs != null ? duration(wallMs) : "n/a"}</dd>
           <dt className="stat__label">wall time · {dateTime(run.started_at)}</dt>
+          <dd className="stat__value num">{wallMs != null ? duration(wallMs) : "n/a"}</dd>
         </div>
         <div className="stat">
-          <dd className="stat__value num">{run.steps.length}</dd>
           <dt className="stat__label">steps</dt>
+          <dd className="stat__value num">{run.steps.length}</dd>
         </div>
       </dl>
 

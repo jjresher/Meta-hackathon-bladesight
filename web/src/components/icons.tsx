@@ -149,13 +149,6 @@ export function ImageOffIcon({ size = 28, className }: IconProps) {
   );
 }
 
-export function ChevronIcon({ size = 14, className }: IconProps) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 16 16" aria-hidden="true" focusable="false" className={className}>
-      <path d="M5 6.5 L8 9.5 L11 6.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
 
 export function TrendIcon({ trend, size = 12 }: { trend: "worse" | "same" | "better" | "new"; size?: number }) {
   const common = { width: size, height: size, viewBox: "0 0 12 12", "aria-hidden": true, focusable: false } as const;

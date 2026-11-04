@@ -46,7 +46,7 @@ export default function DefectCard({ item, selected, onSelect }: DefectCardProps
         className="dcard__head"
         onClick={onSelect}
         aria-expanded={selected}
-        aria-controls={`dcard-${defect.id}`}
+        aria-controls={selected ? `dcard-${defect.id}` : undefined}
       >
         <span className="dcard__id">{shortDefectId(defect.id)}</span>
         <span className="dcard__title">{title}</span>
@@ -135,8 +135,7 @@ export default function DefectCard({ item, selected, onSelect }: DefectCardProps
                     </span>
                   </Row>
                   <Row label="Elongation">
-                    <span className="num">{measurement.elongation.toFixed(2)}</span>
-                    {measurement.elongation >= 0.85 ? " · crack-like" : ""}
+                    <span className="num">{measurement.elongation.toFixed(2)}</span> (1 is a thin line)
                   </Row>
                   <Row label="Position">
                     {measurement.position === "unknown"

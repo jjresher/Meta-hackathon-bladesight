@@ -601,7 +601,7 @@ code,
 
 .stat {
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
   gap: 2px;
   padding: 14px 16px;
   background: var(--surface);
@@ -1206,7 +1206,12 @@ code,
 }
 
 .legend__hint {
-  margin-left: auto;
+  flex-basis: 100%;
+  max-width: 78ch;
+}
+
+.legend__hint strong {
+  color: var(--text-dim);
 }
 
 .filmstrip {
@@ -2306,10 +2311,6 @@ code,
 
   .stage {
     padding: 8px 8px 0;
-  }
-
-  .legend__hint {
-    display: none;
   }
 
   .kv__row {

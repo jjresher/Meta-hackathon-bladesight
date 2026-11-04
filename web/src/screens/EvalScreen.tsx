@@ -6,7 +6,7 @@ import RangeBar from "../components/RangeBar";
 import SweepChart from "../components/SweepChart";
 import { InfoIcon } from "../components/icons";
 import { useAsyncData } from "../hooks/useAsyncData";
-import { SEVERITY_AGREEMENT, evidenceUrl } from "../evidence";
+import { DEV_FALSE_ALARM_RATE, SEVERITY_AGREEMENT, evidenceUrl } from "../evidence";
 import { pct, usd } from "../lib/format";
 import type { ClassMetrics, EvalReport, Interval } from "../types";
 
@@ -106,7 +106,18 @@ function Detection({ report }: { report: EvalReport }) {
           <p className="headline__value num">{pct(report.image_recall, 1)}</p>
           <RangeBar value={report.image_recall} interval={null} />
           <p className="headline__ci num">no interval reported</p>
-          <p className="headline__caption">Damaged photos with at least one damage prediction, wherever it is.</p>
+          <p className="headline__caption" data-testid="image-recall-caption">
+            Damaged photos with at least one damage prediction, <strong>wherever it is</strong>: it does not check the
+            location, and a detector that fired on every photo would score 100%.{" "}
+            {report.split === "dev" ? (
+              <>
+                On the {DEV_FALSE_ALARM_RATE.cleanTiles} dev photos with no dataset box,{" "}
+                {pct(DEV_FALSE_ALARM_RATE.rate)} still got a damage prediction.
+              </>
+            ) : (
+              <>Read it with the false-alarm rate on photos with no dataset box, in the evidence file below.</>
+            )}
+          </p>
         </div>
       </div>
 
@@ -121,7 +132,11 @@ function Detection({ report }: { report: EvalReport }) {
           {damage && `${pct(1 - damage.recall)} of annotated damage is missed at IoU ≥ ${report.iou_threshold}`}
           {dirt && `, and the dirt class has ${pct(dirt.precision, 1)} precision`}. Intervals are bootstrap over tiles; tiles
           of one photo are correlated, so they are probably a little too narrow.
-          {report.sample_note ? ` ${report.sample_note}` : " The sample over-represents damaged tiles, so precision is optimistic for a real inspection."}
+          {report.sample_note
+            ? ` ${report.sample_note}`
+            : report.split === "dev"
+              ? " The dev sample over-represents damaged tiles, so precision is optimistic for a real inspection."
+              : ""}
         </span>
       </p>
 
@@ -229,13 +244,12 @@ function EvalBody({ reports }: { reports: EvalReport[] }) {
         </p>
       </header>
 
-      <div className="seg seg--tabs" role="tablist" aria-label="Evaluation split">
+      <div className="seg seg--tabs" role="group" aria-label="Evaluation split">
         {(["heldout", "dev"] as const).map((key) => (
           <button
             key={key}
             type="button"
-            role="tab"
-            aria-selected={split === key}
+            aria-pressed={split === key}
             className={`seg__item${split === key ? " is-active" : ""}`}
             onClick={() => setSplit(key)}
             data-testid={`tab-${key}`}
@@ -251,15 +265,15 @@ function EvalBody({ reports }: { reports: EvalReport[] }) {
           <InfoIcon className="note__icon" />
           <span>
             The held-out run is a single, pre-registered evaluation on photos nobody tuned on. Its result is not published
-            here yet; when it is, it appears in this tab exactly as measured. The dev numbers were used to tune thresholds
-            and prompts, so they are optimistic by construction.
+            here yet; when it is, it appears in this tab exactly as measured. The dev split is where the pipeline was
+            developed and its thresholds were set, so quote the held-out numbers when they exist, not these.
           </span>
         </p>
       )}
       {split === "dev" && heldout && (
         <p className="note">
           <InfoIcon className="note__icon" />
-          <span>The dev split was used to tune thresholds and prompts. Quote the held-out numbers, not these.</span>
+          <span>The dev split is where the pipeline was developed and its thresholds were set. Quote the held-out numbers, not these.</span>
         </p>
       )}
 
