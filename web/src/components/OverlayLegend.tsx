@@ -1,7 +1,7 @@
 import { GLYPH, VERDICT_TEXT, type OverlayVerdict } from "./PhotoViewer";
 
 const MEANING: Record<OverlayVerdict, string> = {
-  ok: "two looks agreed and the rule checks passed",
+  ok: "two looks agreed, confidence was high enough and the rule checks passed",
   needs_review: "a person should look at it",
   reinspect: "take new photos before deciding",
   unverified: "not checked: the verification step did not run",

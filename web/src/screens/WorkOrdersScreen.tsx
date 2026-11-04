@@ -4,7 +4,10 @@ import { Link, useLocation } from "react-router-dom";
 import { api } from "../api/client";
 import { Async, Loading } from "../components/PageState";
 import { InfoIcon } from "../components/icons";
+import { ModelBadge } from "../components/Chips";
 import { useAsyncData, type AsyncState } from "../hooks/useAsyncData";
+import { PROVIDER_LABEL } from "../lib/models";
+import { useRun } from "../lib/run";
 import { dateTime, defectLink, shortDefectId } from "../lib/format";
 import { Markdown } from "../lib/markdown";
 import type { Report, WorkOrder, WorkOrderKind } from "../types";
@@ -62,8 +65,9 @@ function OrderCard({ order }: { order: WorkOrder }) {
 
       <footer className="wo__foot">
         <Link to={`/inspections/${encodeURIComponent(order.inspection_id)}`}>Open {order.inspection_id}</Link>
-        <span>
+        <span className="wo__by">
           created by {order.created_by}
+          <ModelBadge model={order.model} provider={order.provider} />
           {order.run_id && (
             <>
               {" "}
@@ -83,7 +87,7 @@ function ReportPanel({ report }: { report: Report }) {
         <p className="eyebrow">Report written by the agent</p>
         <h2>{report.title}</h2>
         <p className="report__meta">
-          <span className="num">{report.model}</span> · {report.provider === "meta" ? "Meta Model API" : report.provider} ·{" "}
+          <span className="num">{report.model}</span> · {PROVIDER_LABEL[report.provider]} ·{" "}
           {dateTime(report.generated_at)} ·{" "}
           <Link to={`/runs/${encodeURIComponent(report.run_id)}`}>{report.run_id}</Link>
         </p>
@@ -166,8 +170,9 @@ function Body({ orders, report }: { orders: WorkOrder[]; report: AsyncState<Repo
 }
 
 export default function WorkOrdersScreen() {
-  const orders = useAsyncData(() => api.workOrders(), []);
-  const report = useAsyncData(() => api.latestReport().catch(() => null), []);
+  const { provider } = useRun();
+  const orders = useAsyncData(() => api.workOrders(provider), [provider]);
+  const report = useAsyncData(() => api.latestReport(provider).catch(() => null), [provider]);
   return (
     <section className="screen" aria-label="Work orders">
       <Async state={orders} what="work orders">

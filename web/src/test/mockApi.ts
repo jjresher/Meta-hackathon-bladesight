@@ -4,6 +4,7 @@ import evalReports from "../fixtures/eval.json";
 import fleet from "../fixtures/fleet.json";
 import health from "../fixtures/health.json";
 import inspection from "../fixtures/inspection_T03-2018.json";
+import replays from "../fixtures/replays.json";
 import report from "../fixtures/report_latest.json";
 import run from "../fixtures/run_run-example-001.json";
 import runs from "../fixtures/runs.json";
@@ -21,6 +22,7 @@ const routes: Record<string, Handler> = {
   "/api/runs": () => ({ body: runs }),
   "/api/runs/run-example-001": () => ({ body: run }),
   "/api/eval": () => ({ body: evalReports }),
+  "/api/replays": () => ({ body: replays }),
 };
 
 /**
@@ -30,8 +32,9 @@ const routes: Record<string, Handler> = {
 export function stubApi(overrides: Overrides = {}) {
   const table = { ...routes, ...overrides };
   const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
-    const path = new URL(String(input), "http://test").pathname;
-    const handler = table[path];
+    const url = new URL(String(input), "http://test");
+    // An override may name the query too ("/api/fleet?provider=baseten"); otherwise the path decides.
+    const handler = table[`${url.pathname}${url.search}`] ?? table[url.pathname];
     const { status = 200, body } = handler ? handler() : { status: 404, body: { detail: "not found" } };
     return new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json" } });
   });
