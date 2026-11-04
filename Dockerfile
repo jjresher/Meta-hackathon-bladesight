@@ -16,8 +16,9 @@ COPY replay ./replay
 COPY docs/evidence ./docs/evidence
 COPY --from=web /src/web/dist ./web/dist
 # Demo tiles only, streamed from the public archive at build time (never committed, never the
-# held-out split); a failure here does not fail the build.
-RUN .venv/bin/python -m bladesight.data.demo --replay-dir replay --data-dir data
+# held-out split). Strict: a missing tile fails the build, so Render keeps the last good deploy
+# instead of publishing a demo without photos. README.md and replay/ above invalidate this layer.
+RUN .venv/bin/python -m bladesight.data.demo --strict --replay-dir replay --data-dir data
 ENV BLADESIGHT_MODE=replay BLADESIGHT_REPLAY_DIR=/app/replay BLADESIGHT_DATA_DIR=/app/data \
     BLADESIGHT_WEB_DIR=/app/web/dist BLADESIGHT_EVIDENCE_DIR=/app/docs/evidence
 EXPOSE 8000

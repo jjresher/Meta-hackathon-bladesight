@@ -109,15 +109,21 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="python -m bladesight.data.demo")
     parser.add_argument("--replay-dir", type=Path, default=Path("replay"))
     parser.add_argument("--data-dir", type=Path, default=Path("data"))
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="exit 1 unless every tile is there (the image build: keep the last good deploy)",
+    )
     args = parser.parse_args(argv)
     try:
         got, wanted = fetch(args.replay_dir, args.data_dir)
     except (httpx.HTTPError, tarfile.TarError, OSError) as error:
         print(f"warning: demo tiles not fetched ({error}); images will be missing", file=sys.stderr)
-        return 0  # never fail the image build over the pictures
+        return 1 if args.strict else 0
     print(f"demo tiles: {got} of {wanted} fetched")
     if got < wanted:
         print("warning: some demo tiles were not found in the archive", file=sys.stderr)
+        return 1 if args.strict else 0
     return 0
 
 

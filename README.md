@@ -175,8 +175,10 @@ uv run python -m bladesight.api.smoke http://127.0.0.1:8000   # in a second term
 ```
 
 - Port 8000 taken? `uv run poe serve --port 8010` (extra arguments go to uvicorn).
-- The tiles step is the slow one (about 10 minutes in the dry run: it reads the archive until all 96
-  demo tiles are found); the rest took under a minute with warm uv and npm caches. You can run it
+- The tiles step is the slow one and depends on a third-party host: it reads the archive until all
+  96 demo tiles are found. It took about 10 minutes in the first dry run, and in the second it ran
+  for 3 hours and timed out with 12 of 96 tiles ([`clean_clone.md`](docs/evidence/clean_clone.md)).
+  The rest took under a minute with warm uv and npm caches. You can run it
   in parallel with the rest; until it finishes, images answer 404, the UI shows "Photo unavailable"
   next to the defect data, and the smoke check fails on its image request.
 - Without `web/dist` (no web build) `/` answers 404 and the API still lives under `/api` and `/docs`.

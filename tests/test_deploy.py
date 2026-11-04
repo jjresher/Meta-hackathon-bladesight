@@ -75,7 +75,7 @@ def test_smoke_check_passes_on_a_good_app_and_fails_on_an_empty_one(tmp_path: Pa
 
 
 @pytest.mark.parametrize(
-    "needle", ["BLADESIGHT_MODE=replay", "--locked --no-dev", "bladesight.data.demo"]
+    "needle", ["BLADESIGHT_MODE=replay", "--locked --no-dev", "bladesight.data.demo --strict"]
 )
 def test_dockerfile_is_replay_only_and_never_copies_data_or_secrets(needle: str) -> None:
     text = (ROOT / "Dockerfile").read_text(encoding="utf-8")
@@ -132,4 +132,18 @@ def test_a_failed_download_degrades_to_a_warning(tmp_path: Path, monkeypatch) ->
     monkeypatch.setattr(
         demo, "fetch", lambda *a, **k: (_ for _ in ()).throw(httpx.ConnectError("x"))
     )
-    assert demo.main(["--replay-dir", str(store.root), "--data-dir", str(tmp_path / "d")]) == 0
+    args = ["--replay-dir", str(store.root), "--data-dir", str(tmp_path / "d")]
+    assert demo.main(args) == 0
+    assert demo.main(["--strict", *args]) == 1
+
+
+def test_strict_fails_the_build_on_a_partial_download(tmp_path: Path, monkeypatch) -> None:
+    from bladesight.data import demo
+
+    store = make_store(tmp_path)
+    args = ["--replay-dir", str(store.root), "--data-dir", str(tmp_path / "d")]
+    monkeypatch.setattr(demo, "fetch", lambda *a, **k: (12, 96))
+    assert demo.main(args) == 0
+    assert demo.main(["--strict", *args]) == 1
+    monkeypatch.setattr(demo, "fetch", lambda *a, **k: (96, 96))
+    assert demo.main(["--strict", *args]) == 0
