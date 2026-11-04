@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import re
 import sys
 from dataclasses import replace
 from pathlib import Path
@@ -46,6 +47,14 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.split == "dev" and args.n > 300:
         parser.error("the dev evaluation is limited to 300 tiles (sprint rule)")
+    if args.stem is not None and (
+        not re.fullmatch(r"[A-Za-z0-9_.-]+", args.stem) or args.stem.startswith(".")
+    ):
+        parser.error("--stem must be a plain file name stem")
+    if args.split != "heldout":
+        target = (args.out / f"{args.stem or 'eval_' + args.split}.md").resolve()
+        if target == ho.EVIDENCE.resolve() or (args.stem or "").startswith("eval_heldout"):
+            parser.error("only the preregistered held-out run may write the held-out evidence")
 
     heldout = args.split == "heldout"
     prereg_hash = ""
@@ -74,6 +83,8 @@ def main(argv: list[str] | None = None) -> int:
     try:
         weights: dict[str, float] = {}
         try:
+            if heldout:
+                ho.unseal_heldout(args.data_dir)  # inside the try: any failure reseals
             if heldout:  # verify BEFORE reading any label
                 print(f"manifest ok: {verify_manifest(args.data_dir)} held-out files match")
             tiles = load_tiles(args.split, args.data_dir)

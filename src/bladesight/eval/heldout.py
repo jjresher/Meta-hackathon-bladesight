@@ -117,15 +117,18 @@ def sha256_of(path: Path) -> str:
 
 
 def preflight(data_dir: Path) -> str:
-    """Checks that must pass before the run; returns the preregistration hash."""
+    """Checks that must pass before the run (nothing unsealed); returns the preregistration hash."""
     if EVIDENCE.exists():
         raise HeldoutError(f"{EVIDENCE} exists: the held-out run was already done (once only)")
     if not PREREGISTRATION.exists():
         raise HeldoutError(f"{PREREGISTRATION} must be written and frozen before the run")
     if ENFORCE_FROZEN and (dirty := dirty_files()):
         raise HeldoutError(f"uncommitted changes in frozen code: {dirty}")
+    return sha256_of(PREREGISTRATION)  # nothing is unsealed here: the caller does that in its try
+
+
+def unseal_heldout(data_dir: Path) -> None:
     unseal(data_dir / "heldout")
-    return sha256_of(PREREGISTRATION)
 
 
 def reseal(data_dir: Path) -> None:

@@ -282,3 +282,23 @@ def test_the_real_manifest_matches_the_committed_summary() -> None:
     recorded = json.loads(heldout.SPLIT_SUMMARY.read_text(encoding="utf-8"))
     assert hashlib.sha256(manifest.encode()).hexdigest() == recorded["manifest_sha256"]
     assert len(manifest.splitlines()) == recorded["counts"]["heldout"]["tiles"] + 1
+
+
+@pytest.mark.parametrize("stem", ["eval_heldout", "eval_heldout_v2", "../x", ".hidden", "a/b"])
+def test_a_dev_run_cannot_consume_or_escape_to_the_heldout_evidence(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, stem: str
+) -> None:
+    _arrange(tmp_path, monkeypatch)
+    out = heldout.EVIDENCE.parent
+    with pytest.raises(SystemExit) as info:
+        eval_main(["--split", "dev", "--provider", "stub", "--stem", stem, "--out", str(out)])
+    assert info.value.code == 2 and not heldout.EVIDENCE.exists()
+
+
+def test_a_dev_run_into_the_heldout_path_by_default_name_is_refused(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _arrange(tmp_path, monkeypatch)
+    monkeypatch.setattr(heldout, "EVIDENCE", tmp_path / "docs" / "evidence" / "eval_dev.md")
+    with pytest.raises(SystemExit):
+        eval_main(["--split", "dev", "--provider", "stub", "--out", str(heldout.EVIDENCE.parent)])

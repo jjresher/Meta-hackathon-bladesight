@@ -56,22 +56,27 @@ No result is hidden or replaced because it is poor.
 
 ## Frozen settings and how the run enforces them
 
-The CLI refuses to start (exit 2, nothing unsealed) unless all of these hold, and records them in
-`docs/evidence/eval_heldout.md`:
+The CLI refuses to start unless all of these hold, and records them in
+`docs/evidence/eval_heldout.md`. The first three are checked **before anything is unsealed**
+(exit 2); the last one hashes the files, so it runs after the directory is unsealed and, on a
+mismatch, aborts and reseals it (exit 2):
 
 - `META_CHAT_MODEL` = `muse-spark-1.3`, `META_SAM_MODEL` = `sam-3.1`, `META_REASONING_EFFORT` =
   `low`, `META_STORE` = false (the defaults; a different value in `.env` aborts the run);
 - no uncommitted change in `src/`, `pyproject.toml`, `uv.lock` or this file (`git status`); the
   recorded commit is `git rev-parse HEAD` of that clean tree;
 - `--provider meta` and none of `--stem`, `--cost-usd` or a different `--out`; the evidence path
-  and the manifest are resolved from the repository root, not the working directory;
+  and the manifest are resolved from the repository root, not the working directory; a dev run
+  (`--split dev`) is refused if its output would be the held-out evidence file or a stem that
+  starts with `eval_heldout`, so only this run can produce that file;
 - the manifest file's own hash and line count equal `eval/split_summary.json`, and every
   held-out file matches its hash, all checked before any label is read.
 
 ## Procedure
 
 1. `eval/preregistration.md` merged (this file); `docs/evidence/eval_heldout.md` does not exist.
-2. `META_SPEND_LIMIT_USD` (cumulative, per provider, summed from `.spend/spend_log.jsonl`) must
+2. Run it from the main checkout (the spend log and the cache live there, so the cap sees the
+   earlier spend). `META_SPEND_LIMIT_USD` (cumulative, per provider, summed from `.spend/spend_log.jsonl`) must
    cover the run: 30 USD was set by the human on 2026-11-03 and about 5.5 USD was already spent,
    against a budget of about 8 USD (ceiling 11). If the cap stops the run midway, the limit is
    raised and the same command is repeated: the cache replays every finished call, so it is the
