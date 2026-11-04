@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import subprocess
 import sys
 from pathlib import Path
 
@@ -18,6 +19,15 @@ from ..meta import MetaError, MetaSettings, build_client
 from .heldout import SAMPLE_SEED, HeldoutError, preflight, reseal, sample_heldout, verify_manifest
 from .report import build_report, write_outputs
 from .runner import evaluate_tiles, load_tiles, sample_tiles
+
+
+def _git_sha() -> str:
+    try:
+        return subprocess.run(
+            ["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=True
+        ).stdout.strip()
+    except (OSError, subprocess.CalledProcessError):
+        return "unknown"
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -84,7 +94,8 @@ def main(argv: list[str] | None = None) -> int:
             f"tiles plus {n_clean} of its {clean_total} clean tiles (seed {SAMPLE_SEED}); each "
             f"clean tile weighs {clean_total / max(n_clean, 1):.2f}, so precision, false positives "
             "and false alarms per image are scaled to the whole split. Recall and image-level "
-            f"rates are not affected. Preregistration sha256 {prereg_hash}."
+            f"rates are not affected. Preregistration sha256 {prereg_hash}. "
+            f"Code commit {_git_sha()}."
         )
     else:
         sample_note = (
