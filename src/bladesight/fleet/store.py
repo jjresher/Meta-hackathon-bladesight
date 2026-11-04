@@ -1,7 +1,8 @@
 """The replay store: JSON results the API and the agent read (no images, no secrets).
 
 `replay/layout.json` (farm layout), `replay/inspections/<id>.json` (`Inspection`),
-`replay/work_orders.json`, `replay/reports/<id>.json`, `replay/runs/<id>.json`.
+`replay/work_orders.json`, `replay/reports/<id>.json`, `replay/runs/<id>.json`, and
+`replay/manifest.json` (the detection models behind the store, read by `GET /api/replays`).
 Writing is atomic (temp file + rename) so a crash never leaves a half-written result.
 """
 
@@ -18,6 +19,8 @@ from pydantic import BaseModel, TypeAdapter
 from ..contracts import AgentRun, Inspection, Report, WorkOrder
 
 REPLAY_DIR = Path("replay")
+# The second replay: the same detections graded, verified and planned on Muse Spark Open.
+OPEN_WEIGHTS_DIR = REPLAY_DIR / "open-weights"
 _ORDERS = TypeAdapter(list[WorkOrder])
 
 
@@ -40,6 +43,14 @@ class Store:
 
     def _model(self, path: Path, model: type[BaseModel]) -> Any:
         return model.model_validate_json(path.read_text(encoding="utf-8"))
+
+    # --- manifest: which models produced this store -----------------------------------------
+    def save_manifest(self, manifest: dict[str, Any]) -> None:
+        self._write(self.root / "manifest.json", manifest)
+
+    def manifest(self) -> dict[str, Any]:
+        path = self.root / "manifest.json"
+        return json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
 
     # --- layout and inspections -----------------------------------------------------------
     def save_layout(self, layout: dict[str, Any]) -> None:

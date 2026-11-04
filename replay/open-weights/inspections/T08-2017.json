@@ -1,0 +1,2935 @@
+{
+ "summary": {
+  "id": "T08-2017",
+  "turbine_id": "T08",
+  "year": 2017,
+  "n_images": 4,
+  "n_defects": 9,
+  "max_severity": 3,
+  "n_needs_review": 4,
+  "n_reinspect": 1
+ },
+ "images": [
+  {
+   "id": "T08-2017/DJI_0732_05_04",
+   "tile_id": "DJI_0732_05_04",
+   "image_url": "/images/DJI_0732_05_04.png",
+   "width": 586,
+   "height": 371,
+   "blade_outline": [],
+   "defects": []
+  },
+  {
+   "id": "T08-2017/DJI_0378_08_08",
+   "tile_id": "DJI_0378_08_08",
+   "image_url": "/images/DJI_0378_08_08.png",
+   "width": 586,
+   "height": 371,
+   "blade_outline": [],
+   "defects": [
+    {
+     "defect": {
+      "id": "T08-2017/DJI_0378_08_08/d1",
+      "image_id": "T08-2017/DJI_0378_08_08",
+      "concept": "damage (proposed)",
+      "source": "box_prompt",
+      "label": "damage",
+      "score": 0.6015625,
+      "bbox": {
+       "x1": 340.0,
+       "y1": 17.0,
+       "x2": 400.0,
+       "y2": 194.0
+      },
+      "outline": [
+       [
+        [
+         386.0,
+         17.0
+        ],
+        [
+         386.0,
+         19.0
+        ],
+        [
+         386.0,
+         21.0
+        ],
+        [
+         385.0,
+         23.0
+        ],
+        [
+         384.0,
+         25.0
+        ],
+        [
+         385.0,
+         27.0
+        ],
+        [
+         384.0,
+         29.0
+        ],
+        [
+         384.0,
+         31.0
+        ],
+        [
+         384.0,
+         33.0
+        ],
+        [
+         381.0,
+         35.0
+        ],
+        [
+         381.0,
+         37.0
+        ],
+        [
+         381.0,
+         39.0
+        ],
+        [
+         380.0,
+         41.0
+        ],
+        [
+         379.0,
+         43.0
+        ],
+        [
+         379.0,
+         45.0
+        ],
+        [
+         379.0,
+         47.0
+        ],
+        [
+         380.0,
+         49.0
+        ],
+        [
+         378.0,
+         51.0
+        ],
+        [
+         378.0,
+         53.0
+        ],
+        [
+         376.0,
+         55.0
+        ],
+        [
+         377.0,
+         57.0
+        ],
+        [
+         376.0,
+         59.0
+        ],
+        [
+         375.0,
+         61.0
+        ],
+        [
+         375.0,
+         63.0
+        ],
+        [
+         374.0,
+         65.0
+        ],
+        [
+         374.0,
+         67.0
+        ],
+        [
+         374.0,
+         69.0
+        ],
+        [
+         373.0,
+         71.0
+        ],
+        [
+         373.0,
+         73.0
+        ],
+        [
+         372.0,
+         75.0
+        ],
+        [
+         373.0,
+         77.0
+        ],
+        [
+         372.0,
+         79.0
+        ],
+        [
+         372.0,
+         81.0
+        ],
+        [
+         372.0,
+         83.0
+        ],
+        [
+         371.0,
+         85.0
+        ],
+        [
+         371.0,
+         87.0
+        ],
+        [
+         370.0,
+         89.0
+        ],
+        [
+         370.0,
+         91.0
+        ],
+        [
+         370.0,
+         93.0
+        ],
+        [
+         370.0,
+         95.0
+        ],
+        [
+         370.0,
+         97.0
+        ],
+        [
+         369.0,
+         99.0
+        ],
+        [
+         369.0,
+         101.0
+        ],
+        [
+         370.0,
+         103.0
+        ],
+        [
+         369.0,
+         105.0
+        ],
+        [
+         368.0,
+         107.0
+        ],
+        [
+         369.0,
+         109.0
+        ],
+        [
+         369.0,
+         111.0
+        ],
+        [
+         368.0,
+         113.0
+        ],
+        [
+         368.0,
+         115.0
+        ],
+        [
+         368.0,
+         117.0
+        ],
+        [
+         369.0,
+         119.0
+        ],
+        [
+         370.0,
+         121.0
+        ],
+        [
+         369.0,
+         123.0
+        ],
+        [
+         370.0,
+         125.0
+        ],
+        [
+         369.0,
+         127.0
+        ],
+        [
+         368.0,
+         129.0
+        ],
+        [
+         368.0,
+         131.0
+        ],
+        [
+         367.0,
+         133.0
+        ],
+        [
+         368.0,
+         135.0
+        ],
+        [
+         370.0,
+         137.0
+        ],
+        [
+         370.0,
+         139.0
+        ],
+        [
+         370.0,
+         141.0
+        ],
+        [
+         369.0,
+         143.0
+        ],
+        [
+         370.0,
+         145.0
+        ],
+        [
+         368.0,
+         147.0
+        ],
+        [
+         369.0,
+         149.0
+        ],
+        [
+         370.0,
+         151.0
+        ],
+        [
+         370.0,
+         153.0
+        ],
+        [
+         370.0,
+         155.0
+        ],
+        [
+         370.0,
+         157.0
+        ],
+        [
+         372.0,
+         159.0
+        ],
+        [
+         374.0,
+         161.0
+        ],
+        [
+         376.0,
+         163.0
+        ],
+        [
+         379.0,
+         165.0
+        ],
+        [
+         383.0,
+         167.0
+        ],
+        [
+         388.0,
+         169.0
+        ],
+        [
+         392.0,
+         171.0
+        ],
+        [
+         396.0,
+         173.0
+        ],
+        [
+         400.0,
+         175.0
+        ],
+        [
+         400.0,
+         177.0
+        ],
+        [
+         397.0,
+         179.0
+        ],
+        [
+         395.0,
+         181.0
+        ],
+        [
+         393.0,
+         183.0
+        ],
+        [
+         390.0,
+         185.0
+        ],
+        [
+         388.0,
+         187.0
+        ],
+        [
+         385.0,
+         189.0
+        ],
+        [
+         377.0,
+         191.0
+        ],
+        [
+         375.0,
+         193.0
+        ],
+        [
+         365.0,
+         193.0
+        ],
+        [
+         356.0,
+         191.0
+        ],
+        [
+         352.0,
+         189.0
+        ],
+        [
+         347.0,
+         187.0
+        ],
+        [
+         342.0,
+         185.0
+        ],
+        [
+         344.0,
+         183.0
+        ],
+        [
+         346.0,
+         181.0
+        ],
+        [
+         345.0,
+         179.0
+        ],
+        [
+         345.0,
+         177.0
+        ],
+        [
+         344.0,
+         175.0
+        ],
+        [
+         344.0,
+         173.0
+        ],
+        [
+         343.0,
+         171.0
+        ],
+        [
+         342.0,
+         169.0
+        ],
+        [
+         341.0,
+         167.0
+        ],
+        [
+         340.0,
+         165.0
+        ],
+        [
+         340.0,
+         163.0
+        ],
+        [
+         341.0,
+         161.0
+        ],
+        [
+         342.0,
+         159.0
+        ],
+        [
+         342.0,
+         157.0
+        ],
+        [
+         343.0,
+         155.0
+        ],
+        [
+         342.0,
+         153.0
+        ],
+        [
+         342.0,
+         151.0
+        ],
+        [
+         343.0,
+         149.0
+        ],
+        [
+         343.0,
+         147.0
+        ],
+        [
+         343.0,
+         145.0
+        ],
+        [
+         343.0,
+         143.0
+        ],
+        [
+         342.0,
+         141.0
+        ],
+        [
+         342.0,
+         139.0
+        ],
+        [
+         340.0,
+         137.0
+        ],
+        [
+         342.0,
+         135.0
+        ],
+        [
+         342.0,
+         133.0
+        ],
+        [
+         341.0,
+         131.0
+        ],
+        [
+         343.0,
+         129.0
+        ],
+        [
+         342.0,
+         127.0
+        ],
+        [
+         343.0,
+         125.0
+        ],
+        [
+         343.0,
+         123.0
+        ],
+        [
+         343.0,
+         121.0
+        ],
+        [
+         344.0,
+         119.0
+        ],
+        [
+         345.0,
+         117.0
+        ],
+        [
+         345.0,
+         115.0
+        ],
+        [
+         344.0,
+         113.0
+        ],
+        [
+         343.0,
+         111.0
+        ],
+        [
+         345.0,
+         109.0
+        ],
+        [
+         346.0,
+         107.0
+        ],
+        [
+         345.0,
+         105.0
+        ],
+        [
+         345.0,
+         103.0
+        ],
+        [
+         344.0,
+         101.0
+        ],
+        [
+         346.0,
+         99.0
+        ],
+        [
+         345.0,
+         97.0
+        ],
+        [
+         346.0,
+         95.0
+        ],
+        [
+         345.0,
+         93.0
+        ],
+        [
+         348.0,
+         91.0
+        ],
+        [
+         348.0,
+         89.0
+        ],
+        [
+         347.0,
+         87.0
+        ],
+        [
+         344.0,
+         85.0
+        ],
+        [
+         346.0,
+         83.0
+        ],
+        [
+         346.0,
+         81.0
+        ],
+        [
+         346.0,
+         79.0
+        ],
+        [
+         345.0,
+         77.0
+        ],
+        [
+         347.0,
+         75.0
+        ],
+        [
+         349.0,
+         73.0
+        ],
+        [
+         350.0,
+         71.0
+        ],
+        [
+         351.0,
+         69.0
+        ],
+        [
+         352.0,
+         67.0
+        ],
+        [
+         348.0,
+         65.0
+        ],
+        [
+         348.0,
+         63.0
+        ],
+        [
+         355.0,
+         61.0
+        ],
+        [
+         353.0,
+         59.0
+        ],
+        [
+         355.0,
+         57.0
+        ],
+        [
+         354.0,
+         55.0
+        ],
+        [
+         355.0,
+         53.0
+        ],
+        [
+         355.0,
+         51.0
+        ],
+        [
+         356.0,
+         49.0
+        ],
+        [
+         360.0,
+         47.0
+        ],
+        [
+         362.0,
+         45.0
+        ],
+        [
+         362.0,
+         43.0
+        ],
+        [
+         361.0,
+         41.0
+        ],
+        [
+         369.0,
+         39.0
+        ],
+        [
+         373.0,
+         37.0
+        ],
+        [
+         363.0,
+         35.0
+        ],
+        [
+         361.0,
+         33.0
+        ],
+        [
+         361.0,
+         31.0
+        ],
+        [
+         362.0,
+         29.0
+        ],
+        [
+         375.0,
+         27.0
+        ],
+        [
+         377.0,
+         25.0
+        ],
+        [
+         378.0,
+         23.0
+        ],
+        [
+         382.0,
+         21.0
+        ],
+        [
+         379.0,
+         19.0
+        ],
+        [
+         384.0,
+         17.0
+        ]
+       ]
+      ],
+      "mask_area_px": 4553.0
+     },
+     "measurement": {
+      "defect_id": "T08-2017/DJI_0378_08_08/d1",
+      "area_px": 4553.0,
+      "tile_area_ratio": 0.02094238429482167,
+      "blade_area_ratio": null,
+      "length_px": 177.17552298552835,
+      "width_px": 60.36329564738634,
+      "elongation": 0.659302,
+      "inside_blade": null,
+      "position": "unknown",
+      "position_t": null,
+      "units": "pixels"
+     },
+     "assessment": {
+      "defect_id": "T08-2017/DJI_0378_08_08/d1",
+      "defect_type": "other",
+      "severity": 1,
+      "rationale": "Both crops are the same very tight and blurry view with no scale; only the normal blade/joint seam and a tiny dark speck are visible with no clear open crack, erosion patch, delamination or exposed fibres to grade.",
+      "confidence": 0.25,
+      "rubric_version": "v1",
+      "prompt_version": "assess/v1",
+      "model": "meta-models/muse-spark-open",
+      "provider": "baseten"
+     },
+     "verification": {
+      "defect_id": "T08-2017/DJI_0378_08_08/d1",
+      "verdict": "needs_review",
+      "agreement": 1.0,
+      "second_severity": 1,
+      "checks": [
+       {
+        "name": "inside_blade",
+        "passed": true,
+        "detail": "no blade mask: not checked"
+       },
+       {
+        "name": "detector_score",
+        "passed": true,
+        "detail": "detector confidence 0.60"
+       },
+       {
+        "name": "severity_vs_size",
+        "passed": true,
+        "detail": "severity 1 fits 2.09% of the photo"
+       }
+      ],
+      "reasons": [
+       "combined confidence 0.25 is below 0.3"
+      ],
+      "model": "meta-models/muse-spark-open",
+      "provider": "baseten"
+     },
+     "error": null
+    },
+    {
+     "defect": {
+      "id": "T08-2017/DJI_0378_08_08/d2",
+      "image_id": "T08-2017/DJI_0378_08_08",
+      "concept": "dirt (proposed)",
+      "source": "box_prompt",
+      "label": "dirt",
+      "score": 0.671875,
+      "bbox": {
+       "x1": 239.0,
+       "y1": 44.0,
+       "x2": 259.0,
+       "y2": 56.0
+      },
+      "outline": [
+       [
+        [
+         248.0,
+         44.0
+        ],
+        [
+         255.0,
+         46.0
+        ],
+        [
+         258.0,
+         48.0
+        ],
+        [
+         258.0,
+         50.0
+        ],
+        [
+         259.0,
+         52.0
+        ],
+        [
+         259.0,
+         54.0
+        ],
+        [
+         257.0,
+         55.0
+        ],
+        [
+         248.0,
+         55.0
+        ],
+        [
+         242.0,
+         54.0
+        ],
+        [
+         241.0,
+         52.0
+        ],
+        [
+         240.0,
+         50.0
+        ],
+        [
+         240.0,
+         48.0
+        ],
+        [
+         239.0,
+         46.0
+        ],
+        [
+         242.0,
+         44.0
+        ]
+       ]
+      ],
+      "mask_area_px": 183.0
+     },
+     "measurement": {
+      "defect_id": "T08-2017/DJI_0378_08_08/d2",
+      "area_px": 183.0,
+      "tile_area_ratio": 0.0008417430981665639,
+      "blade_area_ratio": null,
+      "length_px": 21.36899122233632,
+      "width_px": 12.388436402900524,
+      "elongation": 0.420261,
+      "inside_blade": null,
+      "position": "unknown",
+      "position_t": null,
+      "units": "pixels"
+     },
+     "assessment": {
+      "defect_id": "T08-2017/DJI_0378_08_08/d2",
+      "defect_type": "dirt",
+      "severity": 1,
+      "rationale": "Tiny dark compact spot very small relative to visible blade width with no open crack, fibres or erosion patch visible. Both crops are blurry/low-resolution so dirt versus tiny paint chip cannot be distinguished, but size favors cosmetic.",
+      "confidence": 0.38,
+      "rubric_version": "v1",
+      "prompt_version": "assess/v1",
+      "model": "meta-models/muse-spark-open",
+      "provider": "baseten"
+     },
+     "verification": {
+      "defect_id": "T08-2017/DJI_0378_08_08/d2",
+      "verdict": "needs_review",
+      "agreement": 1.0,
+      "second_severity": 1,
+      "checks": [
+       {
+        "name": "inside_blade",
+        "passed": true,
+        "detail": "no blade mask: not checked"
+       },
+       {
+        "name": "detector_score",
+        "passed": true,
+        "detail": "detector confidence 0.67"
+       },
+       {
+        "name": "severity_vs_size",
+        "passed": true,
+        "detail": "severity 1 fits 0.08% of the photo"
+       }
+      ],
+      "reasons": [
+       "combined confidence 0.20 is below 0.3"
+      ],
+      "model": "meta-models/muse-spark-open",
+      "provider": "baseten"
+     },
+     "error": null
+    }
+   ]
+  },
+  {
+   "id": "T08-2017/DJI_0052_06_03",
+   "tile_id": "DJI_0052_06_03",
+   "image_url": "/images/DJI_0052_06_03.png",
+   "width": 586,
+   "height": 371,
+   "blade_outline": [],
+   "defects": [
+    {
+     "defect": {
+      "id": "T08-2017/DJI_0052_06_03/d1",
+      "image_id": "T08-2017/DJI_0052_06_03",
+      "concept": "damage (proposed)",
+      "source": "box_prompt",
+      "label": "damage",
+      "score": 0.72265625,
+      "bbox": {
+       "x1": 135.0,
+       "y1": 0.0,
+       "x2": 160.0,
+       "y2": 47.0
+      },
+      "outline": [
+       [
+        [
+         155.0,
+         0.0
+        ],
+        [
+         154.0,
+         2.0
+        ],
+        [
+         153.0,
+         4.0
+        ],
+        [
+         154.0,
+         6.0
+        ],
+        [
+         155.0,
+         8.0
+        ],
+        [
+         156.0,
+         10.0
+        ],
+        [
+         157.0,
+         12.0
+        ],
+        [
+         157.0,
+         14.0
+        ],
+        [
+         158.0,
+         16.0
+        ],
+        [
+         154.0,
+         18.0
+        ],
+        [
+         153.0,
+         20.0
+        ],
+        [
+         153.0,
+         22.0
+        ],
+        [
+         154.0,
+         24.0
+        ],
+        [
+         159.0,
+         26.0
+        ],
+        [
+         157.0,
+         28.0
+        ],
+        [
+         160.0,
+         30.0
+        ],
+        [
+         160.0,
+         32.0
+        ],
+        [
+         160.0,
+         34.0
+        ],
+        [
+         160.0,
+         36.0
+        ],
+        [
+         160.0,
+         38.0
+        ],
+        [
+         159.0,
+         40.0
+        ],
+        [
+         159.0,
+         42.0
+        ],
+        [
+         160.0,
+         44.0
+        ],
+        [
+         159.0,
+         46.0
+        ],
+        [
+         151.0,
+         46.0
+        ],
+        [
+         147.0,
+         44.0
+        ],
+        [
+         149.0,
+         42.0
+        ],
+        [
+         151.0,
+         40.0
+        ],
+        [
+         152.0,
+         38.0
+        ],
+        [
+         152.0,
+         36.0
+        ],
+        [
+         152.0,
+         34.0
+        ],
+        [
+         150.0,
+         32.0
+        ],
+        [
+         147.0,
+         30.0
+        ],
+        [
+         145.0,
+         28.0
+        ],
+        [
+         143.0,
+         26.0
+        ],
+        [
+         143.0,
+         24.0
+        ],
+        [
+         143.0,
+         22.0
+        ],
+        [
+         142.0,
+         20.0
+        ],
+        [
+         140.0,
+         18.0
+        ],
+        [
+         139.0,
+         16.0
+        ],
+        [
+         139.0,
+         14.0
+        ],
+        [
+         140.0,
+         12.0
+        ],
+        [
+         140.0,
+         10.0
+        ],
+        [
+         140.0,
+         8.0
+        ],
+        [
+         138.0,
+         6.0
+        ],
+        [
+         135.0,
+         4.0
+        ],
+        [
+         135.0,
+         2.0
+        ],
+        [
+         136.0,
+         0.0
+        ]
+       ]
+      ],
+      "mask_area_px": 605.0
+     },
+     "measurement": {
+      "defect_id": "T08-2017/DJI_0052_06_03/d1",
+      "area_px": 605.0,
+      "tile_area_ratio": 0.0027828118819167823,
+      "blade_area_ratio": null,
+      "length_px": 51.24504100480586,
+      "width_px": 20.372349520377753,
+      "elongation": 0.602452,
+      "inside_blade": null,
+      "position": "unknown",
+      "position_t": null,
+      "units": "pixels"
+     },
+     "assessment": {
+      "defect_id": "T08-2017/DJI_0052_06_03/d1",
+      "defect_type": "leading_edge_erosion",
+      "severity": 3,
+      "rationale": "Reddish-brown coating loss/erosion in irregular patchy band along leading edge in both close and wide crops, no clear open crack or exposed fibres visible.",
+      "confidence": 0.62,
+      "rubric_version": "v1",
+      "prompt_version": "assess/v1",
+      "model": "meta-models/muse-spark-open",
+      "provider": "baseten"
+     },
+     "verification": {
+      "defect_id": "T08-2017/DJI_0052_06_03/d1",
+      "verdict": "ok",
+      "agreement": 1.0,
+      "second_severity": 3,
+      "checks": [
+       {
+        "name": "inside_blade",
+        "passed": true,
+        "detail": "no blade mask: not checked"
+       },
+       {
+        "name": "detector_score",
+        "passed": true,
+        "detail": "detector confidence 0.72"
+       },
+       {
+        "name": "severity_vs_size",
+        "passed": true,
+        "detail": "severity 3 fits 0.28% of the photo"
+       }
+      ],
+      "reasons": [
+       "both looks agree on severity 3",
+       "combined confidence 0.35",
+       "all rule checks passed"
+      ],
+      "model": "meta-models/muse-spark-open",
+      "provider": "baseten"
+     },
+     "error": null
+    },
+    {
+     "defect": {
+      "id": "T08-2017/DJI_0052_06_03/d2",
+      "image_id": "T08-2017/DJI_0052_06_03",
+      "concept": "damage (proposed)",
+      "source": "box_prompt",
+      "label": "damage",
+      "score": 0.890625,
+      "bbox": {
+       "x1": 157.0,
+       "y1": 82.0,
+       "x2": 182.0,
+       "y2": 145.0
+      },
+      "outline": [
+       [
+        [
+         166.0,
+         82.0
+        ],
+        [
+         168.0,
+         84.0
+        ],
+        [
+         170.0,
+         86.0
+        ],
+        [
+         172.0,
+         88.0
+        ],
+        [
+         174.0,
+         90.0
+        ],
+        [
+         175.0,
+         92.0
+        ],
+        [
+         175.0,
+         94.0
+        ],
+        [
+         175.0,
+         96.0
+        ],
+        [
+         177.0,
+         98.0
+        ],
+        [
+         177.0,
+         100.0
+        ],
+        [
+         177.0,
+         102.0
+        ],
+        [
+         177.0,
+         104.0
+        ],
+        [
+         177.0,
+         106.0
+        ],
+        [
+         178.0,
+         108.0
+        ],
+        [
+         179.0,
+         110.0
+        ],
+        [
+         179.0,
+         112.0
+        ],
+        [
+         179.0,
+         114.0
+        ],
+        [
+         180.0,
+         116.0
+        ],
+        [
+         180.0,
+         118.0
+        ],
+        [
+         181.0,
+         120.0
+        ],
+        [
+         182.0,
+         122.0
+        ],
+        [
+         182.0,
+         124.0
+        ],
+        [
+         181.0,
+         126.0
+        ],
+        [
+         181.0,
+         128.0
+        ],
+        [
+         180.0,
+         130.0
+        ],
+        [
+         179.0,
+         132.0
+        ],
+        [
+         178.0,
+         134.0
+        ],
+        [
+         177.0,
+         136.0
+        ],
+        [
+         177.0,
+         138.0
+        ],
+        [
+         177.0,
+         140.0
+        ],
+        [
+         179.0,
+         142.0
+        ],
+        [
+         178.0,
+         144.0
+        ],
+        [
+         177.0,
+         144.0
+        ],
+        [
+         177.0,
+         142.0
+        ],
+        [
+         174.0,
+         140.0
+        ],
+        [
+         173.0,
+         138.0
+        ],
+        [
+         172.0,
+         136.0
+        ],
+        [
+         171.0,
+         134.0
+        ],
+        [
+         170.0,
+         132.0
+        ],
+        [
+         169.0,
+         130.0
+        ],
+        [
+         168.0,
+         128.0
+        ],
+        [
+         167.0,
+         126.0
+        ],
+        [
+         167.0,
+         124.0
+        ],
+        [
+         166.0,
+         122.0
+        ],
+        [
+         165.0,
+         120.0
+        ],
+        [
+         165.0,
+         118.0
+        ],
+        [
+         164.0,
+         116.0
+        ],
+        [
+         164.0,
+         114.0
+        ],
+        [
+         164.0,
+         112.0
+        ],
+        [
+         163.0,
+         110.0
+        ],
+        [
+         163.0,
+         108.0
+        ],
+        [
+         162.0,
+         106.0
+        ],
+        [
+         161.0,
+         104.0
+        ],
+        [
+         161.0,
+         102.0
+        ],
+        [
+         160.0,
+         100.0
+        ],
+        [
+         159.0,
+         98.0
+        ],
+        [
+         159.0,
+         96.0
+        ],
+        [
+         158.0,
+         94.0
+        ],
+        [
+         157.0,
+         92.0
+        ],
+        [
+         157.0,
+         90.0
+        ],
+        [
+         157.0,
+         88.0
+        ],
+        [
+         157.0,
+         86.0
+        ],
+        [
+         157.0,
+         84.0
+        ],
+        [
+         161.0,
+         82.0
+        ]
+       ]
+      ],
+      "mask_area_px": 799.0
+     },
+     "measurement": {
+      "defect_id": "T08-2017/DJI_0052_06_03/d2",
+      "area_px": 799.0,
+      "tile_area_ratio": 0.0036751515597545606,
+      "blade_area_ratio": null,
+      "length_px": 65.03096360288302,
+      "width_px": 18.176100014637427,
+      "elongation": 0.720501,
+      "inside_blade": null,
+      "position": "unknown",
+      "position_t": null,
+      "units": "pixels"
+     },
+     "assessment": {
+      "defect_id": "T08-2017/DJI_0052_06_03/d2",
+      "defect_type": "leading_edge_erosion",
+      "severity": 3,
+      "rationale": "Reddish-brown coating loss and erosion in patches along the leading edge; visible paint loss over an extended linear area with no clear open crack or exposed fibres visible at this resolution.",
+      "confidence": 0.62,
+      "rubric_version": "v1",
+      "prompt_version": "assess/v1",
+      "model": "meta-models/muse-spark-open",
+      "provider": "baseten"
+     },
+     "verification": {
+      "defect_id": "T08-2017/DJI_0052_06_03/d2",
+      "verdict": "ok",
+      "agreement": 1.0,
+      "second_severity": 3,
+      "checks": [
+       {
+        "name": "inside_blade",
+        "passed": true,
+        "detail": "no blade mask: not checked"
+       },
+       {
+        "name": "detector_score",
+        "passed": true,
+        "detail": "detector confidence 0.89"
+       },
+       {
+        "name": "severity_vs_size",
+        "passed": true,
+        "detail": "severity 3 fits 0.37% of the photo"
+       }
+      ],
+      "reasons": [
+       "both looks agree on severity 3",
+       "combined confidence 0.45",
+       "all rule checks passed"
+      ],
+      "model": "meta-models/muse-spark-open",
+      "provider": "baseten"
+     },
+     "error": null
+    },
+    {
+     "defect": {
+      "id": "T08-2017/DJI_0052_06_03/d3",
+      "image_id": "T08-2017/DJI_0052_06_03",
+      "concept": "damage (proposed)",
+      "source": "box_prompt",
+      "label": "damage",
+      "score": 0.83203125,
+      "bbox": {
+       "x1": 200.0,
+       "y1": 228.0,
+       "x2": 273.0,
+       "y2": 283.0
+      },
+      "outline": [
+       [
+        [
+         255.0,
+         228.0
+        ],
+        [
+         261.0,
+         230.0
+        ],
+        [
+         264.0,
+         232.0
+        ],
+        [
+         265.0,
+         234.0
+        ],
+        [
+         267.0,
+         236.0
+        ],
+        [
+         271.0,
+         238.0
+        ],
+        [
+         272.0,
+         240.0
+        ],
+        [
+         272.0,
+         242.0
+        ],
+        [
+         271.0,
+         244.0
+        ],
+        [
+         268.0,
+         246.0
+        ],
+        [
+         265.0,
+         248.0
+        ],
+        [
+         262.0,
+         250.0
+        ],
+        [
+         259.0,
+         252.0
+        ],
+        [
+         256.0,
+         254.0
+        ],
+        [
+         253.0,
+         256.0
+        ],
+        [
+         251.0,
+         258.0
+        ],
+        [
+         248.0,
+         260.0
+        ],
+        [
+         246.0,
+         262.0
+        ],
+        [
+         244.0,
+         264.0
+        ],
+        [
+         243.0,
+         266.0
+        ],
+        [
+         241.0,
+         268.0
+        ],
+        [
+         239.0,
+         270.0
+        ],
+        [
+         236.0,
+         272.0
+        ],
+        [
+         234.0,
+         274.0
+        ],
+        [
+         231.0,
+         276.0
+        ],
+        [
+         211.0,
+         278.0
+        ],
+        [
+         208.0,
+         280.0
+        ],
+        [
+         205.0,
+         282.0
+        ],
+        [
+         204.0,
+         282.0
+        ],
+        [
+         202.0,
+         280.0
+        ],
+        [
+         200.0,
+         278.0
+        ],
+        [
+         200.0,
+         276.0
+        ],
+        [
+         200.0,
+         274.0
+        ],
+        [
+         200.0,
+         272.0
+        ],
+        [
+         200.0,
+         270.0
+        ],
+        [
+         201.0,
+         268.0
+        ],
+        [
+         202.0,
+         266.0
+        ],
+        [
+         204.0,
+         264.0
+        ],
+        [
+         205.0,
+         262.0
+        ],
+        [
+         207.0,
+         260.0
+        ],
+        [
+         209.0,
+         258.0
+        ],
+        [
+         227.0,
+         256.0
+        ],
+        [
+         228.0,
+         254.0
+        ],
+        [
+         230.0,
+         252.0
+        ],
+        [
+         230.0,
+         250.0
+        ],
+        [
+         231.0,
+         248.0
+        ],
+        [
+         232.0,
+         246.0
+        ],
+        [
+         232.0,
+         244.0
+        ],
+        [
+         234.0,
+         242.0
+        ],
+        [
+         236.0,
+         240.0
+        ],
+        [
+         238.0,
+         238.0
+        ],
+        [
+         240.0,
+         236.0
+        ],
+        [
+         242.0,
+         234.0
+        ],
+        [
+         244.0,
+         232.0
+        ],
+        [
+         246.0,
+         230.0
+        ],
+        [
+         251.0,
+         228.0
+        ]
+       ]
+      ],
+      "mask_area_px": 1451.0
+     },
+     "measurement": {
+      "defect_id": "T08-2017/DJI_0052_06_03/d3",
+      "area_px": 1451.0,
+      "tile_area_ratio": 0.006674148827539258,
+      "blade_area_ratio": null,
+      "length_px": 81.63487777490451,
+      "width_px": 30.00477923262008,
+      "elongation": 0.632451,
+      "inside_blade": null,
+      "position": "unknown",
+      "position_t": null,
+      "units": "pixels"
+     },
+     "assessment": {
+      "defect_id": "T08-2017/DJI_0052_06_03/d3",
+      "defect_type": "leading_edge_erosion",
+      "severity": 3,
+      "rationale": "Visible patchy paint/coating loss and erosion along leading edge with exposed light substrate, no clearly open long crack or exposed fibres visible in blurry crop.",
+      "confidence": 0.62,
+      "rubric_version": "v1",
+      "prompt_version": "assess/v1",
+      "model": "meta-models/muse-spark-open",
+      "provider": "baseten"
+     },
+     "verification": {
+      "defect_id": "T08-2017/DJI_0052_06_03/d3",
+      "verdict": "ok",
+      "agreement": 1.0,
+      "second_severity": 3,
+      "checks": [
+       {
+        "name": "inside_blade",
+        "passed": true,
+        "detail": "no blade mask: not checked"
+       },
+       {
+        "name": "detector_score",
+        "passed": true,
+        "detail": "detector confidence 0.83"
+       },
+       {
+        "name": "severity_vs_size",
+        "passed": true,
+        "detail": "severity 3 fits 0.67% of the photo"
+       }
+      ],
+      "reasons": [
+       "both looks agree on severity 3",
+       "combined confidence 0.62",
+       "all rule checks passed"
+      ],
+      "model": "meta-models/muse-spark-open",
+      "provider": "baseten"
+     },
+     "error": null
+    },
+    {
+     "defect": {
+      "id": "T08-2017/DJI_0052_06_03/d4",
+      "image_id": "T08-2017/DJI_0052_06_03",
+      "concept": "damage (proposed)",
+      "source": "box_prompt",
+      "label": "damage",
+      "score": 0.6953125,
+      "bbox": {
+       "x1": 197.0,
+       "y1": 300.0,
+       "x2": 210.0,
+       "y2": 319.0
+      },
+      "outline": [
+       [
+        [
+         209.0,
+         300.0
+        ],
+        [
+         210.0,
+         302.0
+        ],
+        [
+         209.0,
+         304.0
+        ],
+        [
+         208.0,
+         306.0
+        ],
+        [
+         207.0,
+         308.0
+        ],
+        [
+         206.0,
+         310.0
+        ],
+        [
+         206.0,
+         312.0
+        ],
+        [
+         205.0,
+         314.0
+        ],
+        [
+         203.0,
+         316.0
+        ],
+        [
+         201.0,
+         318.0
+        ],
+        [
+         198.0,
+         318.0
+        ],
+        [
+         197.0,
+         316.0
+        ],
+        [
+         197.0,
+         314.0
+        ],
+        [
+         197.0,
+         312.0
+        ],
+        [
+         197.0,
+         310.0
+        ],
+        [
+         198.0,
+         308.0
+        ],
+        [
+         199.0,
+         306.0
+        ],
+        [
+         201.0,
+         304.0
+        ],
+        [
+         205.0,
+         302.0
+        ],
+        [
+         208.0,
+         300.0
+        ]
+       ]
+      ],
+      "mask_area_px": 133.0
+     },
+     "measurement": {
+      "defect_id": "T08-2017/DJI_0052_06_03/d4",
+      "area_px": 133.0,
+      "tile_area_ratio": 0.0006117586451155902,
+      "blade_area_ratio": null,
+      "length_px": 21.589184530925166,
+      "width_px": 9.689083211553054,
+      "elongation": 0.551207,
+      "inside_blade": null,
+      "position": "unknown",
+      "position_t": null,
+      "units": "pixels"
+     },
+     "assessment": {
+      "defect_id": "T08-2017/DJI_0052_06_03/d4",
+      "defect_type": "dirt",
+      "severity": 1,
+      "rationale": "Close crop is extremely blurry and only a few pixels showing a tiny dark streak/smudged spot that is a minute fraction of the visible blade width. No clearly open crack, delamination or exposed fibres can be discerned and it is most consistent with dirt/light discolouration, but the crop is too small and blurry to grade confidently.",
+      "confidence": 0.32,
+      "rubric_version": "v1",
+      "prompt_version": "assess/v1",
+      "model": "meta-models/muse-spark-open",
+      "provider": "baseten"
+     },
+     "verification": {
+      "defect_id": "T08-2017/DJI_0052_06_03/d4",
+      "verdict": "needs_review",
+      "agreement": 0.75,
+      "second_severity": 2,
+      "checks": [
+       {
+        "name": "inside_blade",
+        "passed": true,
+        "detail": "no blade mask: not checked"
+       },
+       {
+        "name": "detector_score",
+        "passed": true,
+        "detail": "detector confidence 0.70"
+       },
+       {
+        "name": "severity_vs_size",
+        "passed": true,
+        "detail": "severity 1 fits 0.06% of the photo"
+       }
+      ],
+      "reasons": [
+       "the two looks differ by 1 severity level"
+      ],
+      "model": "meta-models/muse-spark-open",
+      "provider": "baseten"
+     },
+     "error": null
+    }
+   ]
+  },
+  {
+   "id": "T08-2017/DJI_0419_07_01",
+   "tile_id": "DJI_0419_07_01",
+   "image_url": "/images/DJI_0419_07_01.png",
+   "width": 586,
+   "height": 371,
+   "blade_outline": [],
+   "defects": [
+    {
+     "defect": {
+      "id": "T08-2017/DJI_0419_07_01/d1",
+      "image_id": "T08-2017/DJI_0419_07_01",
+      "concept": "surface damage",
+      "source": "concept",
+      "label": "damage",
+      "score": 0.6404494643211365,
+      "bbox": {
+       "x1": 570.0,
+       "y1": 273.0,
+       "x2": 586.0,
+       "y2": 341.0
+      },
+      "outline": [
+       [
+        [
+         586.0,
+         273.0
+        ],
+        [
+         586.0,
+         275.0
+        ],
+        [
+         586.0,
+         277.0
+        ],
+        [
+         586.0,
+         279.0
+        ],
+        [
+         586.0,
+         281.0
+        ],
+        [
+         586.0,
+         283.0
+        ],
+        [
+         586.0,
+         285.0
+        ],
+        [
+         586.0,
+         287.0
+        ],
+        [
+         586.0,
+         289.0
+        ],
+        [
+         586.0,
+         291.0
+        ],
+        [
+         586.0,
+         293.0
+        ],
+        [
+         586.0,
+         295.0
+        ],
+        [
+         586.0,
+         297.0
+        ],
+        [
+         586.0,
+         299.0
+        ],
+        [
+         586.0,
+         301.0
+        ],
+        [
+         586.0,
+         303.0
+        ],
+        [
+         586.0,
+         305.0
+        ],
+        [
+         586.0,
+         307.0
+        ],
+        [
+         586.0,
+         309.0
+        ],
+        [
+         586.0,
+         311.0
+        ],
+        [
+         586.0,
+         313.0
+        ],
+        [
+         586.0,
+         315.0
+        ],
+        [
+         586.0,
+         317.0
+        ],
+        [
+         586.0,
+         319.0
+        ],
+        [
+         586.0,
+         321.0
+        ],
+        [
+         586.0,
+         323.0
+        ],
+        [
+         586.0,
+         325.0
+        ],
+        [
+         586.0,
+         327.0
+        ],
+        [
+         586.0,
+         329.0
+        ],
+        [
+         586.0,
+         331.0
+        ],
+        [
+         586.0,
+         333.0
+        ],
+        [
+         586.0,
+         335.0
+        ],
+        [
+         586.0,
+         337.0
+        ],
+        [
+         586.0,
+         339.0
+        ],
+        [
+         583.0,
+         340.0
+        ],
+        [
+         581.0,
+         340.0
+        ],
+        [
+         577.0,
+         339.0
+        ],
+        [
+         575.0,
+         337.0
+        ],
+        [
+         573.0,
+         335.0
+        ],
+        [
+         572.0,
+         333.0
+        ],
+        [
+         572.0,
+         331.0
+        ],
+        [
+         572.0,
+         329.0
+        ],
+        [
+         573.0,
+         327.0
+        ],
+        [
+         575.0,
+         325.0
+        ],
+        [
+         576.0,
+         323.0
+        ],
+        [
+         578.0,
+         321.0
+        ],
+        [
+         579.0,
+         319.0
+        ],
+        [
+         580.0,
+         317.0
+        ],
+        [
+         581.0,
+         315.0
+        ],
+        [
+         581.0,
+         313.0
+        ],
+        [
+         582.0,
+         311.0
+        ],
+        [
+         583.0,
+         309.0
+        ],
+        [
+         583.0,
+         307.0
+        ],
+        [
+         582.0,
+         305.0
+        ],
+        [
+         580.0,
+         303.0
+        ],
+        [
+         577.0,
+         301.0
+        ],
+        [
+         575.0,
+         299.0
+        ],
+        [
+         574.0,
+         297.0
+        ],
+        [
+         572.0,
+         295.0
+        ],
+        [
+         571.0,
+         293.0
+        ],
+        [
+         570.0,
+         291.0
+        ],
+        [
+         570.0,
+         289.0
+        ],
+        [
+         571.0,
+         287.0
+        ],
+        [
+         573.0,
+         285.0
+        ],
+        [
+         576.0,
+         283.0
+        ],
+        [
+         578.0,
+         281.0
+        ],
+        [
+         581.0,
+         279.0
+        ],
+        [
+         583.0,
+         277.0
+        ],
+        [
+         584.0,
+         275.0
+        ],
+        [
+         585.0,
+         273.0
+        ]
+       ]
+      ],
+      "mask_area_px": 613.0
+     },
+     "measurement": {
+      "defect_id": "T08-2017/DJI_0419_07_01/d1",
+      "area_px": 613.0,
+      "tile_area_ratio": 0.0028196093944049382,
+      "blade_area_ratio": null,
+      "length_px": 67.99059113837285,
+      "width_px": 16.054534487388196,
+      "elongation": 0.763871,
+      "inside_blade": null,
+      "position": "unknown",
+      "position_t": null,
+      "units": "pixels"
+     },
+     "assessment": {
+      "defect_id": "T08-2017/DJI_0419_07_01/d1",
+      "defect_type": "surface_damage",
+      "severity": 3,
+      "rationale": "Irregular patch of chipped/peeling white coating exposing brown substrate at the blade edge, no clearly open crack or visible fibres; patch is small relative to visible blade width and images are low-resolution/blurry.",
+      "confidence": 0.58,
+      "rubric_version": "v1",
+      "prompt_version": "assess/v1",
+      "model": "meta-models/muse-spark-open",
+      "provider": "baseten"
+     },
+     "verification": {
+      "defect_id": "T08-2017/DJI_0419_07_01/d1",
+      "verdict": "ok",
+      "agreement": 1.0,
+      "second_severity": 3,
+      "checks": [
+       {
+        "name": "inside_blade",
+        "passed": true,
+        "detail": "no blade mask: not checked"
+       },
+       {
+        "name": "detector_score",
+        "passed": true,
+        "detail": "detector confidence 0.64"
+       },
+       {
+        "name": "severity_vs_size",
+        "passed": true,
+        "detail": "severity 3 fits 0.28% of the photo"
+       }
+      ],
+      "reasons": [
+       "both looks agree on severity 3",
+       "combined confidence 0.58",
+       "all rule checks passed"
+      ],
+      "model": "meta-models/muse-spark-open",
+      "provider": "baseten"
+     },
+     "error": null
+    },
+    {
+     "defect": {
+      "id": "T08-2017/DJI_0419_07_01/d2",
+      "image_id": "T08-2017/DJI_0419_07_01",
+      "concept": "surface damage",
+      "source": "concept",
+      "label": "damage",
+      "score": 0.5747508406639099,
+      "bbox": {
+       "x1": 0.0,
+       "y1": 312.0,
+       "x2": 26.0,
+       "y2": 363.0
+      },
+      "outline": [
+       [
+        [
+         1.0,
+         312.0
+        ],
+        [
+         3.0,
+         314.0
+        ],
+        [
+         4.0,
+         316.0
+        ],
+        [
+         5.0,
+         318.0
+        ],
+        [
+         5.0,
+         320.0
+        ],
+        [
+         5.0,
+         322.0
+        ],
+        [
+         6.0,
+         324.0
+        ],
+        [
+         7.0,
+         326.0
+        ],
+        [
+         8.0,
+         328.0
+        ],
+        [
+         10.0,
+         330.0
+        ],
+        [
+         12.0,
+         332.0
+        ],
+        [
+         14.0,
+         334.0
+        ],
+        [
+         16.0,
+         336.0
+        ],
+        [
+         17.0,
+         338.0
+        ],
+        [
+         19.0,
+         340.0
+        ],
+        [
+         21.0,
+         342.0
+        ],
+        [
+         23.0,
+         344.0
+        ],
+        [
+         24.0,
+         346.0
+        ],
+        [
+         26.0,
+         348.0
+        ],
+        [
+         25.0,
+         350.0
+        ],
+        [
+         22.0,
+         352.0
+        ],
+        [
+         19.0,
+         354.0
+        ],
+        [
+         17.0,
+         356.0
+        ],
+        [
+         14.0,
+         358.0
+        ],
+        [
+         11.0,
+         360.0
+        ],
+        [
+         1.0,
+         362.0
+        ],
+        [
+         0.0,
+         362.0
+        ],
+        [
+         0.0,
+         360.0
+        ],
+        [
+         0.0,
+         358.0
+        ],
+        [
+         0.0,
+         356.0
+        ],
+        [
+         0.0,
+         354.0
+        ],
+        [
+         0.0,
+         352.0
+        ],
+        [
+         0.0,
+         350.0
+        ],
+        [
+         0.0,
+         348.0
+        ],
+        [
+         0.0,
+         346.0
+        ],
+        [
+         0.0,
+         344.0
+        ],
+        [
+         0.0,
+         342.0
+        ],
+        [
+         0.0,
+         340.0
+        ],
+        [
+         0.0,
+         338.0
+        ],
+        [
+         0.0,
+         336.0
+        ],
+        [
+         0.0,
+         334.0
+        ],
+        [
+         0.0,
+         332.0
+        ],
+        [
+         0.0,
+         330.0
+        ],
+        [
+         0.0,
+         328.0
+        ],
+        [
+         0.0,
+         326.0
+        ],
+        [
+         0.0,
+         324.0
+        ],
+        [
+         0.0,
+         322.0
+        ],
+        [
+         0.0,
+         320.0
+        ],
+        [
+         0.0,
+         318.0
+        ],
+        [
+         0.0,
+         316.0
+        ],
+        [
+         0.0,
+         314.0
+        ],
+        [
+         0.0,
+         312.0
+        ]
+       ]
+      ],
+      "mask_area_px": 672.0
+     },
+     "measurement": {
+      "defect_id": "T08-2017/DJI_0419_07_01/d2",
+      "area_px": 672.0,
+      "tile_area_ratio": 0.0030909910490050873,
+      "blade_area_ratio": null,
+      "length_px": 50.24091679382235,
+      "width_px": 28.639856292423254,
+      "elongation": 0.42995,
+      "inside_blade": null,
+      "position": "unknown",
+      "position_t": null,
+      "units": "pixels"
+     },
+     "assessment": {
+      "defect_id": "T08-2017/DJI_0419_07_01/d2",
+      "defect_type": "other",
+      "severity": 1,
+      "rationale": "Image 1 is too blurry and pixelated to grade and shows no clear crack, erosion, delamination or exposed fibres; Image 2 shows an intact white coating with black tapes/shadows and no discernible coating loss or structural damage, so at most cosmetic.",
+      "confidence": 0.28,
+      "rubric_version": "v1",
+      "prompt_version": "assess/v1",
+      "model": "meta-models/muse-spark-open",
+      "provider": "baseten"
+     },
+     "verification": {
+      "defect_id": "T08-2017/DJI_0419_07_01/d2",
+      "verdict": "needs_review",
+      "agreement": 1.0,
+      "second_severity": 1,
+      "checks": [
+       {
+        "name": "inside_blade",
+        "passed": true,
+        "detail": "no blade mask: not checked"
+       },
+       {
+        "name": "detector_score",
+        "passed": true,
+        "detail": "detector confidence 0.57"
+       },
+       {
+        "name": "severity_vs_size",
+        "passed": true,
+        "detail": "severity 1 fits 0.31% of the photo"
+       }
+      ],
+      "reasons": [
+       "combined confidence 0.20 is below 0.3"
+      ],
+      "model": "meta-models/muse-spark-open",
+      "provider": "baseten"
+     },
+     "error": null
+    },
+    {
+     "defect": {
+      "id": "T08-2017/DJI_0419_07_01/d3",
+      "image_id": "T08-2017/DJI_0419_07_01",
+      "concept": "damage (proposed)",
+      "source": "box_prompt",
+      "label": "damage",
+      "score": 0.9062497615814209,
+      "bbox": {
+       "x1": 401.0,
+       "y1": 323.0,
+       "x2": 539.0,
+       "y2": 371.0
+      },
+      "outline": [
+       [
+        [
+         524.0,
+         323.0
+        ],
+        [
+         525.0,
+         325.0
+        ],
+        [
+         526.0,
+         327.0
+        ],
+        [
+         528.0,
+         329.0
+        ],
+        [
+         530.0,
+         331.0
+        ],
+        [
+         533.0,
+         333.0
+        ],
+        [
+         535.0,
+         335.0
+        ],
+        [
+         537.0,
+         337.0
+        ],
+        [
+         539.0,
+         339.0
+        ],
+        [
+         536.0,
+         341.0
+        ],
+        [
+         529.0,
+         343.0
+        ],
+        [
+         526.0,
+         345.0
+        ],
+        [
+         524.0,
+         347.0
+        ],
+        [
+         523.0,
+         349.0
+        ],
+        [
+         525.0,
+         351.0
+        ],
+        [
+         526.0,
+         353.0
+        ],
+        [
+         528.0,
+         355.0
+        ],
+        [
+         531.0,
+         357.0
+        ],
+        [
+         533.0,
+         359.0
+        ],
+        [
+         534.0,
+         361.0
+        ],
+        [
+         533.0,
+         363.0
+        ],
+        [
+         535.0,
+         365.0
+        ],
+        [
+         537.0,
+         367.0
+        ],
+        [
+         536.0,
+         369.0
+        ],
+        [
+         536.0,
+         370.0
+        ],
+        [
+         401.0,
+         370.0
+        ],
+        [
+         402.0,
+         369.0
+        ],
+        [
+         405.0,
+         367.0
+        ],
+        [
+         407.0,
+         365.0
+        ],
+        [
+         408.0,
+         363.0
+        ],
+        [
+         409.0,
+         361.0
+        ],
+        [
+         410.0,
+         359.0
+        ],
+        [
+         411.0,
+         357.0
+        ],
+        [
+         413.0,
+         355.0
+        ],
+        [
+         415.0,
+         353.0
+        ],
+        [
+         421.0,
+         351.0
+        ],
+        [
+         428.0,
+         349.0
+        ],
+        [
+         432.0,
+         347.0
+        ],
+        [
+         466.0,
+         345.0
+        ],
+        [
+         481.0,
+         343.0
+        ],
+        [
+         483.0,
+         341.0
+        ],
+        [
+         484.0,
+         339.0
+        ],
+        [
+         486.0,
+         337.0
+        ],
+        [
+         490.0,
+         335.0
+        ],
+        [
+         493.0,
+         333.0
+        ],
+        [
+         494.0,
+         331.0
+        ],
+        [
+         495.0,
+         329.0
+        ],
+        [
+         515.0,
+         327.0
+        ],
+        [
+         518.0,
+         325.0
+        ],
+        [
+         521.0,
+         323.0
+        ]
+       ]
+      ],
+      "mask_area_px": 3668.0
+     },
+     "measurement": {
+      "defect_id": "T08-2017/DJI_0419_07_01/d3",
+      "area_px": 3668.0,
+      "tile_area_ratio": 0.016871659475819433,
+      "blade_area_ratio": null,
+      "length_px": 140.97942472293323,
+      "width_px": 49.489973708902085,
+      "elongation": 0.648956,
+      "inside_blade": null,
+      "position": "unknown",
+      "position_t": null,
+      "units": "pixels"
+     },
+     "assessment": {
+      "defect_id": "T08-2017/DJI_0419_07_01/d3",
+      "defect_type": "dirt",
+      "severity": 1,
+      "rationale": "Blurry tight crops show irregular brown staining/peeling along edge with no clear open crack, delamination or fibres; without scale and visible blade width the patch is too small/blurry to confirm paint/coating loss versus dirt, so graded as cosmetic at low confidence.",
+      "confidence": 0.32,
+      "rubric_version": "v1",
+      "prompt_version": "assess/v1",
+      "model": "meta-models/muse-spark-open",
+      "provider": "baseten"
+     },
+     "verification": {
+      "defect_id": "T08-2017/DJI_0419_07_01/d3",
+      "verdict": "reinspect",
+      "agreement": 0.5,
+      "second_severity": 3,
+      "checks": [
+       {
+        "name": "inside_blade",
+        "passed": true,
+        "detail": "no blade mask: not checked"
+       },
+       {
+        "name": "detector_score",
+        "passed": true,
+        "detail": "detector confidence 0.91"
+       },
+       {
+        "name": "severity_vs_size",
+        "passed": true,
+        "detail": "severity 1 fits 1.69% of the photo"
+       }
+      ],
+      "reasons": [
+       "the two looks differ by 2 severity levels"
+      ],
+      "model": "meta-models/muse-spark-open",
+      "provider": "baseten"
+     },
+     "error": null
+    }
+   ]
+  }
+ ]
+}

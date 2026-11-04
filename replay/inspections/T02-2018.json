@@ -271,7 +271,9 @@
       ],
       "reasons": [
        "the two looks differ by 1 severity level"
-      ]
+      ],
+      "model": "muse-spark-1.3",
+      "provider": "meta"
      },
      "error": null
     }
@@ -668,7 +670,9 @@
        "both looks agree on severity 3",
        "combined confidence 0.55",
        "all rule checks passed"
-      ]
+      ],
+      "model": "muse-spark-1.3",
+      "provider": "meta"
      },
      "error": null
     },
@@ -1164,7 +1168,9 @@
       ],
       "reasons": [
        "the two looks differ by 1 severity level"
-      ]
+      ],
+      "model": "muse-spark-1.3",
+      "provider": "meta"
      },
      "error": null
     },
@@ -1500,7 +1506,9 @@
       ],
       "reasons": [
        "the two looks differ by 1 severity level"
-      ]
+      ],
+      "model": "muse-spark-1.3",
+      "provider": "meta"
      },
      "error": null
     },
@@ -1772,7 +1780,9 @@
       ],
       "reasons": [
        "the two looks differ by 1 severity level"
-      ]
+      ],
+      "model": "muse-spark-1.3",
+      "provider": "meta"
      },
      "error": null
     }

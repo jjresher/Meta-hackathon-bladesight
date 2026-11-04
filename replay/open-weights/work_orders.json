@@ -1,0 +1,206 @@
+[
+ {
+  "id": "WO-001",
+  "kind": "repair",
+  "priority": "P2",
+  "turbine_id": "T02",
+  "inspection_id": "T02-2018",
+  "defect_ids": [
+   "T02-2018/DJI_0711_01_04/d1",
+   "T02-2018/DJI_0982_06_05/d1"
+  ],
+  "action": "Schedule rope-access repair for surface damage (severity 3) on two blade locations",
+  "rationale": "Both defects verified ok with severity 3, agreement 1.0, rule checks passed; trend worse vs 2017 (max verified severity rose from 1 to 3)",
+  "evidence": [
+   "T02-2018/DJI_0711_01_04/d1: severity 3 (surface_damage), verdict ok, agreement 1.00, confidence 0.38",
+   "T02-2018/DJI_0982_06_05/d1: severity 3 (surface_damage), verdict ok, agreement 1.00, confidence 0.58"
+  ],
+  "due_within_days": 30,
+  "created_by": "agent",
+  "run_id": "run-open-weights",
+  "model": "meta-models/muse-spark-open",
+  "provider": "baseten"
+ },
+ {
+  "id": "WO-002",
+  "kind": "repair",
+  "priority": "P2",
+  "turbine_id": "T01",
+  "inspection_id": "T01-2018",
+  "defect_ids": [
+   "T01-2018/DJI_0681_06_09/d2"
+  ],
+  "action": "Schedule crack repair for verified severity 3 defect on blade",
+  "rationale": "Defect verified ok severity 3 with agreement 1.0 and all rule checks passed; T01 ranked #2 by deterministic priority score",
+  "evidence": [
+   "T01-2018/DJI_0681_06_09/d2: severity 3 (crack), verdict ok, agreement 1.00, confidence 0.52"
+  ],
+  "due_within_days": 30,
+  "created_by": "agent",
+  "run_id": "run-open-weights",
+  "model": "meta-models/muse-spark-open",
+  "provider": "baseten"
+ },
+ {
+  "id": "WO-003",
+  "kind": "reinspect",
+  "priority": "P2",
+  "turbine_id": "T02",
+  "inspection_id": "T02-2018",
+  "defect_ids": [
+   "T02-2018/DJI_0982_06_05/d2",
+   "T02-2018/DJI_0982_06_05/d5",
+   "T02-2018/DJI_0982_06_05/d6"
+  ],
+  "action": "Re-shoot with higher resolution and different angles, ensure blade clean and well-lit",
+  "rationale": "verdict needs_review: low confidence / disagreement between looks",
+  "evidence": [
+   "T02-2018/DJI_0982_06_05/d2: not verified (combined confidence 0.25 is below 0.3)",
+   "T02-2018/DJI_0982_06_05/d5: not verified (the two looks differ by 1 severity level)",
+   "T02-2018/DJI_0982_06_05/d6: not verified (the two looks differ by 1 severity level; combined confidence 0.28 is below 0.3)"
+  ],
+  "due_within_days": 14,
+  "created_by": "agent",
+  "run_id": "run-open-weights",
+  "model": "meta-models/muse-spark-open",
+  "provider": "baseten"
+ },
+ {
+  "id": "WO-004",
+  "kind": "reinspect",
+  "priority": "P2",
+  "turbine_id": "T01",
+  "inspection_id": "T01-2018",
+  "defect_ids": [
+   "T01-2018/DJI_0681_06_09/d4",
+   "T01-2018/DJI_0681_06_09/d6",
+   "T01-2018/DJI_0681_06_09/d7",
+   "T01-2018/DJI_0391_06_05/d1",
+   "T01-2018/DJI_0391_06_05/d2",
+   "T01-2018/DJI_0391_06_05/d3",
+   "T01-2018/DJI_0391_06_05/d4"
+  ],
+  "action": "Acquire new close-up photos with scale reference and improved lighting",
+  "rationale": "verdict needs_review: low confidence, severity disagreement, or rule check failed",
+  "evidence": [
+   "T01-2018/DJI_0681_06_09/d4: not verified (the two looks differ by 1 severity level; combined confidence 0.22 is below 0.3)",
+   "T01-2018/DJI_0681_06_09/d6: not verified (the two looks differ by 1 severity level)",
+   "T01-2018/DJI_0681_06_09/d7: not verified (the two looks differ by 1 severity level)",
+   "T01-2018/DJI_0391_06_05/d1: not verified (combined confidence 0.25 is below 0.3)",
+   "T01-2018/DJI_0391_06_05/d2: not verified (the two looks differ by 1 severity level; combined confidence 0.19 is below 0.3; rule check failed: detector_score (detector confidence 0.01))",
+   "T01-2018/DJI_0391_06_05/d3: not verified (combined confidence 0.28 is below 0.3; rule check failed: detector_score (detector confidence 0.02))",
+   "T01-2018/DJI_0391_06_05/d4: not verified (combined confidence 0.25 is below 0.3; rule check failed: severity_vs_size (severity 1 but it covers 25.0% of the photo))"
+  ],
+  "due_within_days": 14,
+  "created_by": "agent",
+  "run_id": "run-open-weights",
+  "model": "meta-models/muse-spark-open",
+  "provider": "baseten"
+ },
+ {
+  "id": "WO-005",
+  "kind": "reinspect",
+  "priority": "P2",
+  "turbine_id": "T06",
+  "inspection_id": "T06-2018",
+  "defect_ids": [
+   "T06-2018/DJI_0785_03_02/d1",
+   "T06-2018/DJI_0609_05_05/d1",
+   "T06-2018/DJI_0609_05_05/d2"
+  ],
+  "action": "Re-inspect blade areas with high-resolution photography",
+  "rationale": "verdict needs_review: severity disagreement and low combined confidence",
+  "evidence": [
+   "T06-2018/DJI_0785_03_02/d1: not verified (the two looks differ by 1 severity level)",
+   "T06-2018/DJI_0609_05_05/d1: not verified (the two looks differ by 1 severity level; combined confidence 0.20 is below 0.3)",
+   "T06-2018/DJI_0609_05_05/d2: not verified (the two looks differ by 1 severity level; combined confidence 0.20 is below 0.3)"
+  ],
+  "due_within_days": 14,
+  "created_by": "agent",
+  "run_id": "run-open-weights",
+  "model": "meta-models/muse-spark-open",
+  "provider": "baseten"
+ },
+ {
+  "id": "WO-006",
+  "kind": "reinspect",
+  "priority": "P2",
+  "turbine_id": "T10",
+  "inspection_id": "T10-2018",
+  "defect_ids": [
+   "T10-2018/DJI_0351_03_03/d2",
+   "T10-2018/DJI_0351_03_03/d3",
+   "T10-2018/DJI_0351_03_03/d4",
+   "T10-2018/DJI_0351_03_03/d6",
+   "T10-2018/DJI_0682_06_05/d1",
+   "T10-2018/DJI_0682_06_05/d2"
+  ],
+  "action": "Retake images with proper exposure and focus; include size reference",
+  "rationale": "verdict needs_review/reinspect: low confidence, severity disagreement, rule check failures",
+  "evidence": [
+   "T10-2018/DJI_0351_03_03/d2: not verified (combined confidence 0.15 is below 0.3)",
+   "T10-2018/DJI_0351_03_03/d3: not verified (the two looks differ by 1 severity level; combined confidence 0.15 is below 0.3)",
+   "T10-2018/DJI_0351_03_03/d4: not verified (the two looks differ by 3 severity levels; rule check failed: severity_vs_size (severity 1 but it covers 9.3% of the photo))",
+   "T10-2018/DJI_0351_03_03/d6: not verified (the two looks differ by 1 severity level)",
+   "T10-2018/DJI_0682_06_05/d1: not verified (rule check failed: detector_score (detector confidence 0.27))",
+   "T10-2018/DJI_0682_06_05/d2: not verified (the two looks differ by 1 severity level; rule check failed: severity_vs_size (severity 1 but it covers 5.6% of the photo))"
+  ],
+  "due_within_days": 14,
+  "created_by": "agent",
+  "run_id": "run-open-weights",
+  "model": "meta-models/muse-spark-open",
+  "provider": "baseten"
+ },
+ {
+  "id": "WO-007",
+  "kind": "reinspect",
+  "priority": "P2",
+  "turbine_id": "T07",
+  "inspection_id": "T07-2018",
+  "defect_ids": [
+   "T07-2018/DJI_0743_04_09/d1",
+   "T07-2018/DJI_0682_07_06/d1",
+   "T07-2018/DJI_0682_07_06/d3",
+   "T07-2018/DJI_0682_07_06/d7"
+  ],
+  "action": "Re-photograph blade sections with stable drone hover and clean lens",
+  "rationale": "verdict needs_review: low confidence or severity disagreement",
+  "evidence": [
+   "T07-2018/DJI_0743_04_09/d1: not verified (combined confidence 0.25 is below 0.3; rule check failed: detector_score (detector confidence 0.49))",
+   "T07-2018/DJI_0682_07_06/d1: not verified (the two looks differ by 1 severity level)",
+   "T07-2018/DJI_0682_07_06/d3: not verified (combined confidence 0.25 is below 0.3)",
+   "T07-2018/DJI_0682_07_06/d7: not verified (the two looks differ by 1 severity level; combined confidence 0.25 is below 0.3)"
+  ],
+  "due_within_days": 14,
+  "created_by": "agent",
+  "run_id": "run-open-weights",
+  "model": "meta-models/muse-spark-open",
+  "provider": "baseten"
+ },
+ {
+  "id": "WO-008",
+  "kind": "reinspect",
+  "priority": "P2",
+  "turbine_id": "T08",
+  "inspection_id": "T08-2018",
+  "defect_ids": [
+   "T08-2018/DJI_0183_03_05/d1",
+   "T08-2018/DJI_0183_03_05/d2",
+   "T08-2018/DJI_0183_03_05/d3",
+   "T08-2018/DJI_0183_03_05/d5"
+  ],
+  "action": "New inspection flight needed with closer distance and optimal lighting",
+  "rationale": "verdict needs_review/reinspect: low confidence and severity disagreement",
+  "evidence": [
+   "T08-2018/DJI_0183_03_05/d1: not verified (the two looks differ by 2 severity levels)",
+   "T08-2018/DJI_0183_03_05/d2: not verified (combined confidence 0.05 is below 0.15)",
+   "T08-2018/DJI_0183_03_05/d3: not verified (combined confidence 0.25 is below 0.3)",
+   "T08-2018/DJI_0183_03_05/d5: not verified (the two looks differ by 1 severity level)"
+  ],
+  "due_within_days": 14,
+  "created_by": "agent",
+  "run_id": "run-open-weights",
+  "model": "meta-models/muse-spark-open",
+  "provider": "baseten"
+ }
+]

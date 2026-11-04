@@ -52,6 +52,10 @@ class MetaSettings(BaseModel):
     reasoning_effort: str | None = "low"
     baseten_api_key: SecretStr | None = None
     baseten_base_url: str = DEFAULT_BASETEN_BASE_URL
+    # Muse Spark Open on Baseten (BASETEN_CHAT_MODEL) and the account's request rate limit
+    # (BASETEN_REQUESTS_PER_MINUTE), enforced client-side by `ratelimit.RateLimiter`.
+    baseten_chat_model: str = MUSE_SPARK_OPEN_MODEL
+    baseten_requests_per_minute: int = 15
     spend_limit_usd: float = DEFAULT_SPEND_LIMIT_USD
     baseten_spend_limit_usd: float = DEFAULT_BASETEN_SPEND_LIMIT_USD
     mode: Literal["replay", "live"] = "replay"
@@ -105,6 +109,8 @@ class MetaSettings(BaseModel):
             reasoning_effort=_effort(get("META_REASONING_EFFORT")),
             baseten_api_key=SecretStr(baseten_key) if baseten_key else None,
             baseten_base_url=get("BASETEN_BASE_URL") or DEFAULT_BASETEN_BASE_URL,
+            baseten_chat_model=get("BASETEN_CHAT_MODEL") or MUSE_SPARK_OPEN_MODEL,
+            baseten_requests_per_minute=_rpm(get("BASETEN_REQUESTS_PER_MINUTE")),
             spend_limit_usd=limit,
             baseten_spend_limit_usd=baseten_limit,
             mode=mode,  # type: ignore[arg-type]
@@ -129,6 +135,8 @@ class MetaSettings(BaseModel):
             "BASETEN_BASE_URL": "set"
             if self.baseten_base_url != DEFAULT_BASETEN_BASE_URL
             else "default",
+            "BASETEN_CHAT_MODEL": self.baseten_chat_model,
+            "BASETEN_REQUESTS_PER_MINUTE": str(self.baseten_requests_per_minute),
             "META_SPEND_LIMIT_USD": f"{self.spend_limit_usd:.2f}",
             "BASETEN_SPEND_LIMIT_USD": f"{self.baseten_spend_limit_usd:.2f}",
             "BLADESIGHT_MODE": self.mode,
@@ -163,6 +171,18 @@ def _limit(raw: str | None, name: str, default: float) -> float:
         raise MetaConfigError(f"{name} is not a number") from None
     if math.isnan(value) or value < 0:
         raise MetaConfigError(f"{name} must be >= 0")
+    return value
+
+
+def _rpm(raw: str | None) -> int:
+    if raw is None:
+        return 15
+    try:
+        value = int(raw)
+    except ValueError:
+        raise MetaConfigError("BASETEN_REQUESTS_PER_MINUTE is not a whole number") from None
+    if value < 1:
+        raise MetaConfigError("BASETEN_REQUESTS_PER_MINUTE must be >= 1")
     return value
 
 
