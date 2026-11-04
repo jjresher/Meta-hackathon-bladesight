@@ -278,7 +278,6 @@ function RunBody({ run, orders }: { run: AgentRun; orders: WorkOrder[] }) {
   return (
     <>
       <header className="page-head">
-        <p className="eyebrow">Agent trace</p>
         <h1>
           {calls.length} tool calls, one report, {run.work_order_ids.length} work orders
         </h1>

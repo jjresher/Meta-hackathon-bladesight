@@ -4,7 +4,7 @@ import { api } from "../api/client";
 import { TrendBadge, TurbineStatusChip } from "../components/Chips";
 import { Async } from "../components/PageState";
 import SeverityScale from "../components/SeverityScale";
-import { InfoIcon } from "../components/icons";
+import { InfoIcon, ToneGlyph, TurbineArt, type Tone } from "../components/icons";
 import { useAsyncData } from "../hooks/useAsyncData";
 import { useRun } from "../lib/run";
 import { defectsLabel, latestInspection } from "../lib/format";
@@ -16,6 +16,66 @@ function Stat({ value, label, tone }: { value: number | string; label: string; t
       <dt className="stat__label">{label}</dt>
       <dd className="stat__value num">{value}</dd>
     </div>
+  );
+}
+
+const STATUS_TONE: Record<Turbine["status"], Tone> = {
+  critical: "alert",
+  attention: "review",
+  needs_review: "review",
+  ok: "ok",
+};
+
+/** Every defect of the farm by verdict, summed over all inspections, with the turbine counts beside it. */
+function VerdictStrip({ turbines, orders }: { turbines: Turbine[]; orders: number }) {
+  const inspections = turbines.flatMap((t) => t.inspections);
+  const sum = (pick: (i: (typeof inspections)[number]) => number) => inspections.reduce((n, i) => n + pick(i), 0);
+  const total = sum((i) => i.n_defects);
+  const review = sum((i) => i.n_needs_review);
+  const reinspect = sum((i) => i.n_reinspect);
+  // The fleet contract has no verified count: what is left after the two flagged verdicts.
+  const verdicts: { tone: Tone; label: string; n: number }[] = [
+    { tone: "ok", label: "Verified", n: Math.max(0, total - review - reinspect) },
+    { tone: "review", label: "Needs review", n: review },
+    { tone: "alert", label: "Reinspect", n: reinspect },
+  ];
+  const count = (status: Turbine["status"]) => turbines.filter((t) => t.status === status).length;
+
+  return (
+    <section className="vstrip" aria-label="Defects by verdict" data-testid="verdict-strip">
+      <p className="vstrip__total">
+        <span className="vstrip__n num">{total}</span>
+        <span className="vstrip__cap">
+          defects in
+          <br />
+          {inspections.length} inspections
+        </span>
+      </p>
+      <div className="vstrip__main">
+        <span className="vbar" aria-hidden="true">
+          {verdicts
+            .filter((v) => v.n > 0)
+            .map((v) => (
+              <span key={v.tone} className={`vbar__seg vbar__seg--${v.tone}`} style={{ flexGrow: v.n }} />
+            ))}
+        </span>
+        <ul className="vstrip__legend">
+          {verdicts.map((v) => (
+            <li key={v.tone} data-tone={v.tone}>
+              <ToneGlyph tone={v.tone} size={12} />
+              {v.label} <span className="vstrip__count num">{v.n}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <dl className="vstrip__facts">
+        <Stat value={count("critical")} label="critical" tone="alert" />
+        <Stat value={count("attention")} label="attention" tone="review" />
+        <Stat value={count("needs_review")} label="need review" tone="review" />
+        <Stat value={count("ok")} label="no verified issue" />
+        <Stat value={orders} label="open work orders" />
+      </dl>
+    </section>
   );
 }
 
@@ -33,7 +93,9 @@ function TurbineRow({ turbine, maxScore }: { turbine: Turbine; maxScore: number 
           {turbine.name}
           <span className="visually-hidden">, open latest inspection {latest.id}</span>
         </Link>
-        <p className="frow__reason">{turbine.reason}</p>
+        <p className="frow__reason" title={turbine.reason}>
+          {turbine.reason}
+        </p>
       </div>
 
       <div className="frow__status">
@@ -45,8 +107,8 @@ function TurbineRow({ turbine, maxScore }: { turbine: Turbine; maxScore: number 
         <span className="pbar">
           <span className="pbar__track">
             <span
-              className="pbar__fill"
-              style={{ width: `${maxScore > 0 ? Math.max(3, (turbine.priority_score / maxScore) * 100) : 0}%` }}
+              className={`pbar__fill pbar__fill--${STATUS_TONE[turbine.status]}`}
+              style={{ width: `${turbine.priority_score > 0 ? Math.max(3, (turbine.priority_score / maxScore) * 100) : 0}%` }}
             />
           </span>
         </span>
@@ -91,19 +153,18 @@ function TurbineRow({ turbine, maxScore }: { turbine: Turbine; maxScore: number 
 function FleetBody({ fleet }: { fleet: Fleet }) {
   const turbines = [...fleet.turbines].sort((a, b) => a.rank - b.rank);
   const maxScore = Math.max(0, ...turbines.map((t) => t.priority_score));
-  const count = (status: Turbine["status"]) => turbines.filter((t) => t.status === status).length;
   const orders = turbines.reduce((sum, t) => sum + t.open_work_orders, 0);
 
   return (
     <>
       <header className="page-head">
-        <p className="eyebrow">Fleet</p>
         <h1>{turbines.length} turbines, ranked by what needs a person first</h1>
         <p className="lede">
           Only <em>verified</em> defects (two looks agreed, rule checks passed) set a turbine's status and severity. A
           defect that needs review adds a quarter of its weight to the priority score; one that needs reinspection adds
           nothing. Both ask for a person or new photos.
         </p>
+        <TurbineArt className="page-head__art" />
       </header>
 
       <p className="note" data-testid="fleet-note">
@@ -113,13 +174,7 @@ function FleetBody({ fleet }: { fleet: Fleet }) {
         </span>
       </p>
 
-      <dl className="stats">
-        <Stat value={count("critical")} label="critical" tone="alert" />
-        <Stat value={count("attention")} label="attention" tone="review" />
-        <Stat value={count("needs_review")} label="need review" tone="review" />
-        <Stat value={count("ok")} label="no verified issue" />
-        <Stat value={orders} label="open work orders" />
-      </dl>
+      <VerdictStrip turbines={turbines} orders={orders} />
 
       <div className="fhead" aria-hidden="true">
         <span>#</span>

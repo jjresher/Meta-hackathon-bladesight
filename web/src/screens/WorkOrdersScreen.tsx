@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 
 import { api } from "../api/client";
 import { Async, Loading } from "../components/PageState";
-import { InfoIcon } from "../components/icons";
+import { TurbineArt } from "../components/icons";
 import { ModelBadge } from "../components/Chips";
 import { useAsyncData, type AsyncState } from "../hooks/useAsyncData";
 import { PROVIDER_LABEL } from "../lib/models";
@@ -118,7 +118,6 @@ function Body({ orders, report }: { orders: WorkOrder[]; report: AsyncState<Repo
   return (
     <>
       <header className="page-head">
-        <p className="eyebrow">Work orders</p>
         <h1>
           {count("repair")} to repair, {count("reinspect")} to reinspect
         </h1>
@@ -144,8 +143,8 @@ function Body({ orders, report }: { orders: WorkOrder[]; report: AsyncState<Repo
             ))}
           </div>
           {shown.length === 0 ? (
-            <p className="note">
-              <InfoIcon className="note__icon" />
+            <p className="note note--empty">
+              <TurbineArt className="note__art" />
               <span>No work orders of this kind.</span>
             </p>
           ) : (
@@ -159,8 +158,8 @@ function Body({ orders, report }: { orders: WorkOrder[]; report: AsyncState<Repo
         {report.status === "loading" && <Loading what="the report" />}
         {report.status === "ready" && report.data && <ReportPanel report={report.data} />}
         {report.status === "ready" && !report.data && (
-          <p className="note">
-            <InfoIcon className="note__icon" />
+          <p className="note note--empty">
+            <TurbineArt className="note__art" />
             <span>No report has been written yet.</span>
           </p>
         )}

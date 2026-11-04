@@ -8,6 +8,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import App from "../App";
 import evalReports from "../fixtures/eval.json";
+import fleetFixture from "../fixtures/fleet.json";
 import inspectionFixture from "../fixtures/inspection_T03-2018.json";
 import type { Inspection } from "../types";
 import { stubApi, type Overrides } from "../test/mockApi";
@@ -37,6 +38,19 @@ describe("Fleet", () => {
       "href",
       "/inspections/T03-2018",
     );
+  });
+
+  it("sums the verdicts of every inspection in the fleet strip", async () => {
+    open("/");
+    const strip = await screen.findByTestId("verdict-strip");
+    const inspections = fleetFixture.turbines.flatMap((t) => t.inspections);
+    const sum = (key: "n_defects" | "n_needs_review" | "n_reinspect") => inspections.reduce((n, i) => n + i[key], 0);
+    const review = sum("n_needs_review");
+    const reinspect = sum("n_reinspect");
+    expect(strip).toHaveTextContent(`${sum("n_defects")}defects in${inspections.length} inspections`);
+    expect(strip).toHaveTextContent(`Verified ${sum("n_defects") - review - reinspect}`);
+    expect(strip).toHaveTextContent(`Needs review ${review}`);
+    expect(strip).toHaveTextContent(`Reinspect ${reinspect}`);
   });
 
   it("shows a clear error when the API is down", async () => {

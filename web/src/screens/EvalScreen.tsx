@@ -230,7 +230,6 @@ function EvalBody({ reports }: { reports: EvalReport[] }) {
   return (
     <>
       <header className="page-head">
-        <p className="eyebrow">Evaluation</p>
         <h1>What the system gets right, and what it does not</h1>
         <p className="lede">
           Detection is scored against the dataset's own annotations. Severity is scored against one human grader. Both are
