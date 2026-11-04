@@ -228,8 +228,8 @@ function Autonomy({ run, orders }: { run: AgentRun; orders: WorkOrder[] }) {
           </li>
           <li data-testid="order-count">
             <span className="num">{o.repair}</span> repair, <span className="num">{o.monitor}</span> monitor and{" "}
-            <span className="num">{o.reinspect}</span> re-inspection orders. Defects that are not verified get a
-            re-inspection request, never a repair.
+            <span className="num">{o.reinspect}</span> re-inspection orders. Unverified defects can only get a re-inspection
+            request, never a repair (rule <code>verified_only</code>).
           </li>
         </ul>
       </section>
@@ -239,7 +239,11 @@ function Autonomy({ run, orders }: { run: AgentRun; orders: WorkOrder[] }) {
           Rules that could stop it
         </h2>
         <p className="autonomy__rules" data-testid="rule-summary">
-          {a.rejected.length === 0 ? (
+          {a.rejected.length === 0 && a.unrecorded > 0 ? (
+            <>
+              Rejections were not recorded for <span className="num">{a.unrecorded}</span> of the calls in this run.
+            </>
+          ) : a.rejected.length === 0 ? (
             <>No call was rejected by a rule in this run.</>
           ) : (
             <>

@@ -147,7 +147,7 @@ function Body({ sides }: { sides: Side[] }) {
             {capitalize(split.same.map((s) => `${STAGE_LABEL[s.stage]} by ${modelLabel(s.model, s.provider)}`).join(" and "))}{" "}
             ran once
             and both runs reuse the stored result
-            {split.same.some((s) => s.stage === "segmentation") ? " (SAM 3.1 has no open-weights path)" : ""}. Only{" "}
+            {split.same.some((s) => s.stage === "segmentation") ? " (SAM 3.1 has no open-weights path here)" : ""}. Only{" "}
             {split.changed.map((s) => STAGE_LABEL[s.stage]).join(", ")} changed model.
           </span>
         </p>
@@ -155,7 +155,7 @@ function Body({ sides }: { sides: Side[] }) {
 
       <div className="cmp-runs">
         {sides.map((side) => (
-          <RunCard key={side.replay.provider} side={side} onShow={() => choose(side.replay.provider)} />
+          <RunCard key={side.replay.provider} side={side} onShow={() => choose(side.replay.provider, "/")} />
         ))}
       </div>
 

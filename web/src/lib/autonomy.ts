@@ -8,6 +8,8 @@ export interface Autonomy {
   byTool: [string, number][];
   withReason: number;
   rejected: AgentStep[];
+  /** calls whose outcome was not recorded: a rejection count would be unknown for them */
+  unrecorded: number;
 }
 
 export function autonomyOf(run: AgentRun): Autonomy {
@@ -25,6 +27,7 @@ export function autonomyOf(run: AgentRun): Autonomy {
     byTool: [...byTool.entries()].sort((a, b) => a[0].localeCompare(b[0])),
     withReason: calls.filter((c) => c.rationale).length,
     rejected: calls.filter((c) => c.outcome === "rejected"),
+    unrecorded: calls.filter((c) => c.outcome == null).length,
   };
 }
 

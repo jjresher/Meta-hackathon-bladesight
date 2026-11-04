@@ -141,4 +141,17 @@ describe("Agent trace decisions", () => {
     expect(screen.getByTestId("reason-count")).toHaveTextContent(/no text before any call/);
     expect(screen.getByTestId("order-count")).toHaveTextContent(/1 repair, 0 monitor and 1 re-inspection/);
   });
+
+  it("does not claim zero rejections when outcomes were not recorded", async () => {
+    const legacy = structuredClone(run);
+    for (const s of legacy.steps) {
+      if (s.kind === "tool_call") {
+        s.outcome = null;
+        s.blocked_by_rule = null;
+      }
+    }
+    open("/runs", { "/api/runs": () => ({ body: [legacy] }) });
+    expect(await screen.findByTestId("rule-summary")).toHaveTextContent(/Rejections were not recorded for \d+ of the calls/);
+    expect(screen.getByTestId("rule-summary")).not.toHaveTextContent("No call was rejected");
+  });
 });

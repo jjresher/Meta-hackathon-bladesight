@@ -15,7 +15,7 @@ interface RunContext {
   /** The replay being shown, once `/api/replays` answered (null on an API without it). */
   current: ReplaySet | null;
   replays: ReplaySet[];
-  choose: (provider: RunProvider) => void;
+  choose: (provider: RunProvider, pathname?: string) => void;
 }
 
 const Ctx = createContext<RunContext>({ provider: undefined, current: null, replays: [], choose: () => {} });
@@ -46,12 +46,12 @@ export function RunScope({ children }: { children: React.ReactNode }) {
   const replays = loaded.status === "ready" ? loaded.data : [];
   const current = replays.find((r) => r.provider === provider) ?? replays.find((r) => r.default) ?? null;
 
-  const choose = (next: RunProvider) => {
+  const choose = (next: RunProvider, to?: string) => {
     setSticky(next);
     const search = new URLSearchParams(location.search);
     search.set("provider", next);
     // A run id belongs to one replay: go to the chosen replay's latest run instead.
-    const pathname = location.pathname.startsWith("/runs/") ? "/runs" : location.pathname;
+    const pathname = to ?? (location.pathname.startsWith("/runs/") ? "/runs" : location.pathname);
     navigate({ pathname, search: `?${search}`, hash: location.hash });
   };
 
