@@ -1278,7 +1278,7 @@
          16.0
         ],
         [
-         161.0,
+         164.0,
          14.0
         ],
         [
@@ -1311,16 +1311,16 @@
         ]
        ]
       ],
-      "mask_area_px": 24862.0
+      "mask_area_px": 24841.0
      },
      "measurement": {
       "defect_id": "T04-2018/DJI_0005_07_04/d1",
-      "area_px": 24862.0,
-      "tile_area_ratio": 0.1143574694350662,
+      "area_px": 24841.0,
+      "tile_area_ratio": 0.11426087596478478,
       "blade_area_ratio": null,
-      "length_px": 320.49204669967725,
-      "width_px": 138.4121914637455,
-      "elongation": 0.568126,
+      "length_px": 320.488081444517,
+      "width_px": 138.41482833525134,
+      "elongation": 0.568112,
       "inside_blade": null,
       "position": "unknown",
       "position_t": null,
@@ -1330,7 +1330,7 @@
       "defect_id": "T04-2018/DJI_0005_07_04/d1",
       "defect_type": "leading_edge_erosion",
       "severity": 2,
-      "rationale": "A line of small pits/chips along the blade edge with paint wear but no exposed fibres or open crack.",
+      "rationale": "Row of small pits/chips along the leading edge with minor coating loss but no fibres or open crack visible.",
       "confidence": 0.45,
       "rubric_version": "v1",
       "prompt_version": "assess/v1",

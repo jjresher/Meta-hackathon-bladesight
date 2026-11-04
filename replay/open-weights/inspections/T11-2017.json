@@ -4,10 +4,10 @@
   "turbine_id": "T11",
   "year": 2017,
   "n_images": 4,
-  "n_defects": 4,
-  "max_severity": null,
-  "n_needs_review": 3,
-  "n_reinspect": 1
+  "n_defects": 5,
+  "max_severity": 3,
+  "n_needs_review": 2,
+  "n_reinspect": 2
  },
  "images": [
   {
@@ -2365,7 +2365,7 @@
       "bbox": {
        "x1": 511.0,
        "y1": 348.0,
-       "x2": 586.0,
+       "x2": 551.0,
        "y2": 371.0
       },
       "outline": [
@@ -2379,43 +2379,43 @@
          350.0
         ],
         [
-         576.0,
+         525.0,
          352.0
         ],
         [
-         581.0,
+         527.0,
          354.0
         ],
         [
-         582.0,
+         532.0,
          356.0
         ],
         [
-         586.0,
+         539.0,
          358.0
         ],
         [
-         586.0,
+         541.0,
          360.0
         ],
         [
-         586.0,
+         542.0,
          362.0
         ],
         [
-         586.0,
+         545.0,
          364.0
         ],
         [
-         586.0,
+         549.0,
          366.0
         ],
         [
-         586.0,
+         550.0,
          368.0
         ],
         [
-         586.0,
+         551.0,
          370.0
         ],
         [
@@ -2468,16 +2468,16 @@
         ]
        ]
       ],
-      "mask_area_px": 1059.0
+      "mask_area_px": 476.0
      },
      "measurement": {
       "defect_id": "T11-2017/DJI_0390_03_05/d2",
-      "area_px": 1059.0,
-      "tile_area_ratio": 0.004871070715619624,
+      "area_px": 476.0,
+      "tile_area_ratio": 0.00218945199304527,
       "blade_area_ratio": null,
-      "length_px": 75.7968227656321,
-      "width_px": 22.327596067142963,
-      "elongation": 0.705428,
+      "length_px": 42.680774722764454,
+      "width_px": 16.684252735712022,
+      "elongation": 0.609092,
       "inside_blade": null,
       "position": "unknown",
       "position_t": null,
@@ -2485,10 +2485,10 @@
      },
      "assessment": {
       "defect_id": "T11-2017/DJI_0390_03_05/d2",
-      "defect_type": "surface_damage",
-      "severity": 3,
-      "rationale": "Close crop shows irregular flaking/peeling of white coating exposing grey substrate over a patch with brownish staining at margin; no clearly open crack or exposed fibres is visible and patch covers a modest fraction of visible blade width.",
-      "confidence": 0.48,
+      "defect_type": "dirt",
+      "severity": 1,
+      "rationale": "Both crops are extremely blurry and low-resolution; the flagged area appears as small reddish-brown streaks/patches consistent with dirt/staining and is small versus visible blade width, but detail is insufficient to rule out underlying minor coating loss.",
+      "confidence": 0.3,
       "rubric_version": "v1",
       "prompt_version": "assess/v1",
       "model": "meta-models/muse-spark-open",
@@ -2496,9 +2496,9 @@
      },
      "verification": {
       "defect_id": "T11-2017/DJI_0390_03_05/d2",
-      "verdict": "needs_review",
-      "agreement": 0.75,
-      "second_severity": 2,
+      "verdict": "reinspect",
+      "agreement": 0.5,
+      "second_severity": 3,
       "checks": [
        {
         "name": "inside_blade",
@@ -2513,11 +2513,167 @@
        {
         "name": "severity_vs_size",
         "passed": true,
-        "detail": "severity 3 fits 0.49% of the photo"
+        "detail": "severity 1 fits 0.22% of the photo"
        }
       ],
       "reasons": [
-       "the two looks differ by 1 severity level"
+       "the two looks differ by 2 severity levels"
+      ],
+      "model": "meta-models/muse-spark-open",
+      "provider": "baseten"
+     },
+     "error": null
+    },
+    {
+     "defect": {
+      "id": "T11-2017/DJI_0390_03_05/d3",
+      "image_id": "T11-2017/DJI_0390_03_05",
+      "concept": "dirt (proposed)",
+      "source": "box_prompt",
+      "label": "dirt",
+      "score": 0.8124998211860657,
+      "bbox": {
+       "x1": 545.0,
+       "y1": 352.0,
+       "x2": 586.0,
+       "y2": 371.0
+      },
+      "outline": [
+       [
+        [
+         576.0,
+         352.0
+        ],
+        [
+         581.0,
+         354.0
+        ],
+        [
+         582.0,
+         356.0
+        ],
+        [
+         586.0,
+         358.0
+        ],
+        [
+         586.0,
+         360.0
+        ],
+        [
+         586.0,
+         362.0
+        ],
+        [
+         586.0,
+         364.0
+        ],
+        [
+         586.0,
+         366.0
+        ],
+        [
+         586.0,
+         368.0
+        ],
+        [
+         586.0,
+         370.0
+        ],
+        [
+         558.0,
+         370.0
+        ],
+        [
+         555.0,
+         368.0
+        ],
+        [
+         554.0,
+         366.0
+        ],
+        [
+         551.0,
+         364.0
+        ],
+        [
+         550.0,
+         362.0
+        ],
+        [
+         549.0,
+         360.0
+        ],
+        [
+         549.0,
+         358.0
+        ],
+        [
+         548.0,
+         356.0
+        ],
+        [
+         546.0,
+         354.0
+        ],
+        [
+         546.0,
+         352.0
+        ]
+       ]
+      ],
+      "mask_area_px": 583.0
+     },
+     "measurement": {
+      "defect_id": "T11-2017/DJI_0390_03_05/d3",
+      "area_px": 583.0,
+      "tile_area_ratio": 0.002681618722574354,
+      "blade_area_ratio": null,
+      "length_px": 42.87230211103724,
+      "width_px": 21.059422131910935,
+      "elongation": 0.508787,
+      "inside_blade": null,
+      "position": "unknown",
+      "position_t": null,
+      "units": "pixels"
+     },
+     "assessment": {
+      "defect_id": "T11-2017/DJI_0390_03_05/d3",
+      "defect_type": "leading_edge_erosion",
+      "severity": 3,
+      "rationale": "Wider view shows patchy paint/coating loss with reddish-brown erosion along the blade edge and no clear exposed fibres or open crack; close crop is very blurry but confirms a patchy coating-loss area of moderate extent relative to visible blade width.",
+      "confidence": 0.43,
+      "rubric_version": "v1",
+      "prompt_version": "assess/v1",
+      "model": "meta-models/muse-spark-open",
+      "provider": "baseten"
+     },
+     "verification": {
+      "defect_id": "T11-2017/DJI_0390_03_05/d3",
+      "verdict": "ok",
+      "agreement": 1.0,
+      "second_severity": 3,
+      "checks": [
+       {
+        "name": "inside_blade",
+        "passed": true,
+        "detail": "no blade mask: not checked"
+       },
+       {
+        "name": "detector_score",
+        "passed": true,
+        "detail": "detector confidence 0.81"
+       },
+       {
+        "name": "severity_vs_size",
+        "passed": true,
+        "detail": "severity 3 fits 0.27% of the photo"
+       }
+      ],
+      "reasons": [
+       "both looks agree on severity 3",
+       "combined confidence 0.43",
+       "all rule checks passed"
       ],
       "model": "meta-models/muse-spark-open",
       "provider": "baseten"

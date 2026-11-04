@@ -329,7 +329,7 @@
          154.0
         ],
         [
-         546.0,
+         545.0,
          156.0
         ],
         [
@@ -417,7 +417,7 @@
          198.0
         ],
         [
-         521.0,
+         520.0,
          200.0
         ],
         [
@@ -685,7 +685,7 @@
          332.0
         ],
         [
-         334.0,
+         333.0,
          334.0
         ],
         [
@@ -749,11 +749,11 @@
          350.0
         ],
         [
-         245.0,
+         248.0,
          348.0
         ],
         [
-         258.0,
+         260.0,
          346.0
         ],
         [
@@ -765,11 +765,11 @@
          342.0
         ],
         [
-         288.0,
+         289.0,
          340.0
         ],
         [
-         294.0,
+         297.0,
          338.0
         ],
         [
@@ -777,7 +777,7 @@
          336.0
         ],
         [
-         312.0,
+         313.0,
          334.0
         ],
         [
@@ -793,7 +793,7 @@
          328.0
         ],
         [
-         340.0,
+         341.0,
          326.0
         ],
         [
@@ -805,7 +805,7 @@
          322.0
         ],
         [
-         354.0,
+         355.0,
          320.0
         ],
         [
@@ -1146,16 +1146,16 @@
         ]
        ]
       ],
-      "mask_area_px": 3162.0
+      "mask_area_px": 3125.0
      },
      "measurement": {
       "defect_id": "T12-2018/DJI_0270_04_02/d4",
-      "area_px": 3162.0,
-      "tile_area_ratio": 0.01454421681094358,
+      "area_px": 3125.0,
+      "tile_area_ratio": 0.01437402831568586,
       "blade_area_ratio": null,
-      "length_px": 425.9979893096899,
-      "width_px": 69.96909329951035,
-      "elongation": 0.835753,
+      "length_px": 425.9981576697558,
+      "width_px": 69.9427467766372,
+      "elongation": 0.835814,
       "inside_blade": null,
       "position": "unknown",
       "position_t": null,
@@ -1165,8 +1165,8 @@
       "defect_id": "T12-2018/DJI_0270_04_02/d4",
       "defect_type": "dirt",
       "severity": 1,
-      "rationale": "Small dark specks/stains on white blade surface with intact paint/coating, no visible crack, erosion or exposed laminate; appearance consistent with dirt.",
-      "confidence": 0.48,
+      "rationale": "Both crops are identical, blurry and tightly cropped with no scale; only tiny dark specks/stains on intact pale surface are visible with no clear open crack, erosion patch or exposed fibres.",
+      "confidence": 0.3,
       "rubric_version": "v1",
       "prompt_version": "assess/v1",
       "model": "meta-models/muse-spark-open",
@@ -1191,12 +1191,12 @@
        {
         "name": "severity_vs_size",
         "passed": true,
-        "detail": "severity 1 fits 1.45% of the photo"
+        "detail": "severity 1 fits 1.44% of the photo"
        }
       ],
       "reasons": [
        "both looks agree on severity 1",
-       "combined confidence 0.48",
+       "combined confidence 0.30",
        "all rule checks passed"
       ],
       "model": "meta-models/muse-spark-open",

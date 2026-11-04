@@ -1403,16 +1403,16 @@
         ]
        ]
       ],
-      "mask_area_px": 3676.0
+      "mask_area_px": 3675.0
      },
      "measurement": {
       "defect_id": "T01-2017/DJI_0448_05_05/d1",
-      "area_px": 3676.0,
-      "tile_area_ratio": 0.01690845698830759,
+      "area_px": 3675.0,
+      "tile_area_ratio": 0.01690385729924657,
       "blade_area_ratio": null,
-      "length_px": 91.01998139960065,
-      "width_px": 77.15149893166583,
-      "elongation": 0.152367,
+      "length_px": 91.00685001593686,
+      "width_px": 77.14264652269104,
+      "elongation": 0.152342,
       "inside_blade": null,
       "position": "unknown",
       "position_t": null,
@@ -1422,8 +1422,8 @@
       "defect_id": "T01-2017/DJI_0448_05_05/d1",
       "defect_type": "dirt",
       "severity": 1,
-      "rationale": "Dark streaky marks and light scuffs on white paint with no clear open crack, fibres or coating loss; close crop is blurry so damage cannot be confirmed.",
-      "confidence": 0.45,
+      "rationale": "Close crop is blurry and shows only faint grey scuff-like marks with paint appearing intact, no clear coating loss, fibres or open crack.",
+      "confidence": 0.35,
       "rubric_version": "v1",
       "prompt_version": "assess/v1",
       "model": "muse-spark-1.3",

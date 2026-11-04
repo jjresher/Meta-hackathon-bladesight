@@ -139,7 +139,7 @@
          54.0
         ],
         [
-         137.0,
+         136.0,
          56.0
         ],
         [
@@ -151,7 +151,7 @@
          60.0
         ],
         [
-         137.0,
+         136.0,
          62.0
         ],
         [
@@ -167,7 +167,7 @@
          68.0
         ],
         [
-         135.0,
+         134.0,
          70.0
         ],
         [
@@ -231,7 +231,7 @@
          100.0
         ],
         [
-         131.0,
+         130.0,
          102.0
         ],
         [
@@ -247,7 +247,7 @@
          108.0
         ],
         [
-         131.0,
+         130.0,
          110.0
         ],
         [
@@ -255,7 +255,7 @@
          112.0
         ],
         [
-         133.0,
+         132.0,
          114.0
         ],
         [
@@ -363,7 +363,7 @@
          166.0
         ],
         [
-         121.0,
+         120.0,
          168.0
         ],
         [
@@ -499,7 +499,7 @@
          234.0
         ],
         [
-         117.0,
+         116.0,
          236.0
         ],
         [
@@ -559,7 +559,7 @@
          264.0
         ],
         [
-         111.0,
+         110.0,
          266.0
         ],
         [
@@ -583,39 +583,39 @@
          276.0
         ],
         [
-         112.0,
+         111.0,
          278.0
         ],
         [
-         109.0,
+         108.0,
          280.0
         ],
         [
-         109.0,
+         108.0,
          282.0
         ],
         [
-         109.0,
+         108.0,
          284.0
         ],
         [
-         110.0,
+         108.0,
          286.0
         ],
         [
-         111.0,
+         108.0,
          288.0
         ],
         [
-         111.0,
+         109.0,
          290.0
         ],
         [
-         111.0,
+         109.0,
          292.0
         ],
         [
-         111.0,
+         109.0,
          294.0
         ],
         [
@@ -719,7 +719,7 @@
          344.0
         ],
         [
-         107.0,
+         106.0,
          346.0
         ],
         [
@@ -1139,7 +1139,7 @@
          188.0
         ],
         [
-         108.0,
+         109.0,
          186.0
         ],
         [
@@ -1315,7 +1315,7 @@
          100.0
         ],
         [
-         121.0,
+         122.0,
          98.0
         ],
         [
@@ -1379,7 +1379,7 @@
          68.0
         ],
         [
-         124.0,
+         125.0,
          66.0
         ],
         [
@@ -1411,7 +1411,7 @@
          52.0
         ],
         [
-         129.0,
+         130.0,
          50.0
         ],
         [
@@ -1508,16 +1508,16 @@
         ]
        ]
       ],
-      "mask_area_px": 2660.0
+      "mask_area_px": 2585.0
      },
      "measurement": {
       "defect_id": "T01-2018/DJI_0681_06_09/d2",
-      "area_px": 2660.0,
-      "tile_area_ratio": 0.012235172902311804,
+      "area_px": 2585.0,
+      "tile_area_ratio": 0.011890196222735343,
       "blade_area_ratio": null,
-      "length_px": 368.979500372402,
-      "width_px": 25.308884629723266,
-      "elongation": 0.931408,
+      "length_px": 368.9834716971713,
+      "width_px": 25.14532152684292,
+      "elongation": 0.931852,
       "inside_blade": null,
       "position": "unknown",
       "position_t": null,
@@ -1527,8 +1527,8 @@
       "defect_id": "T01-2018/DJI_0681_06_09/d2",
       "defect_type": "crack",
       "severity": 3,
-      "rationale": "Long thin vertical linear defect with intermittent dark paint/coating loss and chipping along its length consistent with a crack/hairline mark; image is low-res/cropped with no visible blade width for scale and openness/fibres not clearly resolved.",
-      "confidence": 0.52,
+      "rationale": "Blurry vertical thin line with intermittent dark chips/paint loss spanning most of the frame height. Both crops are identical tight blurry crops with no visible blade edges, width or scale, so cannot confirm a clearly open long crack versus a short hairline mark/patchy coating loss.",
+      "confidence": 0.32,
       "rubric_version": "v1",
       "prompt_version": "assess/v1",
       "model": "meta-models/muse-spark-open",
@@ -1553,12 +1553,12 @@
        {
         "name": "severity_vs_size",
         "passed": true,
-        "detail": "severity 3 fits 1.22% of the photo"
+        "detail": "severity 3 fits 1.19% of the photo"
        }
       ],
       "reasons": [
        "both looks agree on severity 3",
-       "combined confidence 0.52",
+       "combined confidence 0.32",
        "all rule checks passed"
       ],
       "model": "meta-models/muse-spark-open",
@@ -2341,7 +2341,7 @@
       "bbox": {
        "x1": 371.0,
        "y1": 0.0,
-       "x2": 504.0,
+       "x2": 499.0,
        "y2": 41.0
       },
       "outline": [
@@ -2359,11 +2359,11 @@
          4.0
         ],
         [
-         504.0,
+         497.0,
          6.0
         ],
         [
-         502.0,
+         499.0,
          8.0
         ],
         [
@@ -2516,16 +2516,16 @@
         ]
        ]
       ],
-      "mask_area_px": 3494.0
+      "mask_area_px": 3491.0
      },
      "measurement": {
       "defect_id": "T01-2018/DJI_0391_06_05/d2",
-      "area_px": 3494.0,
-      "tile_area_ratio": 0.016071313579202044,
+      "area_px": 3491.0,
+      "tile_area_ratio": 0.016057514512018988,
       "blade_area_ratio": null,
-      "length_px": 135.13019374986544,
-      "width_px": 40.63882755067327,
-      "elongation": 0.699262,
+      "length_px": 129.95812723211156,
+      "width_px": 40.64157859537746,
+      "elongation": 0.687272,
       "inside_blade": null,
       "position": "unknown",
       "position_t": null,
@@ -2533,10 +2533,10 @@
      },
      "assessment": {
       "defect_id": "T01-2018/DJI_0391_06_05/d2",
-      "defect_type": "crack",
-      "severity": 2,
-      "rationale": "Both crops are extremely blurry/low-resolution with no blade-width scale; only a thin curved brownish line along a seam/edge and faint streaking is visible with no clearly open crack, delamination or exposed fibres to confirm serious damage.",
-      "confidence": 0.19,
+      "defect_type": "dirt",
+      "severity": 1,
+      "rationale": "Image is too blurry/low-resolution to grade definitively; only faint dark staining/streaks and a thin curved line likely a seam/shadow are visible with no clear open crack, coating loss, or exposed fibres, and extent is small relative to visible blade width.",
+      "confidence": 0.28,
       "rubric_version": "v1",
       "prompt_version": "assess/v1",
       "model": "meta-models/muse-spark-open",
@@ -2545,7 +2545,7 @@
      "verification": {
       "defect_id": "T01-2018/DJI_0391_06_05/d2",
       "verdict": "needs_review",
-      "agreement": 0.75,
+      "agreement": 1.0,
       "second_severity": 1,
       "checks": [
        {
@@ -2561,12 +2561,11 @@
        {
         "name": "severity_vs_size",
         "passed": true,
-        "detail": "severity 2 fits 1.61% of the photo"
+        "detail": "severity 1 fits 1.61% of the photo"
        }
       ],
       "reasons": [
-       "the two looks differ by 1 severity level",
-       "combined confidence 0.19 is below 0.3",
+       "combined confidence 0.25 is below 0.3",
        "rule check failed: detector_score (detector confidence 0.01)"
       ],
       "model": "meta-models/muse-spark-open",

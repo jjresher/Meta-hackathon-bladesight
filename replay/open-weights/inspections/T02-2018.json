@@ -6,7 +6,7 @@
   "n_images": 4,
   "n_defects": 5,
   "max_severity": 3,
-  "n_needs_review": 3,
+  "n_needs_review": 2,
   "n_reinspect": 0
  },
  "images": [
@@ -37,7 +37,7 @@
       "score": 0.90234375,
       "bbox": {
        "x1": 415.0,
-       "y1": 98.0,
+       "y1": 99.0,
        "x2": 460.0,
        "y2": 140.0
       },
@@ -45,87 +45,83 @@
        [
         [
          441.0,
-         98.0
+         99.0
         ],
         [
-         443.0,
-         100.0
+         444.0,
+         101.0
         ],
         [
          445.0,
-         102.0
-        ],
-        [
-         446.0,
-         104.0
-        ],
-        [
-         449.0,
-         106.0
-        ],
-        [
-         450.0,
-         108.0
-        ],
-        [
-         452.0,
-         110.0
-        ],
-        [
-         453.0,
-         112.0
-        ],
-        [
-         455.0,
-         114.0
-        ],
-        [
-         457.0,
-         116.0
-        ],
-        [
-         458.0,
-         118.0
-        ],
-        [
-         459.0,
-         120.0
-        ],
-        [
-         460.0,
-         122.0
-        ],
-        [
-         458.0,
-         124.0
-        ],
-        [
-         456.0,
-         126.0
-        ],
-        [
-         453.0,
-         128.0
-        ],
-        [
-         450.0,
-         130.0
+         103.0
         ],
         [
          447.0,
-         132.0
+         105.0
         ],
         [
-         445.0,
-         134.0
+         450.0,
+         107.0
         ],
         [
-         442.0,
-         136.0
+         451.0,
+         109.0
         ],
         [
-         439.0,
-         138.0
+         453.0,
+         111.0
+        ],
+        [
+         454.0,
+         113.0
+        ],
+        [
+         456.0,
+         115.0
+        ],
+        [
+         458.0,
+         117.0
+        ],
+        [
+         459.0,
+         119.0
+        ],
+        [
+         460.0,
+         121.0
+        ],
+        [
+         459.0,
+         123.0
+        ],
+        [
+         457.0,
+         125.0
+        ],
+        [
+         454.0,
+         127.0
+        ],
+        [
+         451.0,
+         129.0
+        ],
+        [
+         448.0,
+         131.0
+        ],
+        [
+         446.0,
+         133.0
+        ],
+        [
+         444.0,
+         135.0
+        ],
+        [
+         440.0,
+         137.0
         ],
         [
          437.0,
@@ -136,101 +132,97 @@
          139.0
         ],
         [
-         436.0,
-         138.0
-        ],
-        [
          435.0,
-         136.0
+         137.0
         ],
         [
          434.0,
-         134.0
-        ],
-        [
-         430.0,
-         132.0
-        ],
-        [
-         427.0,
-         130.0
-        ],
-        [
-         425.0,
-         128.0
-        ],
-        [
-         424.0,
-         126.0
-        ],
-        [
-         421.0,
-         124.0
-        ],
-        [
-         420.0,
-         122.0
-        ],
-        [
-         418.0,
-         120.0
-        ],
-        [
-         417.0,
-         118.0
-        ],
-        [
-         415.0,
-         116.0
-        ],
-        [
-         416.0,
-         114.0
-        ],
-        [
-         418.0,
-         112.0
-        ],
-        [
-         421.0,
-         110.0
-        ],
-        [
-         423.0,
-         108.0
-        ],
-        [
-         425.0,
-         106.0
-        ],
-        [
-         428.0,
-         104.0
+         135.0
         ],
         [
          432.0,
-         102.0
+         133.0
         ],
         [
-         435.0,
-         100.0
+         428.0,
+         131.0
         ],
         [
-         438.0,
-         98.0
+         426.0,
+         129.0
+        ],
+        [
+         425.0,
+         127.0
+        ],
+        [
+         422.0,
+         125.0
+        ],
+        [
+         421.0,
+         123.0
+        ],
+        [
+         419.0,
+         121.0
+        ],
+        [
+         417.0,
+         119.0
+        ],
+        [
+         416.0,
+         117.0
+        ],
+        [
+         415.0,
+         115.0
+        ],
+        [
+         417.0,
+         113.0
+        ],
+        [
+         420.0,
+         111.0
+        ],
+        [
+         422.0,
+         109.0
+        ],
+        [
+         424.0,
+         107.0
+        ],
+        [
+         427.0,
+         105.0
+        ],
+        [
+         430.0,
+         103.0
+        ],
+        [
+         434.0,
+         101.0
+        ],
+        [
+         437.0,
+         99.0
         ]
        ]
       ],
-      "mask_area_px": 1039.0
+      "mask_area_px": 1034.0
      },
      "measurement": {
       "defect_id": "T02-2018/DJI_0711_01_04/d1",
-      "area_px": 1039.0,
-      "tile_area_ratio": 0.004779076934399234,
+      "area_px": 1034.0,
+      "tile_area_ratio": 0.004756078489094137,
       "blade_area_ratio": null,
-      "length_px": 44.56099139417029,
-      "width_px": 40.68049480686799,
-      "elongation": 0.087083,
+      "length_px": 44.75077575971528,
+      "width_px": 39.967693933779195,
+      "elongation": 0.106883,
       "inside_blade": null,
       "position": "unknown",
       "position_t": null,
@@ -240,8 +232,8 @@
       "defect_id": "T02-2018/DJI_0711_01_04/d1",
       "defect_type": "surface_damage",
       "severity": 3,
-      "rationale": "Blurry compact brown-white patch on the blade edge showing paint/coating loss over a small patch with no clear open crack or exposed fibres; defect is small relative to visible blade width but resolution is too low to confirm substrate detail.",
-      "confidence": 0.38,
+      "rationale": "Both crops are extremely blurry/low-resolution and show a compact mottled brown patch on the blade edge consistent with paint/coating loss over a patch with substrate possibly showing but no visible fibres or open crack. Resolution is too low to reliably distinguish dirt from erosion or to judge extent against blade width, so grading is uncertain.",
+      "confidence": 0.33,
       "rubric_version": "v1",
       "prompt_version": "assess/v1",
       "model": "meta-models/muse-spark-open",
@@ -271,7 +263,7 @@
       ],
       "reasons": [
        "both looks agree on severity 3",
-       "combined confidence 0.38",
+       "combined confidence 0.33",
        "all rule checks passed"
       ],
       "model": "meta-models/muse-spark-open",
@@ -1187,7 +1179,7 @@
       "bbox": {
        "x1": 100.0,
        "y1": 114.0,
-       "x2": 131.0,
+       "x2": 129.0,
        "y2": 179.0
       },
       "outline": [
@@ -1229,7 +1221,7 @@
          130.0
         ],
         [
-         118.0,
+         117.0,
          132.0
         ],
         [
@@ -1237,7 +1229,7 @@
          134.0
         ],
         [
-         120.0,
+         119.0,
          136.0
         ],
         [
@@ -1245,51 +1237,51 @@
          138.0
         ],
         [
-         125.0,
+         122.0,
          140.0
         ],
         [
-         126.0,
+         124.0,
          142.0
         ],
         [
-         128.0,
+         126.0,
          144.0
         ],
         [
-         128.0,
+         127.0,
          146.0
         ],
         [
-         129.0,
+         128.0,
          148.0
         ],
         [
-         130.0,
+         128.0,
          150.0
         ],
         [
-         131.0,
+         129.0,
          152.0
         ],
         [
-         131.0,
+         129.0,
          154.0
         ],
         [
-         131.0,
+         129.0,
          156.0
         ],
         [
-         131.0,
+         129.0,
          158.0
         ],
         [
-         131.0,
+         129.0,
          160.0
         ],
         [
-         130.0,
+         128.0,
          162.0
         ],
         [
@@ -1373,11 +1365,11 @@
          156.0
         ],
         [
-         105.0,
+         106.0,
          154.0
         ],
         [
-         104.0,
+         105.0,
          152.0
         ],
         [
@@ -1385,19 +1377,19 @@
          150.0
         ],
         [
-         103.0,
+         104.0,
          148.0
         ],
         [
-         102.0,
+         103.0,
          146.0
         ],
         [
-         101.0,
+         102.0,
          144.0
         ],
         [
-         100.0,
+         101.0,
          142.0
         ],
         [
@@ -1413,7 +1405,7 @@
          136.0
         ],
         [
-         100.0,
+         101.0,
          134.0
         ],
         [
@@ -1458,16 +1450,16 @@
         ]
        ]
       ],
-      "mask_area_px": 1119.0
+      "mask_area_px": 1052.0
      },
      "measurement": {
       "defect_id": "T02-2018/DJI_0982_06_05/d5",
-      "area_px": 1119.0,
-      "tile_area_ratio": 0.005147052059280793,
+      "area_px": 1052.0,
+      "tile_area_ratio": 0.0048388728921924876,
       "blade_area_ratio": null,
-      "length_px": 67.41705645376499,
-      "width_px": 27.28584600060725,
-      "elongation": 0.595268,
+      "length_px": 67.45733438425586,
+      "width_px": 24.993514284751996,
+      "elongation": 0.629492,
       "inside_blade": null,
       "position": "unknown",
       "position_t": null,
@@ -1476,9 +1468,9 @@
      "assessment": {
       "defect_id": "T02-2018/DJI_0982_06_05/d5",
       "defect_type": "surface_damage",
-      "severity": 3,
-      "rationale": "Close crop shows patchy paint/coating loss with exposed substrate but no clearly open crack, delamination or visible fibres; extent is limited relative to visible width.",
-      "confidence": 0.48,
+      "severity": 2,
+      "rationale": "Crop is too blurry/low-res to grade confidently and shows no scale against the visible blade width. What is visible is patchy paint/coating loss with indistinct substrate but no clear open crack, fibres or delamination, so at most minor to moderate wear.",
+      "confidence": 0.33,
       "rubric_version": "v1",
       "prompt_version": "assess/v1",
       "model": "meta-models/muse-spark-open",
@@ -1486,8 +1478,8 @@
      },
      "verification": {
       "defect_id": "T02-2018/DJI_0982_06_05/d5",
-      "verdict": "needs_review",
-      "agreement": 0.75,
+      "verdict": "ok",
+      "agreement": 1.0,
       "second_severity": 2,
       "checks": [
        {
@@ -1503,11 +1495,13 @@
        {
         "name": "severity_vs_size",
         "passed": true,
-        "detail": "severity 3 fits 0.51% of the photo"
+        "detail": "severity 2 fits 0.48% of the photo"
        }
       ],
       "reasons": [
-       "the two looks differ by 1 severity level"
+       "both looks agree on severity 2",
+       "combined confidence 0.33",
+       "all rule checks passed"
       ],
       "model": "meta-models/muse-spark-open",
       "provider": "baseten"

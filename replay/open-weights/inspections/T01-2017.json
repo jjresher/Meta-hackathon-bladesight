@@ -6,7 +6,7 @@
   "n_images": 4,
   "n_defects": 4,
   "max_severity": 3,
-  "n_needs_review": 1,
+  "n_needs_review": 0,
   "n_reinspect": 1
  },
  "images": [
@@ -1402,16 +1402,16 @@
         ]
        ]
       ],
-      "mask_area_px": 3676.0
+      "mask_area_px": 3675.0
      },
      "measurement": {
       "defect_id": "T01-2017/DJI_0448_05_05/d1",
-      "area_px": 3676.0,
-      "tile_area_ratio": 0.01690845698830759,
+      "area_px": 3675.0,
+      "tile_area_ratio": 0.01690385729924657,
       "blade_area_ratio": null,
-      "length_px": 91.01998139960065,
-      "width_px": 77.15149893166583,
-      "elongation": 0.152367,
+      "length_px": 91.00685001593686,
+      "width_px": 77.14264652269104,
+      "elongation": 0.152342,
       "inside_blade": null,
       "position": "unknown",
       "position_t": null,
@@ -1419,10 +1419,10 @@
      },
      "assessment": {
       "defect_id": "T01-2017/DJI_0448_05_05/d1",
-      "defect_type": "dirt",
-      "severity": 1,
-      "rationale": "Close crop is very blurry/low-res and shows faint irregular grey-brown smudgy patches on white surface with no clearly open crack, exposed fibres or distinct paint loss, most consistent with dirt/staining; blur prevents ruling out minor wear so choose lower level.",
-      "confidence": 0.35,
+      "defect_type": "surface_damage",
+      "severity": 2,
+      "rationale": "Both crops are blurry low-resolution with scattered dark patchy marks on white coating; possible small paint chips/coating loss vs dirt cannot be resolved, no open crack or fibres visible and extent is small versus visible blade chord.",
+      "confidence": 0.34,
       "rubric_version": "v1",
       "prompt_version": "assess/v1",
       "model": "meta-models/muse-spark-open",
@@ -1430,8 +1430,8 @@
      },
      "verification": {
       "defect_id": "T01-2017/DJI_0448_05_05/d1",
-      "verdict": "needs_review",
-      "agreement": 0.75,
+      "verdict": "ok",
+      "agreement": 1.0,
       "second_severity": 2,
       "checks": [
        {
@@ -1447,11 +1447,13 @@
        {
         "name": "severity_vs_size",
         "passed": true,
-        "detail": "severity 1 fits 1.69% of the photo"
+        "detail": "severity 2 fits 1.69% of the photo"
        }
       ],
       "reasons": [
-       "the two looks differ by 1 severity level"
+       "both looks agree on severity 2",
+       "combined confidence 0.34",
+       "all rule checks passed"
       ],
       "model": "meta-models/muse-spark-open",
       "provider": "baseten"
