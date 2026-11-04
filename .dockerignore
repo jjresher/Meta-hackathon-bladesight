@@ -2,8 +2,8 @@
 .venv
 .cache
 .spend
-.env
-.env.*
+**/.env
+**/.env.*
 data
 outputs
 runs

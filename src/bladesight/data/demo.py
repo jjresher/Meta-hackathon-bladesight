@@ -43,6 +43,18 @@ class _Stream:
         return data
 
 
+HELDOUT_MANIFEST = Path(__file__).resolve().parents[3] / "eval" / "heldout_manifest.sha256"
+
+
+def heldout_ids(manifest: Path | None = None) -> set[str]:
+    """Tile ids listed in the committed held-out manifest (names only, no file is read)."""
+    manifest = manifest or HELDOUT_MANIFEST
+    if not manifest.exists():
+        return set()
+    names = (line.partition("  ")[2] for line in manifest.read_text("utf-8").splitlines())
+    return {Path(n).stem for n in names if n.startswith("heldout/img/")}
+
+
 def tile_ids_from_replay(replay_dir: Path) -> set[str]:
     ids: set[str] = set()
     for path in (replay_dir / "inspections").glob("*.json"):
@@ -50,6 +62,8 @@ def tile_ids_from_replay(replay_dir: Path) -> set[str]:
             ids.add(image["tile_id"])
     for tile_id in ids:
         TileLabel.parse_tile_id(tile_id)  # also rejects anything that is not a DTU tile id
+    if banned := ids & heldout_ids():
+        raise ValueError(f"the replay store names held-out tiles: {sorted(banned)[:3]}")
     return ids
 
 

@@ -82,7 +82,7 @@ def test_dockerfile_is_replay_only_and_never_copies_data_or_secrets(needle: str)
     assert needle in text
     assert "COPY data" not in text and ".env" not in text.replace("BLADESIGHT_", "")
     ignore = (ROOT / ".dockerignore").read_text(encoding="utf-8")
-    assert "data" in ignore.split() and ".env" in ignore.split()
+    assert "data" in ignore.split() and "**/.env" in ignore.split()
 
 
 def test_render_blueprint_sets_replay_and_a_health_check_and_no_secret() -> None:
@@ -103,3 +103,31 @@ def test_a_web_dir_without_an_index_does_not_break_the_api(tmp_path: Path) -> No
     assert client.get("/").status_code == 404
     assert client.get("/api/health").status_code == 200
     assert [f for f in check(client, ui=False) if "/api/fleet" in f or "/api/health" in f] == []
+
+
+def test_a_held_out_tile_in_the_replay_store_is_refused(tmp_path: Path) -> None:
+    from bladesight.data import demo
+
+    store = make_store(tmp_path)
+    manifest = tmp_path / "manifest.sha256"
+    manifest.write_text("0" * 64 + "  heldout/img/DJI_0001_01_01.png\n", encoding="utf-8")
+    assert demo.heldout_ids(manifest) == {"DJI_0001_01_01"}
+    original = demo.HELDOUT_MANIFEST
+    demo.HELDOUT_MANIFEST = manifest
+    try:
+        with pytest.raises(ValueError):
+            demo.tile_ids_from_replay(store.root)
+    finally:
+        demo.HELDOUT_MANIFEST = original
+
+
+def test_a_failed_download_degrades_to_a_warning(tmp_path: Path, monkeypatch) -> None:
+    import httpx
+
+    from bladesight.data import demo
+
+    store = make_store(tmp_path)
+    monkeypatch.setattr(
+        demo, "fetch", lambda *a, **k: (_ for _ in ()).throw(httpx.ConnectError("x"))
+    )
+    assert demo.main(["--replay-dir", str(store.root), "--data-dir", str(tmp_path / "d")]) == 0

@@ -3,9 +3,10 @@ services:
   - type: web
     name: bladesight
     runtime: docker
-    plan: starter            # paid instance: it does not sleep during judging (Nov 5-16)
+    plan: starter            # PAID (about 7 USD/month at list price): no sleep during judging
+                             # (Nov 5-16); downgrade or delete the service after Nov 16
     healthCheckPath: /api/health
-    autoDeploy: false
+    autoDeploy: false        # merging does not redeploy: trigger deploys by hand
     envVars:
       - key: BLADESIGHT_MODE
         value: replay
