@@ -57,7 +57,7 @@ export default function App() {
       </a>
       <header className="app-header">
         <NavLink to="/" className="app-brand" aria-label="BladeSight, fleet">
-          <BrandMark size={30} />
+          <BrandMark size={26} />
           <span className="app-brand__text">
             <span className="app-brand__name">BladeSight</span>
             <span className="app-brand__tagline">Synthetic farm of real DTU photos</span>

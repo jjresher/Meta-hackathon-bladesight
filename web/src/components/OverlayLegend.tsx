@@ -21,7 +21,7 @@ export default function OverlayLegend() {
       </h2>
       <ul className="legend__items">
         {ORDER.map((verdict) => (
-          <li key={verdict} className="legend__item" data-testid={`legend-${verdict}`}>
+          <li key={verdict} className="legend__item" data-testid={`legend-${verdict}`} title={MEANING[verdict]}>
             <span className={`legend__glyph photo__tag--${verdict}`} aria-hidden="true">
               {GLYPH[verdict]}
             </span>

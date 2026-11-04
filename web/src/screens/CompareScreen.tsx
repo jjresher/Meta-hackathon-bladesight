@@ -131,7 +131,6 @@ function Body({ sides }: { sides: Side[] }) {
   return (
     <>
       <header className="page-head">
-        <p className="eyebrow">Compare runs</p>
         <h1>Two models on the same detections</h1>
         <p className="lede">
           The farm was graded, verified and planned twice. These are counts of where the two models agree, not accuracy:

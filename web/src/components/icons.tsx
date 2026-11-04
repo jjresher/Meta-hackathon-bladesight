@@ -119,9 +119,9 @@ export function BrandMark({ size = 34 }: { size?: number }) {
       focusable="false"
       className="app-brand__mark"
     >
-      <rect width="34" height="34" rx="7" fill="var(--accent)" />
-      <g transform="translate(17 17)" fill="var(--accent-ink)">
-        <circle r="2.4" />
+      <circle cx="17" cy="17" r="15.5" fill="none" stroke="var(--accent)" strokeWidth="1.5" strokeDasharray="20.3 4" strokeDashoffset="10.15" />
+      <g transform="translate(17 17)" fill="var(--text)">
+        <circle r="2.2" fill="var(--accent)" />
         <g>
           <path d="M0 -2 C 1.2 -7 1 -10.5 0 -12.5 C -1 -10.5 -1.2 -7 0 -2 Z" />
           <path d="M0 -2 C 1.2 -7 1 -10.5 0 -12.5 C -1 -10.5 -1.2 -7 0 -2 Z" transform="rotate(120)" />

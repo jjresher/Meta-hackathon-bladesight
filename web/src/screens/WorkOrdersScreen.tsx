@@ -118,7 +118,6 @@ function Body({ orders, report }: { orders: WorkOrder[]; report: AsyncState<Repo
   return (
     <>
       <header className="page-head">
-        <p className="eyebrow">Work orders</p>
         <h1>
           {count("repair")} to repair, {count("reinspect")} to reinspect
         </h1>
@@ -144,7 +143,7 @@ function Body({ orders, report }: { orders: WorkOrder[]; report: AsyncState<Repo
             ))}
           </div>
           {shown.length === 0 ? (
-            <p className="note">
+            <p className="note note--empty">
               <InfoIcon className="note__icon" />
               <span>No work orders of this kind.</span>
             </p>
@@ -159,7 +158,7 @@ function Body({ orders, report }: { orders: WorkOrder[]; report: AsyncState<Repo
         {report.status === "loading" && <Loading what="the report" />}
         {report.status === "ready" && report.data && <ReportPanel report={report.data} />}
         {report.status === "ready" && !report.data && (
-          <p className="note">
+          <p className="note note--empty">
             <InfoIcon className="note__icon" />
             <span>No report has been written yet.</span>
           </p>

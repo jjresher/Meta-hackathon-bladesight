@@ -150,7 +150,7 @@ function InspectionBody({ inspection, fleet, orders }: { inspection: Inspection;
 
   if (!image) {
     return (
-      <p className="note">
+      <p className="note note--empty">
         <InfoIcon className="note__icon" />
         <span>This inspection has no tiles.</span>
       </p>
