@@ -16,14 +16,14 @@ All times COT (UTC-5). Official deadline: **Wed Nov 4, 9:00 PM COT** (9:00 PM ET
 | Repo (public, MIT) | https://github.com/jjresher/Meta-hackathon-bladesight |
 | Live URL | https://bladesight.onrender.com (replay mode, no login; Render Free plan, auto-deploy on commit to `main`). Cold start 21.5 s after 3.5 h idle, smoke OK in 1.9 s, 390x844 phone viewport passed on five screens ([`deploy.md`](../evidence/deploy.md)). Open it once and wait before recording or sharing |
 | Video | <https://youtu.be/xJRrVH76CBA> (2:55, from [`video_script.md`](video_script.md)), public, opens without login |
-| X post | **human:** link of the post with #MetaAIHackathon (texts in [`launch.md`](launch.md), issue #21) |
+| X post | None, by decision (issue #21); the community-vote link will be shared once the gallery opens |
 | Models used | Muse Spark `muse-spark-1.3` and SAM 3.1 `sam-3.1` (Meta Model API); Muse Spark Open `meta-models/muse-spark-open` (Baseten) for severity, verification, the agent and the report in the second run |
 | Bonus: Best Agentic Use-Case | **yes**: fleet agent choosing its own calls over seven tools, rules enforced by the tools, re-inspection instead of repair for unverified defects, full trace in the UI ([`fleet_run.md`](../evidence/fleet_run.md), README "Why it is agentic"). Say plainly that no stored run triggered a rule rejection |
 | Bonus: Build on Meta Open Weight Models | **yes, scoped**: the whole planning half (severity, second look, agent with tool calls, report) ran end to end on Muse Spark Open and is the second run in the live demo (run selector, Compare runs); detection stays on SAM 3.1 via the Model API, which has no open-weights path ([`open_weights.md`](../evidence/open_weights.md), [`open_weights_farm.md`](../evidence/open_weights_farm.md)). Never claim the whole pipeline runs on open weights or that the open model is better |
-| Bonus: Most Viral / Community Vote | via the X post and the gallery (#21); nothing to flag in the form beyond the post link |
+| Bonus: Most Viral / Community Vote | via the gallery (#21); nothing to flag in the form |
 | Bonus: Best Creative Build | not targeted |
 | Data | DTU drone images (CC BY-NC 3.0) and the YOLO-annotated derivative (CC BY-NC 4.0), [`DATA.md`](../../DATA.md) |
-| Short description (form) | Drone photos of wind turbine blades go in; a verified, prioritized repair plan comes out. Muse Spark proposes damage boxes and SAM 3.1 segments them with no training; Muse Spark grades each defect against a written rubric; a second look marks it ok, needs review or re-inspect; a fleet agent with seven tools reads a deterministic ranking of a synthetic 12-turbine farm, writes repair orders that can only cite verified defects, and asks for re-inspection of the rest. The planning half also runs on Muse Spark Open. Detection was measured once on a preregistered held-out split. |
+| Short description (form) | Drone photos of wind turbine blades go in; a verified, prioritized repair plan comes out. Muse Spark proposes damage boxes and SAM 3.1 segments them with no training; Muse Spark grades each defect against a written rubric; a second look marks it ok, needs review or re-inspect; a fleet agent with seven tools reads a deterministic ranking of a synthetic 12-turbine farm, writes repair orders that can only cite verified defects, and requests re-inspection for some unverified defects (19 of 63 in the Muse Spark run). The planning half also runs on Muse Spark Open. The first detector was measured once on a preregistered held-out split; the demo runs a later detector, measured on a preregistered fresh dev set, not on held-out. |
 
 ## Done (with evidence)
 
@@ -50,13 +50,13 @@ Estimates are wall-clock. Steps 1-8 fit before the 13:00 freeze; the video is th
 | 1 | by 08:00 | Review and merge the README / checklist / video-script PR (#18, #19, #20). Detection v2 (#22): the result is merged (PR #58); the integration PR moves the demo to v2 and adds its README row, linked to its evidence file. Merge it only if it is green and audited. | 20 min |
 | 2 | by 08:15 | Close stale PR #47 (superseded by #46 and #49; optionally move its "How this compares with the dev run" paragraph first, see [`dod_audit.md`](dod_audit.md)). | 5 min |
 | 3 | by 08:30 | Attach screenshots as PR comments (not commits): the 5 overlay PNGs from `bladesight-wt/i5/outputs/detect/` on PR #28 (issue #5 DoD), and the 1280 and 390 px screenshots from `bladesight-screenshots/` on PR #44 (issue #13 DoD); tick those boxes and close #13. Keep the CC BY-NC attribution in the comment. | 15 min |
-| 4 | by 08:45 | Open https://bladesight.onrender.com on a real phone (wake it first, allow up to a minute): fleet, an inspection, a work order, the run selector. Tick "public URL works from a phone" on #14 and close it. | 10 min |
+| 4 | by 08:45 | Done: the owner confirmed the URL on a real phone (comment on #14). | 10 min |
 | 5 | before recording | Wake the URL by hand before recording and before the submission checks (12-22 s in the two cold samples, `docs/evidence/deploy.md`). During judging the external cron-job.org job (`GET /api/health` every 10 minutes since Nov 4, 16:10 COT) keeps it awake; the GitHub Actions workflow is only a backup. | 5 min |
 | 6 | 09:00-11:30 | Record the video (#19) from [`video_script.md`](video_script.md) against the live URL: wake it, 1280x720 browser window, replay mode only; edit to 3:00 or less, English captions. | 2 h 30 |
 | 7 | 11:30-12:00 | Upload (YouTube or Vimeo, public or unlisted); check the length and that it opens in an incognito window. Tick the #19 DoD boxes. | 30 min |
 | 8 | before 13:00 | Code freeze: last merge to `main`, CI green (`gh run list --branch main`), Render redeployed, smoke passes (`uv run python -m bladesight.api.smoke https://bladesight.onrender.com`). | 15 min |
-| 9 | 13:00-13:20 | Put the video link in the README (replace the `VIDEO_URL` placeholder and its TODO comment) and in this table; small docs PR, merge. A README change rebuilds the Docker layer that streams the tiles: if the archive host is slow the deploy can take long or fail, and the previous deploy stays live (the README on GitHub still shows the link). Afterwards check the deploy status in the Render dashboard: the smoke check also passes on the old deploy after a failed build. | 20 min |
-| 10 | 13:20-14:00 | X post (#21): ask in Discord `#questions` which Meta account to tag (if still unanswered, post without it); replace `<demo URL>`, `<video URL>`, `<Meta account>` in the [`launch.md`](launch.md) texts, check the X counter, post, copy the link. | 40 min |
+| 9 | 13:00-13:20 | Done: the video link is in the README and in this table (#70). For any later README change: small docs PR, merge. A README change rebuilds the Docker layer that streams the tiles: if the archive host is slow the deploy can take long or fail, and the previous deploy stays live (the README on GitHub still shows the link). Afterwards check the deploy status in the Render dashboard: the smoke check also passes on the old deploy after a failed build. | 20 min |
+| 10 | 13:20-14:00 | Skipped: no X post, by decision (#21). | 0 min |
 | 11 | 14:00-15:00 | Fill the submission form from "Facts for the form": track, challenge, repo, live URL, video, X post, contributors, bonus flags (agentic yes; open weights yes, scoped as written). | 1 h |
 | 12 | before sending | Incognito check of every link in the form: repo, README renders with the diagram, live URL (wake it), video, X post. | 15 min |
 | 13 | by 18:00 | Send. Keep the confirmation (screenshot). Tick the #20 DoD and close #18, #19, #20 when their boxes are met. | 10 min |
@@ -69,9 +69,9 @@ the form with the main post only.
 
 - [ ] `main` is green in CI and the last merge is the one you want judged (`gh run list --branch main`)
 - [ ] `README.md` shows the live URL and the video link
-- [ ] `uv run poe secrets-scan` passes: no secret, data, image or held-out file in git
-- [ ] `docs/limitations.md` is current; severity labels described only as one non-specialist applying the rubric
-- [ ] **human** The live URL opens on a real phone (#14)
+- [x] `uv run poe secrets-scan` passes: no secret, data, image or held-out file in git (Nov 4, final audit)
+- [x] `docs/limitations.md` is current (Nov 4, final audit); severity labels described only as one non-specialist applying the rubric
+- [x] **human** The live URL opens on a real phone (confirmed by the owner in a comment on #14)
 - [ ] **human** Video and live URL open from an incognito window (no login)
 - [ ] **human** Contributors (solo), track Indie, bonus flags as in the table above
 - [ ] **human** Confirmation received after submitting (screenshot kept)

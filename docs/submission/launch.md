@@ -1,7 +1,8 @@
 # Launch texts (issue #21)
 
 Ready-to-paste posts for X, LinkedIn and the hackathon Discord. Posting is the human's job; this
-file only holds the texts and the plan.
+file only holds the texts and the plan. **Update, Nov 4:** there is no X post, by decision (#21); the
+X text stays here unused.
 
 Rules the texts follow:
 
@@ -73,7 +74,7 @@ al.)" from 3/3 if it runs over.
 ## LinkedIn
 
 ```text
-Over the last nine days I built BladeSight, solo, for the Meta Global AI Developer Hackathon (Indie track).
+Over the last week I built BladeSight, solo, for the Meta Global AI Developer Hackathon (Indie track).
 
 The problem: wind farms collect large numbers of drone photos of blades, and people still review them by hand. BladeSight takes the photos and returns a prioritized repair plan, and it says "I am not sure" instead of guessing.
 
@@ -82,7 +83,7 @@ How it works:
 - Size and position are measured from the mask, in pixels: the photos carry no scale, so no invented millimetres.
 - Muse Spark grades each defect 1-5 against a written rubric and explains why.
 - A second, independent look plus rule checks decides: ok, needs_review or reinspect.
-- A fleet agent with tools ranks turbines, compares the 2017 and 2018 inspections and writes work orders. It picks its own tool calls, and when verification cannot confirm a defect it requests a re-inspection instead of a repair (6 of its 11 work orders on the demo farm); a repair order citing an unverified defect is rejected by the tool itself, not just by the prompt.
+- A fleet agent with tools ranks turbines, compares the 2017 and 2018 inspections and writes work orders. It picks its own tool calls, and when verification cannot confirm a defect it can only request a re-inspection, never a repair (6 of its 11 work orders on the demo farm, covering 19 of the 63 unconfirmed defects); a repair order citing an unverified defect is rejected by the tool itself, not just by the prompt.
 
 What I measured, once, with the first detector, on a preregistered held-out set of 760 tiles nobody tuned on: a damaged tile is flagged 70% of the time, with false alarms on 24% of clean tiles. Box-level scores are low (precision 0.19, recall 0.16), partly because most labelled defects are smaller than about 20x20 pixels. The demo runs a later detector, measured separately on a preregistered fresh dev set of 300 tiles (box F1 0.25 against 0.22, same false alarms); it was never measured on the held-out set. The severity grade agrees only weakly with a non-expert applying the rubric (kappa 0.12), so it is advisory, not a verdict. The planning half (grading, verification, the agent and its report) also runs on Muse Spark Open, Meta's open-weights model, on Baseten; detection (Muse Spark boxes + SAM 3.1 masks) stays on the Meta Model API. On the same 98 defects the two models gave the same severity to 78 and the same verdict to 64.
 
