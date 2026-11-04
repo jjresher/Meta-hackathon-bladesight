@@ -22,8 +22,13 @@ invoice-checked. As in `severity_agreement.md`, the labels are one non-specialis
 - The two models give the **same severity on 32 of the 40 crops** (`eval/gold/model_grades.csv`
   vs `model_grades_open_weights.csv`). Both grade mostly 1 and neither grades above 3.
 - The kappa difference (0.19 vs 0.12) is inside the overlap of the two intervals at n = 40:
-  we do not claim the open model is better, only that it is **comparable** on this check, with a
-  wide interval.
+  we do not claim the open model is better. Both agree only weakly with the rubric as applied by
+  the labeller (kappa near zero to 0.4, both grade mostly 1); the open model is **no worse** on this
+  small check.
+- The comparison is not controlled for reasoning: the API run used low reasoning effort and a
+  1,500-token budget, Baseten's model always reasons and had 6,000 tokens. The 2.8x cost ratio
+  reflects token volume at the rates in `spend.py` (documented prices), not a hosting-price
+  comparison.
 - Muse Spark Open reasons before it answers and the reasoning counts against the output budget: at
   1,500 tokens it returned an empty reply on 23 of 40 crops (that first attempt, 0.45 USD, was
   discarded and is why Baseten spend in total is about 0.89 USD); at 6,000 tokens all 40 were valid.

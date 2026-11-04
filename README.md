@@ -122,8 +122,8 @@ decision, spend and cut is in [`docs/decision_ledger.md`](docs/decision_ledger.m
 ## Models
 
 Meta Muse Spark (`muse-spark-1.3`) and SAM 3.1 (`sam-3.1`) through the Meta Model API. Muse Spark
-Open (`meta-models/muse-spark-open`, Baseten) was run on the severity gold set and is comparable to
-the API on that small check ([`open_weights.md`](docs/evidence/open_weights.md)); the agent, the
+Open (`meta-models/muse-spark-open`, Baseten) was run on the severity gold set and is no worse than
+the API on that small check (both agree only weakly with the labels) ([`open_weights.md`](docs/evidence/open_weights.md)); the agent, the
 report and detection run on the API only.
 
 ## License
