@@ -138,6 +138,26 @@ on the verdict of 64; the open model is more cautious on this farm (25 `ok` agai
 [`open_weights_farm.md`](docs/evidence/open_weights_farm.md)). We do not claim either model is
 better. In the UI, pick "Muse Spark Open (Baseten)" in the run selector or open **Compare runs**.
 
+The model id actually used on Baseten is exactly **`meta-models/muse-spark-open`**: it is the only
+Muse Spark id that `/v1/models` lists for this account (checked on Nov 4). The `-1026` id from the
+hackathon guide answers 404 ([`open_weights.md`](docs/evidence/open_weights.md)). To verify:
+
+```bash
+# the id Baseten resolves (a free listing, no model call; export BASETEN_API_KEY first)
+curl -s https://inference.baseten.co/v1/models -H "Authorization: Api-Key $BASETEN_API_KEY"
+
+# the stored Open run (no key, no model call)
+uv run poe serve
+curl -s http://127.0.0.1:8000/api/replays                   # which model ran each stage
+curl -s "http://127.0.0.1:8000/api/runs?provider=baseten"   # the Open agent trace
+
+# reproduce it live on Baseten (costs and prerequisites: "Live mode" under "Run it")
+BLADESIGHT_MODE=live uv run poe fleet regrade --chat-provider baseten \
+  --source-dir replay --replay-dir /tmp/bladesight-open --workers 3
+BLADESIGHT_MODE=live uv run poe fleet run --chat-provider baseten \
+  --replay-dir /tmp/bladesight-open --run-id run-open-check
+```
+
 ## Models
 
 | Stage | Muse Spark run (`replay/`, default) | Muse Spark Open run (`replay/open-weights/`) |

@@ -1,5 +1,9 @@
 # Definition-of-Done audit
 
+> **Snapshot of commit `7c92e77`, before detection v2.** Farm counts below are from that commit. The
+> current farm is 35 `ok` / 50 `needs_review` / 13 `reinspect` and 11 work orders:
+> [`fleet_run.md`](../evidence/fleet_run.md).
+
 Audited on 2026-11-03, about 23:40 COT (UTC-5), against `main` at commit
 [`7c92e77`](https://github.com/jjresher/Meta-hackathon-bladesight/commit/7c92e77e870c2335ea395adc23edd4de53d008e1).
 Scope: every checkbox of the closed issues #1-#13 and #16 (the plan's per-issue DoD in
