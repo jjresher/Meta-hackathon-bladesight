@@ -65,6 +65,13 @@ URL on a real phone stays a human check in `docs/submission/checklist.md`.
 
 ## Keep-alive
 
+**Update, Nov 4:** the keep-alive is now an external job on cron-job.org that requests the demo
+every 10 minutes. It is configured outside this repository, so its run history is not recorded
+here. The GitHub Actions workflow below stays in place as a second pinger; after the note below it
+had its first scheduled run (18:51Z, success). The rest of this section is the record of that
+workflow up to 10:27 COT, and "not keeping the demo warm" describes that workflow, not the external
+job. A cold start remains possible either way.
+
 The first schedule (`*/10 * * * *`, merged 08:50Z on Nov 4) produced no scheduled run in its first
 2.5 hours; only the manual run was green. GitHub's status page listed Actions as degraded from
 09:50Z, as part of an incident on Pull Requests, Git Operations and Issues, so that explains at most
