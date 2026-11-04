@@ -86,6 +86,14 @@ def test_eval_reads_the_evidence_json(parts) -> None:
     assert client.get("/api/eval").json()[0]["split"] == "dev"
 
 
+def test_eval_serves_the_committed_evidence_folder(parts) -> None:
+    _, settings, _ = parts
+    real = Settings(**{**settings.__dict__, "evidence_dir": Path("docs/evidence")})
+    response = TestClient(create_app(real)).get("/api/eval")
+    assert response.status_code == 200
+    assert [r["split"] for r in response.json()] == ["dev", "heldout"]
+
+
 def test_live_runs_are_refused_in_replay_mode_and_without_the_key(parts, tmp_path: Path) -> None:
     _, settings, client = parts
     assert client.post("/api/runs").status_code == 403
