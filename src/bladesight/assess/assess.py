@@ -63,11 +63,18 @@ def parse_assessment(text: str) -> dict[str, object]:
     return {**data, "rationale": rationale.strip()}
 
 
-def build_prompt(defect: Defect, measurement: Measurement, version: str = "v1") -> str:
+def build_prompt(
+    defect: Defect, measurement: Measurement, version: str = "v1", *, with_score: bool = True
+) -> str:
+    score_text = (
+        f"detector confidence {defect.score:.2f}"
+        if with_score
+        else "no detector confidence (an annotated box from the dataset)"
+    )
     return load_prompt(version).format(
         rubric_version=RUBRIC_VERSION,
         source=defect.source,
-        score=defect.score,
+        score_text=score_text,
         area_px=measurement.area_px,
         tile_share=measurement.tile_area_ratio,
         elongation=measurement.elongation,
@@ -83,13 +90,16 @@ def assess_defect(
     measurement: Measurement,
     *,
     provider: str = "meta",
+    crops: tuple[bytes, bytes] | None = None,
+    with_score: bool = True,
 ) -> Assessment:
-    close, wide = close_and_context(png, BBox.model_validate(defect.bbox))
+    """`crops` (close, context) overrides the default crops, e.g. the exact crops a human saw."""
+    close, wide = crops or close_and_context(png, BBox.model_validate(defect.bbox))
     images = [
         ImagePart(data=close, mime_type="image/png"),
         ImagePart(data=wide, mime_type="image/png"),
     ]
-    prompt = build_prompt(defect, measurement)
+    prompt = build_prompt(defect, measurement, with_score=with_score)
     problem = ""
     for attempt in range(2):
         text = (

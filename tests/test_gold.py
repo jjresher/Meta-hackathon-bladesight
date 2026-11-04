@@ -157,3 +157,26 @@ def test_relabelling_keeps_a_hand_written_note(tmp_path: Path) -> None:
 def test_select_gold_refuses_to_return_fewer_crops_than_asked() -> None:
     with pytest.raises(ValueError):
         select_gold(_tiles()[:20])
+
+
+def test_the_crops_the_labeller_saw_are_frozen() -> None:
+    """Pinned hashes: if these change, the model is compared on other images than the human saw."""
+    import hashlib
+    import io
+
+    from PIL import Image
+
+    from bladesight.contracts import BBox
+    from bladesight.eval.gold import _frozen_crop
+
+    image = Image.new("RGB", (586, 371))
+    for x in range(586):
+        for y in range(371):
+            image.putpixel((x, y), ((x * 7) % 256, (y * 11) % 256, ((x + y) * 3) % 256))
+    buffer = io.BytesIO()
+    image.save(buffer, format="PNG")
+    box = BBox(x1=100, y1=80, x2=140, y2=95)
+    close = hashlib.sha256(_frozen_crop(buffer.getvalue(), box, 0.4, 40.0)).hexdigest()
+    wide = hashlib.sha256(_frozen_crop(buffer.getvalue(), box, 3.0, 96.0)).hexdigest()
+    assert close == "33181fe83b48c47261de5e695bcbc98968747e84ba950b675c8362ca3265010e"
+    assert wide == "403cde2824270ce32901a478a396c9e7d3cd096f7975693062b054e5e867b8c3"
