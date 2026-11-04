@@ -187,7 +187,7 @@ def render_comparison(
         "measurements (Muse Spark box proposals + SAM 3.1 masks from the Meta run): only severity,",
         "the second look, the agent and the report changed model, so the differences below come",
         "from the chat model. n is small (96 defects, 12 turbines, one run each): these are",
-        "agreement counts between two models, not accuracy; neither run is ground truth.",
+        "agreement counts between two models, not accuracy; neither run is a reference label.",
         "",
         "## Per defect",
         "",
