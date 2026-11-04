@@ -82,6 +82,6 @@ The `keep-alive` workflow (`.github/workflows/keepalive.yml`) GETs `/api/health`
 try, up to
 5 tries 15 s apart (a cold wake fits), and fails the run on anything but HTTP 200 with
 `"status":"ok"`. Permissions: `contents: read` only. Limits: scheduled workflows run only from the
-default branch, so it starts working once merged to `main`; GitHub may delay or drop scheduled runs
+default branch; GitHub may delay or drop scheduled runs
 under load, so a cold start remains possible; one service awake all month uses at most 744 of the
 750 Free instance hours, which fits only while it is the workspace's only always-on Free service.
