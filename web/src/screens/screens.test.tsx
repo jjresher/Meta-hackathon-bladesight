@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { act, act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -50,6 +50,8 @@ describe("Inspection viewer", () => {
     open("/inspections/T03-2018");
     const photo = await screen.findByTestId("photo-viewer");
     const img = within(photo).getByRole("img", { name: /Drone photo/ });
+    // findBy can return before the viewer's reset effect has run: flush it, or it would undo the load.
+    await act(async () => {});
     fireEvent.load(img);
     return { photo, img };
   };
@@ -153,6 +155,7 @@ describe("Inspection viewer", () => {
     data.images[0].defects[0].verification = null;
     open("/inspections/T03-2018", { "/api/inspections/T03-2018": () => ({ body: data }) });
     const photo = await screen.findByTestId("photo-viewer");
+    await act(async () => {});
     fireEvent.load(within(photo).getByRole("img", { name: /Drone photo/ }));
     const tags = (await within(photo).findAllByTestId("box-tag")).map((t) => t.textContent);
     expect(tags).toEqual(["? d1", "◆ d2"]);
@@ -241,6 +244,7 @@ describe("real stored data", () => {
     const real = read("replay/inspections/T01-2018.json");
     open("/inspections/T01-2018", { "/api/inspections/T01-2018": () => ({ body: real }) });
     const photo = await screen.findByTestId("photo-viewer");
+    await act(async () => {});
     fireEvent.load(within(photo).getByRole("img", { name: /Drone photo/ }));
     expect((await within(photo).findAllByTestId("mask")).length).toBeGreaterThan(0);
     expect(screen.getByTestId("toggle-blade")).toBeDisabled();
