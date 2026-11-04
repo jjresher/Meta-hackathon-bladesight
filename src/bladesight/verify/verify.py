@@ -88,6 +88,9 @@ def decide(
     second: Assessment | None,
     checks: list[Check],
     second_error: str | None = None,
+    *,
+    model: str | None = None,
+    provider: str | None = None,
 ) -> Verification:
     """Pure decision logic: no model call, fully testable."""
     t = THRESHOLDS
@@ -135,6 +138,8 @@ def decide(
             "second_severity": second_severity,
             "checks": checks,
             "reasons": reasons,
+            "model": second.model if second else model,
+            "provider": second.provider if second else provider,
         }
     )
 
@@ -146,6 +151,8 @@ def second_look(
     defect: Defect,
     *,
     provider: str = "meta",
+    model: str | None = None,
+    max_tokens: int = SECOND_MAX_TOKENS,
 ) -> Assessment:
     prompt = resources.files("bladesight.verify").joinpath("prompts/v1.md").read_text("utf-8")
     image = ImagePart(
@@ -158,9 +165,9 @@ def second_look(
             text += f"\n\nYour previous reply was rejected: {problem}. Reply with the JSON only."
         reply = client.chat(
             ChatRequest(
-                model=settings.chat_model,
+                model=model or settings.chat_model,
                 messages=[ChatMessage.user(text, image)],
-                max_tokens=SECOND_MAX_TOKENS,
+                max_tokens=max_tokens,
             )
         )
         try:
@@ -177,7 +184,7 @@ def second_look(
                 "confidence": fields["confidence"],
                 "rubric_version": RUBRIC_VERSION,
                 "prompt_version": "verify/v1",
-                "model": reply.model or settings.chat_model,
+                "model": reply.model or model or settings.chat_model,
                 "provider": provider,
             }
         )
@@ -193,11 +200,17 @@ def verify_defect(
     assessment: Assessment,
     *,
     provider: str = "meta",
+    model: str | None = None,
+    max_tokens: int = SECOND_MAX_TOKENS,
 ) -> Verification:
     checks = rule_checks(defect, measurement, assessment)
     try:
-        second = second_look(client, settings, png, defect, provider=provider)
+        second = second_look(
+            client, settings, png, defect, provider=provider, model=model, max_tokens=max_tokens
+        )
         error = None
     except (AssessError, MetaError) as exc:  # an API failure abstains instead of crashing
         second, error = None, str(exc)
-    return decide(assessment, second, checks, error)
+    return decide(
+        assessment, second, checks, error, model=model or settings.chat_model, provider=provider
+    )

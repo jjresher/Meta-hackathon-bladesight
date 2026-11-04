@@ -5,7 +5,16 @@
   `replay/` (real calls: `BLADESIGHT_MODE=live`, about 0.04 USD per tile; resumable).
 - `run`: the agent over the stored results (real calls in live mode; replay from the cache
   otherwise) and its trace, work orders and report in `replay/`.
+- `regrade`: re-grade and re-verify the defects stored in `--source-dir` (same detections and
+  measurements, no detection call) on `--chat-provider`, into `--replay-dir`.
 - `status`: what the store holds.
+- `backfill`: fill the provenance and trace fields into a store written before they existed
+  (free, no model call; `backfill.py`).
+
+`--chat-provider` (or `BLADESIGHT_CHAT_PROVIDER`) picks the model of severity, verification, the
+agent and its report: `meta` (Muse Spark) or `baseten` (Muse Spark Open, open weights). Detection
+stays on the Meta Model API (`--provider`). The Muse Spark Open replay lives in
+`replay/open-weights/` (`OPEN_WEIGHTS_DIR`).
 """
 
 from __future__ import annotations
@@ -15,20 +24,37 @@ import logging
 import sys
 from pathlib import Path
 
+from ..chat import CHAT_PROVIDERS, ChatProvider, chat_provider_from_env, chat_target
 from ..data import load_split
-from ..meta import MetaError, MetaSettings, build_client
-from .agent import run_agent
+from ..meta import MetaClient, MetaError, MetaSettings, build_client
+from .agent import MAX_TOKENS, run_agent
 from .build import build_layout
-from .process import process_farm
+from .process import process_farm, regrade_farm
 from .store import REPLAY_DIR, Store
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="python -m bladesight.fleet")
-    parser.add_argument("command", choices=["build", "process", "run", "status", "evidence"])
+    parser.add_argument(
+        "command",
+        choices=["build", "process", "regrade", "run", "status", "evidence", "backfill"],
+    )
     parser.add_argument("--data-dir", type=Path, default=Path("data"))
     parser.add_argument("--replay-dir", type=Path, default=REPLAY_DIR)
-    parser.add_argument("--provider", choices=["meta", "stub"], default="meta")
+    parser.add_argument(
+        "--provider", choices=["meta", "stub"], default="meta", help="detection provider"
+    )
+    parser.add_argument(
+        "--chat-provider",
+        choices=CHAT_PROVIDERS,
+        default=None,
+        help="severity, verification, agent and report (default: BLADESIGHT_CHAT_PROVIDER, "
+        "else --provider)",
+    )
+    parser.add_argument(
+        "--source-dir", type=Path, default=REPLAY_DIR, help="regrade: the store to re-grade"
+    )
+    parser.add_argument("--workers", type=int, default=1, help="regrade: parallel defects")
     parser.add_argument("--only", action="append", help="process: only this inspection id")
     parser.add_argument("--max-steps", type=int, default=40)
     parser.add_argument("--max-cost", type=float, default=1.0, help="run: agent budget in USD")
@@ -57,6 +83,12 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 0
 
+    if args.command == "backfill":
+        from .backfill import backfill
+
+        print(f"backfilled {args.replay_dir}: {backfill(store)}")
+        return 0
+
     if args.command == "evidence":
         from .evidence import render
 
@@ -66,27 +98,55 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     settings = MetaSettings.from_env()
-    client = build_client(settings, provider=args.provider)
+    chat_provider: ChatProvider = args.chat_provider or chat_provider_from_env(args.provider)
+    clients: list[MetaClient] = []
+    if args.command == "process":
+        clients.append(build_client(settings, provider=args.provider))
+    chat = chat_target(
+        settings,
+        chat_provider,
+        client=clients[0] if clients and chat_provider == args.provider else None,
+    )
+    if chat.client not in clients:
+        clients.append(chat.client)
+    only = set(args.only) if args.only else None
     try:
         if args.command == "process":
             done = process_farm(
-                client,
+                clients[0],
                 settings,
                 store,
                 args.data_dir,
-                only=set(args.only) if args.only else None,
+                only=only,
                 provider=args.provider,
+                chat=chat,
             )
             print(f"processed {len(done)} inspections: {', '.join(done) or '-'}")
+        elif args.command == "regrade":
+            if args.source_dir.resolve() == args.replay_dir.resolve():
+                print("error: --source-dir and --replay-dir must differ", file=sys.stderr)
+                return 2
+            done = regrade_farm(
+                chat,
+                settings,
+                Store(args.source_dir),
+                store,
+                args.data_dir,
+                only=only,
+                workers=args.workers,
+            )
+            print(f"regraded {len(done)} inspections on {chat.model}: {', '.join(done) or '-'}")
         else:
             run = run_agent(
-                client,
+                chat.client,
                 settings,
                 store,
                 max_steps=args.max_steps,
                 max_cost_usd=args.max_cost,
                 run_id=args.run_id,
-                provider=args.provider,
+                provider=chat.provider,
+                model=chat.model,
+                max_tokens=chat.budget(MAX_TOKENS),
             )
             print(
                 f"run {run.id}: {run.status}, {len(run.steps)} steps, "
@@ -97,12 +157,15 @@ def main(argv: list[str] | None = None) -> int:
         print(f"error: {error}", file=sys.stderr)
         return 1
     finally:
-        print(
-            f"calls live={sum(r.source == 'live' for r in client.records)} "
-            f"cached={sum(r.source == 'cache' for r in client.records)} "
-            f"cost_usd={sum(r.cost_usd for r in client.records):.4f} "
-            f"all_runs_usd={client.spend.spent_usd:.4f} limit_usd={client.spend.limit_usd:.2f}"
-        )
+        for client in clients:
+            print(
+                f"{client.provider.name}: calls "
+                f"live={sum(r.source == 'live' for r in client.records)} "
+                f"cached={sum(r.source == 'cache' for r in client.records)} "
+                f"cost_usd={sum(r.cost_usd for r in client.records):.4f} "
+                f"all_runs_usd={client.spend.spent_usd:.4f} "
+                f"limit_usd={client.spend.limit_usd:.2f}"
+            )
     return 0
 
 

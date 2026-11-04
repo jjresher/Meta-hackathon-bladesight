@@ -174,6 +174,93 @@
           ],
           "default": null,
           "title": "Model"
+        },
+        "provider": {
+          "anyOf": [
+            {
+              "enum": [
+                "meta",
+                "baseten",
+                "stub"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "provider of `model`",
+          "title": "Provider"
+        },
+        "turn": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "model turn (1-based) the step belongs to; null on errors",
+          "title": "Turn"
+        },
+        "rationale": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the model's own text in the same turn, before this call; null if it gave none",
+          "title": "Rationale"
+        },
+        "decision": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "what the call asked for, summarised from its arguments",
+          "title": "Decision"
+        },
+        "outcome": {
+          "anyOf": [
+            {
+              "enum": [
+                "accepted",
+                "rejected"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "rejected when the tool returned an error",
+          "title": "Outcome"
+        },
+        "blocked_by_rule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RuleRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the rule the tool enforced when it rejected this call"
         }
       },
       "required": [
@@ -184,7 +271,13 @@
         "content",
         "duration_ms",
         "cost_usd",
-        "model"
+        "model",
+        "provider",
+        "turn",
+        "rationale",
+        "decision",
+        "outcome",
+        "blocked_by_rule"
       ],
       "title": "AgentStep",
       "type": "object"
@@ -1041,6 +1134,70 @@
       "title": "Measurement",
       "type": "object"
     },
+    "ReplaySet": {
+      "additionalProperties": false,
+      "description": "One stored run of the pipeline. Select it with `?provider=` on the data endpoints.",
+      "properties": {
+        "provider": {
+          "description": "the chat provider of this replay",
+          "enum": [
+            "meta",
+            "baseten"
+          ],
+          "title": "Provider",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "default": {
+          "type": "boolean",
+          "description": "what the endpoints serve without `?provider=`",
+          "title": "Default"
+        },
+        "stages": {
+          "description": "which model ran each stage of this replay",
+          "items": {
+            "$ref": "#/$defs/StageModel"
+          },
+          "title": "Stages",
+          "type": "array"
+        },
+        "run_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "latest agent run of this replay",
+          "title": "Run Id"
+        },
+        "n_inspections": {
+          "title": "N Inspections",
+          "type": "integer"
+        },
+        "note": {
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "provider",
+        "label",
+        "default",
+        "stages",
+        "run_id",
+        "n_inspections",
+        "note"
+      ],
+      "title": "ReplaySet",
+      "type": "object"
+    },
     "Report": {
       "additionalProperties": false,
       "properties": {
@@ -1097,6 +1254,64 @@
         "generated_at"
       ],
       "title": "Report",
+      "type": "object"
+    },
+    "RuleRef": {
+      "additionalProperties": false,
+      "description": "A rule enforced in code by an agent tool (`bladesight.fleet.rules.RULES`).",
+      "properties": {
+        "id": {
+          "description": "stable id, e.g. 'verified_only'",
+          "title": "Id",
+          "type": "string"
+        },
+        "text": {
+          "description": "the rule in plain words",
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "text"
+      ],
+      "title": "RuleRef",
+      "type": "object"
+    },
+    "StageModel": {
+      "additionalProperties": false,
+      "properties": {
+        "stage": {
+          "enum": [
+            "detection_proposals",
+            "segmentation",
+            "severity",
+            "verification",
+            "agent"
+          ],
+          "title": "Stage",
+          "type": "string"
+        },
+        "model": {
+          "title": "Model",
+          "type": "string"
+        },
+        "provider": {
+          "enum": [
+            "meta",
+            "baseten",
+            "stub"
+          ],
+          "title": "Provider",
+          "type": "string"
+        }
+      },
+      "required": [
+        "stage",
+        "model",
+        "provider"
+      ],
+      "title": "StageModel",
       "type": "object"
     },
     "SweepPoint": {
@@ -1254,6 +1469,37 @@
           "minItems": 1,
           "title": "Reasons",
           "type": "array"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "model of the second look; null in results stored before it",
+          "title": "Model"
+        },
+        "provider": {
+          "anyOf": [
+            {
+              "enum": [
+                "meta",
+                "baseten",
+                "stub"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "provider of the second look",
+          "title": "Provider"
         }
       },
       "required": [
@@ -1262,7 +1508,9 @@
         "agreement",
         "second_severity",
         "checks",
-        "reasons"
+        "reasons",
+        "model",
+        "provider"
       ],
       "title": "Verification",
       "type": "object"
@@ -1351,6 +1599,36 @@
           ],
           "default": null,
           "title": "Run Id"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "model of the agent that wrote the order",
+          "title": "Model"
+        },
+        "provider": {
+          "anyOf": [
+            {
+              "enum": [
+                "meta",
+                "baseten",
+                "stub"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider"
         }
       },
       "required": [
@@ -1365,7 +1643,9 @@
         "evidence",
         "due_within_days",
         "created_by",
-        "run_id"
+        "run_id",
+        "model",
+        "provider"
       ],
       "title": "WorkOrder",
       "type": "object"

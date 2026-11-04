@@ -16,6 +16,7 @@ from ..contracts import AgentRun, AgentStep
 from ..meta import ChatMessage, ChatRequest, MetaClient, MetaError, MetaSettings, ToolCall
 from .store import Store
 from .tools import FleetTools, tool_specs
+from .trace import annotate_steps
 
 MAX_STEPS = 40
 MAX_COST_USD = 1.0
@@ -55,7 +56,12 @@ def run_agent(
     max_cost_usd: float = MAX_COST_USD,
     run_id: str | None = None,
     provider: str = "meta",
+    model: str | None = None,
+    max_tokens: int = MAX_TOKENS,
 ) -> AgentRun:
+    """`model` defaults to `settings.chat_model` (Muse Spark); pass the Baseten model id and a
+    larger `max_tokens` for Muse Spark Open (`bladesight.chat.ChatTarget`)."""
+    model = model or settings.chat_model
     started = datetime.now(UTC)
     run_id = run_id or f"run-{started:%Y%m%d-%H%M%S}"
     tools = FleetTools(store, run_id)
@@ -74,7 +80,8 @@ def run_agent(
                     "content": content,
                     "duration_ms": ms,
                     "cost_usd": cost,
-                    "model": settings.chat_model if kind != "tool_result" else None,
+                    "model": model if kind not in ("tool_result", "error") else None,
+                    "turn": turns if kind != "error" else None,
                     **extra,
                 }
             )
@@ -96,10 +103,10 @@ def run_agent(
         try:
             reply = client.chat(
                 ChatRequest(
-                    model=settings.chat_model,
+                    model=model,
                     messages=messages,
                     tools=tool_specs(),
-                    max_tokens=MAX_TOKENS,
+                    max_tokens=max_tokens,
                 )
             )
         except MetaError as error:  # keep the partial trace instead of losing it
@@ -138,12 +145,11 @@ def run_agent(
             )
             messages.append(ChatMessage.of("tool", result, tool_call_id=call.id))
 
-    store.save_work_orders(tools.orders)
+    orders = [o.model_copy(update={"model": model, "provider": provider}) for o in tools.orders]
+    store.save_work_orders(orders)
     report_id = None
     if tools.report is not None:
-        report = tools.report.model_copy(
-            update={"model": settings.chat_model, "provider": provider}
-        )
+        report = tools.report.model_copy(update={"model": model, "provider": provider})
         store.save_report(report)
         report_id = report.id
     chat_records = client.records[chat_records_start:]
@@ -151,13 +157,13 @@ def run_agent(
         id=run_id,
         status=status,  # type: ignore[arg-type]
         replay=bool(chat_records) and all(r.source == "cache" for r in chat_records),
-        model=settings.chat_model,
+        model=model,
         provider=provider,  # type: ignore[arg-type]
         started_at=started,
         finished_at=datetime.now(UTC),
-        steps=steps,
+        steps=annotate_steps(steps, provider),
         total_cost_usd=round(spent, 6),
-        work_order_ids=[o.id for o in tools.orders],
+        work_order_ids=[o.id for o in orders],
         report_id=report_id,
     )
     store.save_run(run)
