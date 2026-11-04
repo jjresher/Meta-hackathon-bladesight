@@ -88,5 +88,5 @@ during that gap found the instance asleep and took 12.47 s (`curl -w`, HTTP 200;
 before it is unknown). At 10:27 COT the workflow still had 0 runs with `event=schedule`, almost
 4 hours after the cron moved, with the workflow `active` and GitHub's status page at "All Systems
 Operational", so the cause is unknown. Its first scheduled run came at 18:51Z (success), and at
-23:10Z that was still the only one (`gh run list --workflow keepalive.yml`). The workflow alone
+23:03Z that was still the only one (`gh run list --workflow keepalive.yml`). The workflow alone
 would not keep the demo awake; it is a backup to the external job, not the mechanism.
