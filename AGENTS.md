@@ -72,6 +72,9 @@ Python 3.12 managed by uv. Tasks run through poethepoet: `uv run poe <task>`.
 | `uv run poe serve` | the API on 127.0.0.1:8000 (replay mode by default; serves `web/dist` at `/` when built) |
 | `uv run python -m bladesight.api.smoke <url>` | post-deploy smoke check: health, fleet, one inspection, one image, the home page |
 | `uv run poe contract` | regenerate `web/src/fixtures/*.json` (examples + JSON Schema) from `bladesight.contracts` (`docs/api.md`) |
+| `cd web && npm run types` | regenerate `web/src/types.ts` from `web/src/fixtures/schema.json` (run after `poe contract`; CI fails if it drifts) |
+| `uv run poe web-check` | web gate: typecheck + Vitest + build (CI also runs the Playwright smoke: `cd web && npm run test:e2e`; `SMOKE_BASE_URL=<url>` runs it against a real deployment) |
+| `uv run poe web-dev` | Vite dev server on :5173 proxying `/api` and `/images` to the API on :8000 |
 
 Later issues add `data`, `detect`, `eval`, `serve`, `web-*` tasks; keep this table current.
 
