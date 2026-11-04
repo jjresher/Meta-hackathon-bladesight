@@ -31,7 +31,7 @@ blocking findings.
 Cumulative Meta spend: **13.62 USD** against `META_SPEND_LIMIT_USD=30.00` (the human raised it from
 0.50 on Nov 3; `meta status` prints the limit, `SpendTracker.spent_usd` the total). Issue #11 alone cost about
 1.75 USD (farm 1.63, agent probe 0.052, final run 0.0645); #10 agreement 0.1515; the held-out run
-8.07 USD (4.21 + 3.86 after the resume). The 30 USD cap was never reached; Baseten 0.89 of 10.00.
+8.07 USD (about 4.21 + 3.86 after the resume). The 30 USD cap was never reached; Baseten 0.89 of 10.00.
 
 ## Incidents
 

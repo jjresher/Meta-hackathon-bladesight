@@ -54,7 +54,7 @@ Prompt versions: {'propose': 'detect/v1', 'assess': 'assess/v1', 'verify': 'veri
   settings were not changed between the two starts (same commit, clean tree, same preregistration
   hash); no tile was dropped or re-drawn.
 - **Cost.** The 3.8623 USD printed above is only the live calls of the resumed process. The whole
-  run cost 8.07 USD (first start 4.21 USD for 1,383 live calls, resumed 3.86 USD for 1,402),
+  run cost 8.07 USD (first start about 4.21 USD for about 1,383 live calls, resumed 3.86 USD for 1,402),
   summed from `.spend/spend_log.jsonl` between 20:28 and 22:51 COT with documented prices; it
   includes the two minimal probes (well under 0.01 USD). The preregistered budget was about 8 USD
   with an 11 USD ceiling.
@@ -62,7 +62,9 @@ Prompt versions: {'propose': 'detect/v1', 'assess': 'assess/v1', 'verify': 'veri
 
 ## How this compares with the dev run (read before quoting)
 
-Damage precision is 0.187 here against 0.37 on dev, and recall 0.164 against 0.22. The dev sample
+Damage precision is 0.187 here against 0.37 on dev, and recall 0.164 against 0.22. The unweighted
+held-out precision (TP 216, FP 529) is 0.29, so part of the drop is real and not only a weighting
+effect. The dev sample
 over-represents tiles with boxes, while the held-out precision is weighted to the whole split
 (each sampled clean tile stands for 5.23), so the two precisions answer different questions and
 the held-out one is the honest estimate for an inspection where most tiles are clean. Image-level

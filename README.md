@@ -52,7 +52,7 @@ the held-out row is the one to trust.
 
 How to read them honestly: most dataset boxes are about 14x14 px, so box-level recall is low for
 any detector; the dev sample over-represents tiles with boxes, so its precision is optimistic for a
-real inspection (the weighted held-out precision is half of it); the severity grade agrees only weakly with the human labels, and the labels come
+real inspection (the weighted held-out precision is half of it, the unweighted one 0.29); the severity grade agrees only weakly with the human labels, and the labels come
 from one person without wind-energy experience applying our rubric, so they measure agreement with
 the rubric, not specialist-validated severity. The full list is in
 [`docs/limitations.md`](docs/limitations.md). Costs are documented prices times real usage, not
