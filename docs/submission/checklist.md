@@ -38,7 +38,7 @@ All times COT (UTC-5). Official deadline: **Wed Nov 4, 9:00 PM COT** (9:00 PM ET
 - [x] Phone-sized check (390x844 emulation) on five screens, same file
 - [x] Open-weights run in the live demo (run selector, `/compare`), PRs #55 and #56
 - [x] Launch texts written with their sources ([`launch.md`](launch.md), PR #51)
-- [x] DoD audit of the closed issues ([`dod_audit.md`](dod_audit.md), PR #53)
+- [x] DoD audit of the closed issues ([`dod_audit.md`](dod_audit.md), PR #53): a snapshot of commit `7c92e77`, before detection v2; the current farm is 35 / 50 / 13 and 11 work orders ([`fleet_run.md`](../evidence/fleet_run.md))
 - [x] `main` green in CI at `da0c7dc` (merge of PR #56)
 
 ## What the human must do, in order
