@@ -15,7 +15,7 @@ All times COT (UTC-5). Official deadline: **Wed Nov 4, 9:00 PM COT** (9:00 PM ET
 | Contributors | Juan José (jjresher), solo |
 | Repo (public, MIT) | https://github.com/jjresher/Meta-hackathon-bladesight |
 | Live URL | https://bladesight.onrender.com (replay mode, no login; Render Free plan, auto-deploy on commit to `main`). Cold start 21.5 s after 3.5 h idle, smoke OK in 1.9 s, 390x844 phone viewport passed on five screens ([`deploy.md`](../evidence/deploy.md)). Open it once and wait before recording or sharing |
-| Video | **human:** link of the 3:00 video ([`video_script.md`](video_script.md)), public or unlisted, opens without login |
+| Video | <https://youtu.be/xJRrVH76CBA> (2:55, from [`video_script.md`](video_script.md)), public, opens without login |
 | X post | **human:** link of the post with #MetaAIHackathon (texts in [`launch.md`](launch.md), issue #21) |
 | Models used | Muse Spark `muse-spark-1.3` and SAM 3.1 `sam-3.1` (Meta Model API); Muse Spark Open `meta-models/muse-spark-open` (Baseten) for severity, verification, the agent and the report in the second run |
 | Bonus: Best Agentic Use-Case | **yes**: fleet agent choosing its own calls over seven tools, rules enforced by the tools, re-inspection instead of repair for unverified defects, full trace in the UI ([`fleet_run.md`](../evidence/fleet_run.md), README "Why it is agentic"). Say plainly that no stored run triggered a rule rejection |
