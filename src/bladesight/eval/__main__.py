@@ -77,6 +77,16 @@ def main(argv: list[str] | None = None) -> int:
         not re.fullmatch(r"[A-Za-z0-9_.-]+", args.stem) or args.stem.startswith(".")
     ):
         parser.error("--stem must be a plain file name stem")
+    if args.split == "heldout" and args.detector != "v1":
+        parser.error("the held-out run is preregistered on detector v1")
+    if (
+        args.split == "dev"
+        and args.detector != "v1"
+        and (args.stem is None or args.stem == "eval_dev")
+    ):
+        parser.error(
+            "a dev run with --detector other than v1 needs its own --stem (eval_dev is v1)"
+        )
     if args.split != "heldout":
         target = (args.out / f"{args.stem or 'eval_' + args.split}.md").resolve()
         if target == ho.EVIDENCE.resolve() or (args.stem or "").startswith("eval_heldout"):
@@ -175,6 +185,8 @@ def main(argv: list[str] | None = None) -> int:
         cost_usd=cost,
         evidence_path=f"docs/evidence/{stem}.md",
         sample_note=sample_note,
+        # v1 reports keep their #16 shape (no postprocess key), so eval_dev stays reproducible
+        detector=None if heldout or args.detector == "v1" else args.detector,
     )
     md, svg = write_outputs(
         report,

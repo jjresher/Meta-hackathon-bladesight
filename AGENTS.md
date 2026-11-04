@@ -67,6 +67,9 @@ Python 3.12 managed by uv. Tasks run through poethepoet: `uv run poe <task>`.
 | `uv run poe data` | download the DTU tiles (2.8 GB), split by photo, seal `data/heldout/`, verify `eval/heldout_manifest.sha256` (`DATA.md`) |
 | `uv run poe detect <tile id>` | detect defects on one dev tile and write an overlay PNG under `outputs/detect/` (`BLADESIGHT_MODE=live` for real calls; `--provider stub` is free) |
 | `uv run poe eval --split dev --n 300` | detection metrics on a dev sample -> `docs/evidence/eval_dev.md` + SVG; refuses `--split heldout` unless `ALLOW_HELDOUT=1` (#16 only); `--provider stub` is a free smoke test |
+| `uv run poe eval --split dev --detector v2 --stem <name>` | dev metrics for detection v2 (#22); a non-v1 detector needs its own `--stem` (`eval_dev` is v1) |
+| `BLADESIGHT_MODE=live uv run poe eval --split fresh` | the single preregistered v1-vs-v2 run on the fresh dev set (`eval/preregistration_v2.md`) -> `docs/evidence/eval_fresh_v2.md`; refuses a second run unless `ALLOW_FRESH_RERUN=1` |
+| `uv run python -m bladesight.eval.fresh` | print the fresh-set exclusions; `--dev-table` (replay mode, free) writes `docs/evidence/eval_fresh_v2_dev.md`; `--write` refuses once the manifest exists |
 | `uv run poe gold prepare` / `label` / `status` | severity gold set (#10): write 40 dev crop ids to `eval/gold/severity.csv`, label them locally in a browser page (keys 1-5, blind to the model), count labels |
 | `uv run poe fleet build/process/run/status` | the synthetic farm (#11): write the layout, run the vision pipeline over it (live: ~0.04 USD per tile), run the agent, show the replay store `replay/` |
 | `uv run poe serve` | the API on 127.0.0.1:8000 (replay mode by default; serves `web/dist` at `/` when built) |

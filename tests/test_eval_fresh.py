@@ -52,7 +52,7 @@ def test_fresh_set_avoids_excluded_photos_and_keeps_the_two_thirds_design() -> N
     assert chosen == fresh.build_fresh(tiles, {"DJI_0000", "DJI_0001"}, n=30, seed=5)
 
 
-def test_the_committed_fresh_set_is_disjoint_from_the_tuned_dev_sample() -> None:
+def test_the_committed_fresh_set_avoids_gold_and_farm_photos_and_matches_the_prereg() -> None:
     ids = [tile_id for _, tile_id in fresh.read_manifest()]
     assert len(ids) == len(set(ids)) == 300
     photos = {fresh.photo_of(t) for t in ids}
@@ -169,3 +169,39 @@ def test_fresh_run_writes_both_detectors_once_and_refuses_a_second_run(
 def test_a_dev_run_may_not_write_the_fresh_evidence() -> None:
     with pytest.raises(SystemExit):
         eval_main(["--split", "dev", "--stem", "eval_fresh_v2", "--provider", "stub"])
+
+
+def test_a_dev_run_with_detector_v2_needs_its_own_stem() -> None:
+    for argv in (
+        ["--split", "dev", "--detector", "v2", "--provider", "stub"],
+        ["--split", "dev", "--detector", "v2", "--stem", "eval_dev", "--provider", "stub"],
+        ["--split", "heldout", "--detector", "v2"],
+    ):
+        with pytest.raises(SystemExit):
+            eval_main(argv)
+
+
+def test_the_manifest_writer_refuses_to_overwrite_the_frozen_set() -> None:
+    assert fresh.MANIFEST.exists()
+    assert fresh.main(["--write"]) == 2
+
+
+def test_a_v2_dev_run_records_its_detector(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("BLADESIGHT_MODE", "replay")
+    tiles = _tiles()[:6]
+    _write_dev(tmp_path / "data", tiles)
+    out = tmp_path / "ev"
+    argv = [
+        "--split",
+        "dev",
+        "--n",
+        "6",
+        "--provider",
+        "stub",
+        "--data-dir",
+        str(tmp_path / "data"),
+    ]
+    assert eval_main([*argv, "--detector", "v2", "--stem", "dev_v2", "--out", str(out)]) == 0
+    assert "detect-post/v2" in (out / "dev_v2.json").read_text(encoding="utf-8")
+    assert eval_main([*argv, "--stem", "dev_v1", "--out", str(out)]) == 0
+    assert "postprocess" not in (out / "dev_v1.json").read_text(encoding="utf-8")

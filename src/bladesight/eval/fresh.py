@@ -27,6 +27,7 @@ import random
 import re
 import statistics
 import subprocess
+import sys
 from collections.abc import Sequence
 from datetime import UTC, datetime
 from pathlib import Path
@@ -684,6 +685,9 @@ def main(argv: list[str] | None = None) -> int:
         f"{len({t.source_photo for t in fresh})} photos, seed {FRESH_SEED}"
     )
     if args.write:
+        if MANIFEST.exists():
+            print(f"refused: {MANIFEST} exists (the fresh set is frozen)", file=sys.stderr)
+            return 2
         text = manifest_text(fresh, args.data_dir)
         MANIFEST.write_text(text, encoding="utf-8")
         print(f"wrote {MANIFEST} sha256 {hashlib.sha256(text.encode()).hexdigest()}")
