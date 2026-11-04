@@ -13,7 +13,8 @@ name: keep-alive
 
 on:
   schedule:
-    - cron: "*/10 * * * *"
+    # Off the top of the hour: GitHub warns that runs at :00 are the first dropped under load.
+    - cron: "7,17,27,37,47,57 * * * *"
   workflow_dispatch:
 
 permissions:

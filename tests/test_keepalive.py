@@ -12,7 +12,7 @@ PUBLIC_URL = "https://bladesight.onrender.com"
 
 def test_keepalive_runs_every_ten_minutes_and_on_demand() -> None:
     text = WORKFLOW.read_text(encoding="utf-8")
-    assert '- cron: "*/10 * * * *"' in text  # under Render Free's 15-minute idle limit
+    assert '- cron: "7,17,27,37,47,57 * * * *"' in text  # under Render Free's 15-minute idle limit
     assert re.search(r"^  workflow_dispatch:", text, re.MULTILINE)
 
 

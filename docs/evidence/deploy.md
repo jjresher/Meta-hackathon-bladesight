@@ -66,7 +66,7 @@ URL on a real phone stays a human check in `docs/submission/checklist.md`.
 ## Keep-alive
 
 The `keep-alive` workflow (`.github/workflows/keepalive.yml`) GETs `/api/health` every
-10 minutes (`*/10 * * * *`) and on demand (`workflow_dispatch`), with a 90 s timeout per try, up to
+10 minutes (`7,17,27,37,47,57 * * * *`, moved off the top of the hour on Nov 4 after the first `*/10` schedule produced no scheduled run in 2.5 hours during a GitHub Actions incident; only the manual run was green) and on demand (`workflow_dispatch`), with a 90 s timeout per try, up to
 5 tries 15 s apart (a cold wake fits), and fails the run on anything but HTTP 200 with
 `"status":"ok"`. Permissions: `contents: read` only. Limits: scheduled workflows run only from the
 default branch, so it starts working once merged to `main`; GitHub may delay or drop scheduled runs
