@@ -25,6 +25,18 @@ export const FALSE_ALARM_RATE = {
   heldout: { file: "docs/evidence/eval_heldout.md", rate: 0.24, cleanTiles: 300 },
 } as const;
 
+/**
+ * Detection v2, the detector the demo runs: measured on a preregistered fresh dev set after the
+ * held-out run, never on the held-out split. The detection numbers on this page measure v1.
+ */
+export const DETECTOR_V2 = {
+  file: "docs/evidence/eval_fresh_v2.md",
+  tiles: 300,
+  f1V1: 0.224,
+  f1V2: 0.25,
+  falseAlarm: 0.21,
+} as const;
+
 export const evidenceUrl = (path: string): string => `${EVIDENCE_BASE_URL}${path}`;
 
 /**

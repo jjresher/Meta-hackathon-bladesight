@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import { FALSE_ALARM_RATE, GUARD_RULES, OPEN_WEIGHTS_FARM as ow, SEVERITY_AGREEMENT as s } from "./evidence";
+import { DETECTOR_V2 as d2, FALSE_ALARM_RATE, GUARD_RULES, OPEN_WEIGHTS_FARM as ow, SEVERITY_AGREEMENT as s } from "./evidence";
 
 /** AGENTS.md rule 5: a number shown in the UI must match the evidence file it links to. */
 describe("SEVERITY_AGREEMENT matches its evidence file", () => {
@@ -34,6 +34,17 @@ describe("FALSE_ALARM_RATE matches its evidence files", () => {
       );
     });
   }
+});
+
+describe("DETECTOR_V2 matches its evidence file", () => {
+  it("verdict, F1 and false alarms", () => {
+    const text = readFileSync(resolve(process.cwd(), "..", d2.file), "utf8");
+    expect(text).toContain("## Verdict: **v2 wins**");
+    expect(text).toContain(`Tiles: ${d2.tiles} fresh dev tiles`);
+    expect(text).toContain(`damage F1 at IoU 0.3: v1 ${d2.f1V1.toFixed(3)}, v2 ${d2.f1V2.toFixed(3)}`);
+    const rate = d2.falseAlarm.toFixed(3);
+    expect(text).toContain(`false-alarm rate on tiles with no box: v1 ${rate}, v2 ${rate}`);
+  });
 });
 
 describe("OPEN_WEIGHTS_FARM matches its evidence file", () => {

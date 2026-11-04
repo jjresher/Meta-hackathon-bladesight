@@ -47,7 +47,7 @@ Estimates are wall-clock. Steps 1-8 fit before the 13:00 freeze; the video is th
 
 | # | When (target) | Step | Estimate |
 |---|---|---|---|
-| 1 | by 08:00 | Review and merge the README / checklist / video-script PR (#18, #19, #20). Merge the detection v2 work (#22) only if its result is in and audited; then add its row to the README results table, linked to its evidence file. | 20 min |
+| 1 | by 08:00 | Review and merge the README / checklist / video-script PR (#18, #19, #20). Detection v2 (#22): the result is merged (PR #58); the integration PR moves the demo to v2 and adds its README row, linked to its evidence file. Merge it only if it is green and audited. | 20 min |
 | 2 | by 08:15 | Close stale PR #47 (superseded by #46 and #49; optionally move its "How this compares with the dev run" paragraph first, see [`dod_audit.md`](dod_audit.md)). | 5 min |
 | 3 | by 08:30 | Attach screenshots as PR comments (not commits): the 5 overlay PNGs from `bladesight-wt/i5/outputs/detect/` on PR #28 (issue #5 DoD), and the 1280 and 390 px screenshots from `bladesight-screenshots/` on PR #44 (issue #13 DoD); tick those boxes and close #13. Keep the CC BY-NC attribution in the comment. | 15 min |
 | 4 | by 08:45 | Open https://bladesight.onrender.com on a real phone (wake it first, allow up to a minute): fleet, an inspection, a work order, the run selector. Tick "public URL works from a phone" on #14 and close it. | 10 min |
