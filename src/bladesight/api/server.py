@@ -184,10 +184,13 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @app.get("/api/eval", response_model=list[EvalReport])
     def evaluation() -> list[EvalReport]:
-        reports = []
-        for path in sorted(cfg.evidence_dir.glob("eval_*.json")):
-            reports.append(EvalReport.model_validate(json.loads(path.read_text(encoding="utf-8"))))
-        return reports
+        # The two official reports only: eval_fresh_v2*.json are other shapes and other runs (#22).
+        paths = [cfg.evidence_dir / name for name in ("eval_dev.json", "eval_heldout.json")]
+        return [
+            EvalReport.model_validate(json.loads(path.read_text(encoding="utf-8")))
+            for path in paths
+            if path.exists()
+        ]
 
     def require_admin(x_admin_key: Annotated[str | None, Header()] = None) -> None:
         if cfg.mode != "live":
