@@ -3,15 +3,16 @@
  * any raster assets (AGENTS.md rule 2) and lets status glyphs double as a
  * non-color status cue.
  */
-import type { Verdict } from "../types";
 
 interface IconProps {
   size?: number;
   className?: string;
 }
 
-/** A distinct glyph per verdict so status is conveyed by shape, not color. */
-export function VerdictGlyph({ verdict, size = 12 }: { verdict: Verdict; size?: number }) {
+export type Tone = "ok" | "review" | "alert";
+
+/** A distinct glyph per tone so status is conveyed by shape, not color. */
+export function ToneGlyph({ tone, size = 12 }: { tone: Tone; size?: number }) {
   const common = {
     width: size,
     height: size,
@@ -21,7 +22,7 @@ export function VerdictGlyph({ verdict, size = 12 }: { verdict: Verdict; size?: 
     className: "chip__glyph",
   } as const;
 
-  if (verdict === "ok") {
+  if (tone === "ok") {
     // Check mark.
     return (
       <svg {...common}>
@@ -36,7 +37,7 @@ export function VerdictGlyph({ verdict, size = 12 }: { verdict: Verdict; size?: 
       </svg>
     );
   }
-  if (verdict === "needs_review") {
+  if (tone === "review") {
     // Diamond with a query stroke.
     return (
       <svg {...common}>
@@ -51,7 +52,7 @@ export function VerdictGlyph({ verdict, size = 12 }: { verdict: Verdict; size?: 
       </svg>
     );
   }
-  // reinspect: warning triangle.
+  // alert: warning triangle.
   return (
     <svg {...common}>
       <path
@@ -129,4 +130,38 @@ export function BrandMark({ size = 34 }: { size?: number }) {
       </g>
     </svg>
   );
+}
+
+export function ImageOffIcon({ size = 28, className }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      focusable="false"
+      className={className}
+    >
+      <rect x="3" y="4" width="18" height="16" rx="2" fill="none" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M3 16 L8.5 11 L13 15 L16 12.5 L21 17" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+      <path d="M4 3 L20 21" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function ChevronIcon({ size = 14, className }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 16 16" aria-hidden="true" focusable="false" className={className}>
+      <path d="M5 6.5 L8 9.5 L11 6.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function TrendIcon({ trend, size = 12 }: { trend: "worse" | "same" | "better" | "new"; size?: number }) {
+  const common = { width: size, height: size, viewBox: "0 0 12 12", "aria-hidden": true, focusable: false } as const;
+  const stroke = { fill: "none", stroke: "currentColor", strokeWidth: 1.7, strokeLinecap: "round", strokeLinejoin: "round" } as const;
+  if (trend === "worse") return <svg {...common}><path d="M2 9 L6 3 L10 9" {...stroke} /></svg>;
+  if (trend === "better") return <svg {...common}><path d="M2 3 L6 9 L10 3" {...stroke} /></svg>;
+  if (trend === "new") return <svg {...common}><path d="M6 2 V10 M2 6 H10" {...stroke} /></svg>;
+  return <svg {...common}><path d="M2 6 H10" {...stroke} /></svg>;
 }

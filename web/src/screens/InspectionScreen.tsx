@@ -1,37 +1,49 @@
-import { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 
-import { api, NotFoundError } from "../api/client";
-import BladeImage from "../components/BladeImage";
+import { api, imageUrl } from "../api/client";
+import { TrendBadge, VerdictChip } from "../components/Chips";
+import DefectCard from "../components/DefectCard";
+import PhotoViewer, { type Layers } from "../components/PhotoViewer";
+import { Async } from "../components/PageState";
 import SeverityScale from "../components/SeverityScale";
-import StatusChip from "../components/StatusChip";
 import { ArrowLeftIcon, InfoIcon } from "../components/icons";
+import { SEVERITY_AGREEMENT } from "../evidence";
 import { useAsyncData } from "../hooks/useAsyncData";
-import type { Defect } from "../types";
+import { defectsLabel, worseVerdict } from "../lib/format";
+import type { Fleet, Inspection, InspectionImage, Verdict, WorkOrder } from "../types";
 
-function pct(value: number): string {
-  return `${Math.round(value * 100)}%`;
+function worstVerdict(image: InspectionImage): Verdict | null {
+  let worst: Verdict | null = null;
+  for (const { verification } of image.defects) {
+    if (verification) worst = worst ? worseVerdict(worst, verification.verdict) : verification.verdict;
+  }
+  return worst;
 }
 
-/** One toggle button for the overlay layers (masks / boxes), kept independent. */
 function LayerToggle({
   label,
-  variant,
+  name,
   on,
   onChange,
+  disabled,
+  hint,
 }: {
   label: string;
-  variant: "masks" | "boxes";
+  name: keyof Layers;
   on: boolean;
   onChange: (next: boolean) => void;
+  disabled?: boolean;
+  hint?: string;
 }) {
   return (
-    <label className={`toggle toggle--${variant}`} data-on={on}>
+    <label className={`toggle toggle--${name}${disabled ? " is-disabled" : ""}`} data-on={on && !disabled} title={hint}>
       <input
         type="checkbox"
-        checked={on}
-        onChange={(e) => onChange(e.target.checked)}
-        data-testid={`toggle-${variant}`}
+        checked={on && !disabled}
+        disabled={disabled}
+        onChange={(event) => onChange(event.target.checked)}
+        data-testid={`toggle-${name}`}
       />
       <span className="toggle__swatch" aria-hidden="true" />
       {label}
@@ -39,217 +51,256 @@ function LayerToggle({
   );
 }
 
-/**
- * Inspection viewer: a schematic inline-SVG drone image (no raster asset) with
- * independently toggleable defect masks and bounding boxes, alongside detailed
- * defect cards (measurement, assessment with a 1-5 severity scale, and the
- * verification verdict with its reasons).
- */
-export default function InspectionScreen() {
-  const { id = "" } = useParams();
-  const state = useAsyncData(() => api.getInspection(id), [id]);
-
-  const [showMasks, setShowMasks] = useState(true);
-  const [showBoxes, setShowBoxes] = useState(true);
-  const [activeId, setActiveId] = useState<string | null>(null);
-
-  if (state.status === "loading") {
-    return (
-      <section className="screen">
-        <p className="state">Loading inspection…</p>
-      </section>
-    );
-  }
-  if (state.status === "error") {
-    const message =
-      state.error instanceof NotFoundError
-        ? state.error.message
-        : `Failed to load inspection: ${state.error.message}`;
-    return (
-      <section className="screen">
-        <Link to="/" className="screen__back">
-          <ArrowLeftIcon /> Back to fleet
-        </Link>
-        <p className="state" role="alert">
-          {message}
-        </p>
-      </section>
-    );
-  }
-
-  const inspection = state.data;
-  const defects = inspection.defects;
-
+function Thumb({ image, active, onClick }: { image: InspectionImage; active: boolean; onClick: () => void }) {
+  const [failed, setFailed] = useState(false);
+  const worst = worstVerdict(image);
   return (
-    <section className="screen" aria-labelledby="inspection-heading">
-      <Link to="/" className="screen__back">
-        <ArrowLeftIcon /> Back to fleet
-      </Link>
-
-      <header className="screen__header">
-        <p className="screen__eyebrow">Inspection viewer</p>
-        <h1 id="inspection-heading">
-          Turbine {inspection.turbineId} · {inspection.year}
-        </h1>
-        <p className="screen__sub">
-          {defects.length === 0
-            ? "No defects detected in this inspection."
-            : `${defects.length} defect${defects.length === 1 ? "" : "s"} detected, with measurement, severity assessment and verification.`}
-        </p>
-      </header>
-
-      <div className="inspect-layout">
-        <div className="viewer">
-          <div className="viewer__frame">
-            <BladeImage
-              inspection={inspection}
-              defects={defects}
-              showMasks={showMasks}
-              showBoxes={showBoxes}
-              activeId={activeId}
-              onHover={setActiveId}
-            />
-            <div className="viewer__toolbar">
-              <LayerToggle
-                label="Masks"
-                variant="masks"
-                on={showMasks}
-                onChange={setShowMasks}
-              />
-              <LayerToggle
-                label="Boxes"
-                variant="boxes"
-                on={showBoxes}
-                onChange={setShowBoxes}
-              />
-              <span className="viewer__legend">
-                {defects.length} overlay{defects.length === 1 ? "" : "s"}
-              </span>
-            </div>
-          </div>
-          <p className="viewer__caption">
-            Schematic placeholder, not the raw photo. Overlays use the defect masks and boxes;
-            root/mid/tip guides mark the blade axis. Source: {inspection.provenance}.
-          </p>
-        </div>
-
-        <div className="defect-list" data-testid="defect-list">
-          {defects.length === 0 ? (
-            <p className="note">
-              <InfoIcon className="note__icon" />
-              <span>This inspection is clean: no defects were segmented or assessed.</span>
-            </p>
-          ) : (
-            defects.map((d) => (
-              <DefectCard
-                key={d.id}
-                defect={d}
-                active={d.id === activeId}
-                onHover={setActiveId}
-              />
-            ))
-          )}
-        </div>
-      </div>
-    </section>
+    <button
+      type="button"
+      className={`thumb${active ? " is-active" : ""}`}
+      onClick={onClick}
+      aria-pressed={active}
+      aria-label={`Tile ${image.tile_id}, ${defectsLabel(image.defects.length)}`}
+      data-testid="thumb"
+    >
+      <span className="thumb__frame" style={{ aspectRatio: `${image.width} / ${image.height}` }}>
+        {failed ? (
+          <span className="thumb__missing">no photo</span>
+        ) : (
+          <img src={imageUrl(image.image_url)} alt="" loading="lazy" decoding="async" onError={() => setFailed(true)} />
+        )}
+        <span className={`thumb__count${worst ? ` thumb__count--${worst}` : ""}`}>{image.defects.length}</span>
+      </span>
+      <span className="thumb__id">{image.tile_id.replace("DJI_", "")}</span>
+    </button>
   );
 }
 
-/** A single defect card: measurement, assessment and verification. */
-function DefectCard({
-  defect: d,
-  active,
-  onHover,
-}: {
-  defect: Defect;
-  active: boolean;
-  onHover: (id: string | null) => void;
-}) {
-  const verdict = d.verification.verdict;
+function InspectionBody({ inspection, fleet, orders }: { inspection: Inspection; fleet: Fleet | null; orders: WorkOrder[] }) {
+  const [params, setParams] = useSearchParams();
+  const { summary, images } = inspection;
+  const [layers, setLayers] = useState<Layers>({ masks: true, boxes: true, blade: true });
+
+  const imageParam = params.get("image");
+  const image = images.find((i) => i.id === imageParam) ?? images.find((i) => i.defects.length > 0) ?? images[0];
+  const defectParam = params.get("defect");
+  const selectedId =
+    image?.defects.find((d) => d.defect.id === defectParam)?.defect.id ?? (defectParam === "" ? null : (image?.defects[0]?.defect.id ?? null));
+
+  const turbine = fleet?.turbines.find((t) => t.id === summary.turbine_id);
+  const inspectionOrders = orders.filter((o) => o.inspection_id === summary.id);
+  const hasBlade = (image?.blade_outline.length ?? 0) > 0;
+
+  const setSelection = (imageId: string, defectId: string | null) => {
+    const next = new URLSearchParams(params);
+    next.set("image", imageId);
+    next.set("defect", defectId ?? "");
+    setParams(next, { replace: true });
+  };
+
+  // Left/right arrows move between the tiles of the inspection.
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target && /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName)) return;
+      if (event.key === "Escape" && image) setSelection(image.id, null);
+      if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+      const at = images.findIndex((i) => i.id === image?.id);
+      const next = images[at + (event.key === "ArrowRight" ? 1 : -1)];
+      if (next) setSelection(next.id, next.defects[0]?.defect.id ?? null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  });
+
+  const selectedDefect = useMemo(
+    () => image?.defects.find((d) => d.defect.id === selectedId),
+    [image, selectedId],
+  );
+  // When a defect is picked on the photo, bring its card into view inside the side panel. Only
+  // where the panel scrolls on its own (wide layout): on a phone the page would jump past the photo.
+  const sideRef = useRef<HTMLElement>(null);
+  const firstSelection = useRef(true);
+  useEffect(() => {
+    if (firstSelection.current) {
+      firstSelection.current = false;
+      return;
+    }
+    const side = sideRef.current;
+    if (!selectedId || !side || getComputedStyle(side).overflowY !== "auto") return;
+    const card = side.querySelector<HTMLElement>(`[data-defect-id="${CSS.escape(selectedId)}"]`);
+    if (card) side.scrollTo({ top: card.offsetTop - side.offsetTop - 8, behavior: "smooth" });
+  }, [selectedId]);
+
+  if (!image) {
+    return (
+      <p className="note">
+        <InfoIcon className="note__icon" />
+        <span>This inspection has no images.</span>
+      </p>
+    );
+  }
+
   return (
-    <article
-      className={`defect-card defect-card--${verdict}${active ? " is-active" : ""}`}
-      data-testid="defect-card"
-      onMouseEnter={() => onHover(d.id)}
-      onMouseLeave={() => onHover(null)}
-    >
-      <div className="defect-card__head">
+    <>
+      <header className="insp-head">
         <div>
-          <h3>{d.assessment.type}</h3>
-          <span className="defect-card__id">{d.id}</span>
-        </div>
-        <StatusChip status={verdict} small />
-      </div>
-
-      {/* Measurement */}
-      <div className="defect-section">
-        <p className="defect-section__label">Measurement</p>
-        <dl className="kv">
-          <div>
-            <dt>Region</dt>
-            <dd style={{ textTransform: "capitalize" }}>{d.measurement.region}</dd>
-          </div>
-          <div>
-            <dt>Axial position</dt>
-            <dd>{pct(d.measurement.axialPosition)}</dd>
-          </div>
-          <div>
-            <dt>Area ratio</dt>
-            <dd>{(d.measurement.areaRatio * 100).toFixed(1)}%</dd>
-          </div>
-          <div>
-            <dt>Elongation</dt>
-            <dd>{d.measurement.elongation.toFixed(1)}×</dd>
-          </div>
-        </dl>
-      </div>
-
-      {/* Assessment */}
-      <div className="defect-section">
-        <p className="defect-section__label">Assessment</p>
-        <dl className="kv">
-          <div>
-            <dt>Severity</dt>
-            <dd>
-              <SeverityScale value={d.assessment.severity} />
-            </dd>
-          </div>
-          <div>
-            <dt>Confidence</dt>
-            <dd>
-              <span className="meter">
-                <span className="meter__track">
-                  <span
-                    className="meter__fill"
-                    style={{ width: pct(d.assessment.confidence) }}
-                  />
-                </span>
-                {pct(d.assessment.confidence)}
+          <Link to="/" className="back">
+            <ArrowLeftIcon /> Fleet
+          </Link>
+          <h1>
+            {turbine?.name ?? `Turbine ${summary.turbine_id}`} <span className="insp-head__year">{summary.year}</span>
+          </h1>
+          <p className="insp-head__meta">
+            {turbine && <span>Rank {turbine.rank} of {fleet?.turbines.length}</span>}
+            {turbine && <TrendBadge trend={turbine.trend} />}
+            <span>
+              {summary.n_images} photos · {defectsLabel(summary.n_defects)}
+            </span>
+            <span>
+              {summary.n_needs_review} to review · {summary.n_reinspect} to reinspect
+            </span>
+            <span className="insp-head__sev">
+              max severity <SeverityScale value={summary.max_severity} />
+            </span>
+            {inspectionOrders.length > 0 && (
+              <span className="insp-head__orders">
+                Work orders
+                {inspectionOrders.map((order) => (
+                  <Link key={order.id} to={`/work-orders#${order.id}`} className="year-chip" data-testid="wo-link">
+                    {order.id}
+                  </Link>
+                ))}
               </span>
-            </dd>
-          </div>
-        </dl>
-        <p className="defect-card__rationale">{d.assessment.rationale}</p>
-      </div>
+            )}
+          </p>
+        </div>
+        {turbine && turbine.inspections.length > 1 && (
+          <nav className="seg" aria-label="Inspection year">
+            {[...turbine.inspections]
+              .sort((a, b) => a.year - b.year)
+              .map((insp) => (
+                <Link
+                  key={insp.id}
+                  to={`/inspections/${encodeURIComponent(insp.id)}`}
+                  className={`seg__item${insp.id === summary.id ? " is-active" : ""}`}
+                  aria-current={insp.id === summary.id ? "page" : undefined}
+                >
+                  {insp.year}
+                </Link>
+              ))}
+          </nav>
+        )}
+      </header>
 
-      {/* Verification */}
-      <div className="defect-section">
-        <p className="defect-section__label">Verification</p>
-        <p style={{ margin: 0 }}>
-          Verdict: <StatusChip status={verdict} small />
-        </p>
-        {d.verification.reasons.length > 0 ? (
-          <ul className="reasons">
-            {d.verification.reasons.map((reason, i) => (
-              <li key={i}>{reason}</li>
+      <div className="insp-grid">
+        <div className="insp-main">
+          <div className="stage">
+            <PhotoViewer
+              key={image.id}
+              image={image}
+              layers={layers}
+              selectedId={selectedId}
+              onSelect={(defectId) => setSelection(image.id, defectId)}
+            />
+            <div className="stage__bar">
+              <div className="stage__layers" role="group" aria-label="Overlay layers">
+                <LayerToggle label="Masks" name="masks" on={layers.masks} onChange={(v) => setLayers({ ...layers, masks: v })} />
+                <LayerToggle label="Boxes" name="boxes" on={layers.boxes} onChange={(v) => setLayers({ ...layers, boxes: v })} />
+                <LayerToggle
+                  label="Blade"
+                  name="blade"
+                  on={layers.blade}
+                  disabled={!hasBlade}
+                  hint={hasBlade ? undefined : "No blade outline was segmented on this photo"}
+                  onChange={(v) => setLayers({ ...layers, blade: v })}
+                />
+              </div>
+              <p className="stage__meta num">
+                {image.tile_id} · {image.width}×{image.height}px
+              </p>
+            </div>
+          </div>
+
+          <div className="legend" aria-label="Overlay colours">
+            <span className="legend__item legend__item--ok">Verified</span>
+            <span className="legend__item legend__item--needs_review">Needs review</span>
+            <span className="legend__item legend__item--reinspect">Reinspect</span>
+            <span className="legend__hint">SAM 3.1 masks and boxes, coloured by verification verdict. ← → switch photo.</span>
+          </div>
+
+          <ul className="filmstrip" aria-label="Photos in this inspection">
+            {images.map((i) => (
+              <li key={i.id}>
+                <Thumb image={i} active={i.id === image.id} onClick={() => setSelection(i.id, i.defects[0]?.defect.id ?? null)} />
+              </li>
             ))}
           </ul>
-        ) : (
-          <p className="reasons" style={{ listStyle: "none", paddingLeft: 0 }}>
-            Both looks agreed; no concerns raised.
-          </p>
-        )}
+        </div>
+
+        <aside className="insp-side" ref={sideRef} aria-label="Defects on this photo">
+          <h2 className="side-title">
+            {image.defects.length === 0 ? "No defects on this photo" : `${defectsLabel(image.defects.length)} on this photo`}
+          </h2>
+          {image.defects.length === 0 && (
+            <p className="note">
+              <InfoIcon className="note__icon" />
+              <span>SAM 3.1 found nothing on this tile. That is not proof the blade is clean here.</span>
+            </p>
+          )}
+          <div className="defect-list" data-testid="defect-list">
+            {image.defects.map((item) => (
+              <DefectCard
+                key={item.defect.id}
+                item={item}
+                selected={item.defect.id === selectedDefect?.defect.id}
+                onSelect={() =>
+                  setSelection(image.id, item.defect.id === selectedDefect?.defect.id ? null : item.defect.id)
+                }
+              />
+            ))}
+          </div>
+          {selectedDefect && orders.some((o) => o.defect_ids.includes(selectedDefect.defect.id)) && (
+            <p className="side-foot side-foot--cites">
+              Cited by{" "}
+              {orders
+                .filter((o) => o.defect_ids.includes(selectedDefect.defect.id))
+                .map((o) => (
+                  <Link key={o.id} to={`/work-orders#${o.id}`} className="year-chip">
+                    {o.id}
+                  </Link>
+                ))}
+            </p>
+          )}
+          {selectedDefect?.verification && (
+            <p className="side-foot">
+              <VerdictChip verdict={selectedDefect.verification.verdict} small /> Severity is advisory: agreement with a
+              human grader is low (kappa {SEVERITY_AGREEMENT.kappa}).{" "}
+              <Link to="/eval">See the evaluation</Link>
+            </p>
+          )}
+        </aside>
       </div>
-    </article>
+    </>
+  );
+}
+
+export default function InspectionScreen() {
+  const { id = "" } = useParams();
+  const inspection = useAsyncData(() => api.inspection(id), [id]);
+  // Siblings, name and rank come from the fleet; the viewer works without it.
+  const fleet = useAsyncData(() => api.fleet(), []);
+  const orders = useAsyncData(() => api.workOrders().catch(() => [] as WorkOrder[]), []);
+
+  return (
+    <section className="screen screen--wide" aria-label="Inspection viewer">
+      <Async state={inspection} what="inspection">
+        {(data) => <InspectionBody
+            inspection={data}
+            fleet={fleet.status === "ready" ? fleet.data : null}
+            orders={orders.status === "ready" ? orders.data : []}
+          />}
+      </Async>
+    </section>
   );
 }

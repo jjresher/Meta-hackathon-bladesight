@@ -5,6 +5,13 @@ import { defineConfig } from "vite";
 // Vite + Vitest configuration for the BladeSight web UI (issue #13).
 export default defineConfig({
   plugins: [react()],
+  // `npm run dev` talks to a local API (`uv run poe serve`, port 8000).
+  server: {
+    proxy: {
+      "/api": "http://127.0.0.1:8000",
+      "/images": "http://127.0.0.1:8000",
+    },
+  },
   test: {
     globals: true,
     environment: "jsdom",

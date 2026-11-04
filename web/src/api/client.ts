@@ -1,94 +1,78 @@
 /**
- * Typed API client for the BladeSight UI (issue #13).
- *
- * The client has a mock mode that reads from the hand-written placeholders in
- * `web/src/mocks/`. When the backend agent commits generated fixtures, switch
- * the data source with a SINGLE line: replace the `mockDataset` import below
- * with a loader for `web/src/fixtures/*.json` (see DATA_SOURCE comment).
+ * Typed client for the BladeSight API (docs/api.md). Same-origin by default (the API serves the
+ * built UI); `VITE_API_BASE` points a dev build at another origin. There is no offline or
+ * fixture fallback here: the fixtures in `src/fixtures/` are made-up values and only tests
+ * import them.
  */
-
-import { mockDataset } from "../mocks/fleet";
 import type {
-  AgentStep,
+  AgentRun,
   EvalReport,
-  FleetDataset,
+  Fleet,
+  Health,
   Inspection,
   Report,
-  Turbine,
   WorkOrder,
 } from "../types";
 
-// ============================================================================
-// ONE-LINE DATA SOURCE SWITCH
-// ----------------------------------------------------------------------------
-// Today the client serves the mock placeholders. To switch to the backend
-// agent's generated fixtures, change ONLY this line to, e.g.:
-//     import DATA_SOURCE from "../fixtures/dataset.json" with { type: "json" };
-// (the fixtures JSON conforms to the `FleetDataset` type in ../types.ts).
-const DATA_SOURCE: FleetDataset = mockDataset;
-// ============================================================================
+const BASE = (import.meta.env.VITE_API_BASE ?? "").replace(/\/$/, "");
 
-export class NotFoundError extends Error {
-  constructor(message: string) {
+/** The schema version this UI was generated against (see `src/fixtures/schema.json`). */
+export const SCHEMA_VERSION = "1.0";
+
+export class ApiError extends Error {
+  readonly status: number | null;
+  readonly path: string;
+
+  constructor(message: string, status: number | null, path: string) {
     super(message);
-    this.name = "NotFoundError";
+    this.name = "ApiError";
+    this.status = status;
+    this.path = path;
+  }
+
+  get notFound(): boolean {
+    return this.status === 404;
   }
 }
 
-/** A tiny typed client over a `FleetDataset`. */
-export class ApiClient {
-  private readonly data: FleetDataset;
-
-  constructor(data: FleetDataset = DATA_SOURCE) {
-    this.data = data;
+async function get<T>(path: string): Promise<T> {
+  let response: Response;
+  try {
+    response = await fetch(`${BASE}${path}`, { headers: { Accept: "application/json" } });
+  } catch {
+    throw new ApiError("The API is not reachable.", null, path);
   }
-
-  /** Farm-level provenance label for honest UI copy. */
-  getFarmLabel(): string {
-    return this.data.farmLabel;
-  }
-
-  /** Turbines ranked by priority (already sorted by the data source). */
-  async getFleet(): Promise<Turbine[]> {
-    return [...this.data.turbines].sort((a, b) => a.rank - b.rank);
-  }
-
-  /** One inspection by id, or throws NotFoundError. */
-  async getInspection(id: string): Promise<Inspection> {
-    const found = this.data.inspections.find((i) => i.id === id);
-    if (!found) {
-      throw new NotFoundError(`Inspection not found: ${id}`);
+  if (!response.ok) {
+    let detail = response.statusText || `HTTP ${response.status}`;
+    try {
+      const body: unknown = await response.json();
+      if (body && typeof body === "object" && "detail" in body && typeof body.detail === "string") {
+        detail = body.detail;
+      }
+    } catch {
+      // keep the status text
     }
-    return found;
+    throw new ApiError(detail, response.status, path);
   }
-
-  /** All inspections for one turbine, newest year first. */
-  async getInspectionsForTurbine(turbineId: string): Promise<Inspection[]> {
-    return this.data.inspections
-      .filter((i) => i.turbineId === turbineId)
-      .sort((a, b) => b.year - a.year);
-  }
-
-  /** The written fleet report with its work orders. */
-  async getReport(): Promise<Report> {
-    return this.data.report;
-  }
-
-  /** Work orders, in priority order (as stored in the report). */
-  async getWorkOrders(): Promise<WorkOrder[]> {
-    return this.data.report.workOrders;
-  }
-
-  /** The agent trace for the latest run, in step order. */
-  async getAgentTrace(): Promise<AgentStep[]> {
-    return [...this.data.agentTrace].sort((a, b) => a.index - b.index);
-  }
-
-  /** The evaluation report (metrics, threshold curve, limitations). */
-  async getEvalReport(): Promise<EvalReport> {
-    return this.data.evalReport;
+  try {
+    return (await response.json()) as T;
+  } catch {
+    throw new ApiError("The API answered with something that is not JSON.", response.status, path);
   }
 }
 
-/** Shared default client used by the screens. */
-export const api = new ApiClient();
+export const api = {
+  health: () => get<Health>("/api/health"),
+  fleet: () => get<Fleet>("/api/fleet"),
+  inspection: (id: string) => get<Inspection>(`/api/inspections/${encodeURIComponent(id)}`),
+  workOrders: () => get<WorkOrder[]>("/api/work-orders"),
+  latestReport: () => get<Report>("/api/reports/latest"),
+  runs: () => get<AgentRun[]>("/api/runs"),
+  run: (id: string) => get<AgentRun>(`/api/runs/${encodeURIComponent(id)}`),
+  evaluations: () => get<EvalReport[]>("/api/eval"),
+};
+
+/** Absolute-or-relative URL of a tile the API streams (`InspectionImage.image_url`). */
+export function imageUrl(path: string): string {
+  return `${BASE}${path}`;
+}

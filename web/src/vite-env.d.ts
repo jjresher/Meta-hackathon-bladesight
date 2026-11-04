@@ -1,4 +1,6 @@
 /// <reference types="vite/client" />
 
-// Allow side-effect imports of CSS files from TypeScript.
-declare module "*.css";
+interface ImportMetaEnv {
+  /** Origin of the API for a dev build; empty means same-origin. */
+  readonly VITE_API_BASE?: string;
+}

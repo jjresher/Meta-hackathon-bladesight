@@ -1,136 +1,149 @@
 import { Link } from "react-router-dom";
 
 import { api } from "../api/client";
+import { TrendBadge, TurbineStatusChip } from "../components/Chips";
+import { Async } from "../components/PageState";
 import SeverityScale from "../components/SeverityScale";
-import StatusChip from "../components/StatusChip";
 import { InfoIcon } from "../components/icons";
 import { useAsyncData } from "../hooks/useAsyncData";
-import type { Turbine } from "../types";
+import { defectsLabel, latestInspection } from "../lib/format";
+import type { Fleet, Turbine } from "../types";
 
-/** Extract the two inspection years a turbine compares, newest first. */
-function yearsCompared(t: Turbine): string {
-  const years = t.inspectionIds
-    .map((id) => {
-      const match = /(\d{4})$/.exec(id);
-      return match ? Number(match[1]) : null;
-    })
-    .filter((y): y is number => y !== null)
-    .sort((a, b) => b - a);
-  if (years.length >= 2) return `${years[0]} vs ${years[1]}`;
-  if (years.length === 1) return `${years[0]}`;
-  return "—";
+function Stat({ value, label, tone }: { value: number | string; label: string; tone?: "alert" | "review" }) {
+  return (
+    <div className={`stat${tone ? ` stat--${tone}` : ""}`}>
+      <dd className="stat__value num">{value}</dd>
+      <dt className="stat__label">{label}</dt>
+    </div>
+  );
 }
 
-/**
- * Fleet screen: every turbine ranked by inspection priority, each row carrying
- * a text+shape status chip, worst severity, defect count and the years
- * compared, linking to the turbine's latest inspection.
- */
-export default function FleetScreen() {
-  const state = useAsyncData(() => api.getFleet(), []);
+function TurbineRow({ turbine, maxScore }: { turbine: Turbine; maxScore: number }) {
+  const latest = latestInspection(turbine);
+  const href = `/inspections/${encodeURIComponent(latest.id)}`;
+  return (
+    <li className={`frow frow--${turbine.status}`} data-testid="fleet-row">
+      <span className={`rank${turbine.rank <= 3 ? " rank--top" : ""}`} aria-label={`Rank ${turbine.rank}`}>
+        {turbine.rank}
+      </span>
 
-  if (state.status === "loading") {
-    return (
-      <section className="screen">
-        <p className="state">Loading fleet…</p>
-      </section>
-    );
-  }
-  if (state.status === "error") {
-    return (
-      <section className="screen">
-        <p className="state" role="alert">
-          Could not load the fleet: {state.error.message}
-        </p>
-      </section>
-    );
-  }
+      <div className="frow__main">
+        <Link to={href} className="frow__name stretched">
+          {turbine.name}
+          <span className="visually-hidden">, open latest inspection {latest.id}</span>
+        </Link>
+        <p className="frow__reason">{turbine.reason}</p>
+      </div>
 
-  const turbines = state.data;
-  const maxPriority = turbines.reduce((m, t) => Math.max(m, t.priority), 1);
-  const attention = turbines.filter((t) => t.status !== "ok").length;
+      <div className="frow__status">
+        <TurbineStatusChip status={turbine.status} />
+        <TrendBadge trend={turbine.trend} />
+      </div>
+
+      <div className="frow__score" title={`Priority score ${turbine.priority_score}`}>
+        <span className="pbar">
+          <span className="pbar__track">
+            <span
+              className="pbar__fill"
+              style={{ width: `${maxScore > 0 ? Math.max(3, (turbine.priority_score / maxScore) * 100) : 0}%` }}
+            />
+          </span>
+        </span>
+        <span className="num frow__score-val">{turbine.priority_score.toFixed(2)}</span>
+      </div>
+
+      <div className="frow__sev">
+        <SeverityScale value={latest.max_severity} />
+        <span className="frow__sub">verified max, {latest.year}</span>
+      </div>
+
+      <div className="frow__counts num">
+        <span>{defectsLabel(latest.n_defects)}</span>
+        <span className="frow__sub">
+          {latest.n_needs_review} review · {latest.n_reinspect} reinspect
+        </span>
+      </div>
+
+      <div className="frow__years">
+        {[...turbine.inspections]
+          .sort((a, b) => a.year - b.year)
+          .map((insp) => (
+            <Link
+              key={insp.id}
+              to={`/inspections/${encodeURIComponent(insp.id)}`}
+              className="year-chip"
+              aria-label={`Open the ${insp.year} inspection of ${turbine.name}`}
+            >
+              {insp.year}
+            </Link>
+          ))}
+        {turbine.open_work_orders > 0 && (
+          <Link to="/work-orders" className="year-chip year-chip--wo" title="Open work orders">
+            {turbine.open_work_orders} WO
+          </Link>
+        )}
+      </div>
+    </li>
+  );
+}
+
+function FleetBody({ fleet }: { fleet: Fleet }) {
+  const turbines = [...fleet.turbines].sort((a, b) => a.rank - b.rank);
+  const maxScore = Math.max(0, ...turbines.map((t) => t.priority_score));
+  const count = (status: Turbine["status"]) => turbines.filter((t) => t.status === status).length;
+  const orders = turbines.reduce((sum, t) => sum + t.open_work_orders, 0);
 
   return (
-    <section className="screen" aria-labelledby="fleet-heading">
-      <header className="screen__header">
-        <p className="screen__eyebrow">Fleet overview</p>
-        <h1 id="fleet-heading">Fleet</h1>
-        <p className="screen__sub">
-          {turbines.length} turbines ranked by inspection priority. {attention} need attention
-          (review or re-inspect) before any repair is scheduled.
+    <>
+      <header className="page-head">
+        <p className="eyebrow">Fleet</p>
+        <h1>{turbines.length} turbines, ranked by what needs a person first</h1>
+        <p className="lede">
+          The agent ranks turbines from <em>verified</em> assessments only: a defect that did not survive the second look
+          never raises a turbine's rank by itself, it asks for a review or new photos.
         </p>
       </header>
 
-      <p className="note">
+      <p className="note" data-testid="fleet-note">
         <InfoIcon className="note__icon" />
         <span>
-          Synthetic farm built from real DTU drone photos. Priority blends the worst verified
-          verdict, max severity and defect count; no repair is recommended without a verified
-          assessment.
+          {fleet.note}
         </span>
       </p>
 
-      <div className="table-wrap">
-        <table className="data-table" data-testid="fleet-table">
-          <thead>
-            <tr>
-              <th scope="col" className="col-num">
-                Rank
-              </th>
-              <th scope="col">Turbine</th>
-              <th scope="col">Status</th>
-              <th scope="col" className="col-optional">
-                Priority
-              </th>
-              <th scope="col" className="col-optional">
-                Max severity
-              </th>
-              <th scope="col" className="col-num col-optional">
-                Defects
-              </th>
-              <th scope="col" className="col-optional">
-                Years compared
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {turbines.map((t) => (
-              <tr key={t.id} data-testid="fleet-row">
-                <td className="col-num">
-                  <span className={`rank-badge${t.rank <= 3 ? " rank-badge--top" : ""}`}>
-                    {t.rank}
-                  </span>
-                </td>
-                <td>
-                  <Link to={`/inspections/${t.latestInspectionId}`} className="turbine-cell">
-                    <span className="turbine-cell__name">{t.name}</span>
-                    <span className="turbine-cell__id">{t.latestInspectionId}</span>
-                  </Link>
-                </td>
-                <td>
-                  <StatusChip status={t.status} small />
-                </td>
-                <td className="col-optional">
-                  <span className="pbar">
-                    <span className="pbar__track">
-                      <span
-                        className="pbar__fill"
-                        style={{ width: `${Math.round((t.priority / maxPriority) * 100)}%` }}
-                      />
-                    </span>
-                    <span className="pbar__val">{t.priority.toFixed(1)}</span>
-                  </span>
-                </td>
-                <td className="col-optional">
-                  <SeverityScale value={t.maxSeverity} />
-                </td>
-                <td className="col-num col-optional">{t.defectCount}</td>
-                <td className="col-optional num">{yearsCompared(t)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <dl className="stats">
+        <Stat value={count("critical")} label="critical" tone="alert" />
+        <Stat value={count("attention")} label="attention" tone="review" />
+        <Stat value={count("needs_review")} label="need review" tone="review" />
+        <Stat value={count("ok")} label="ok" />
+        <Stat value={orders} label="open work orders" />
+      </dl>
+
+      <div className="fhead" aria-hidden="true">
+        <span>#</span>
+        <span>Turbine</span>
+        <span>Status</span>
+        <span>Priority</span>
+        <span>Severity</span>
+        <span>Latest inspection</span>
+        <span>Inspections</span>
       </div>
+      <ol className="fleet-list" data-testid="fleet-list">
+        {turbines.map((turbine) => (
+          <TurbineRow key={turbine.id} turbine={turbine} maxScore={maxScore} />
+        ))}
+      </ol>
+    </>
+  );
+}
+
+export default function FleetScreen() {
+  const state = useAsyncData(() => api.fleet(), []);
+  return (
+    <section className="screen" aria-label="Fleet">
+      <Async state={state} what="the fleet">
+        {(fleet) => <FleetBody fleet={fleet} />}
+      </Async>
     </section>
   );
 }
