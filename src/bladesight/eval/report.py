@@ -223,8 +223,14 @@ def write_outputs(
 ) -> tuple[Path, Path]:
     out_dir.mkdir(parents=True, exist_ok=True)
     md, svg = out_dir / f"{stem}.md", out_dir / f"{stem}_sweep.svg"
+    (out_dir / f"{stem}.json").write_text(  # the API serves this (`/api/eval`)
+        report.model_dump_json(indent=1) + "\n", encoding="utf-8"
+    )
     md.write_text(
-        render_markdown(report, results, title=title, command=command, notes=notes), "utf-8"
+        render_markdown(
+            report, results, title=title, command=command, notes=notes, svg_name=svg.name
+        ),
+        "utf-8",
     )
     svg.write_text(sweep_svg(report.sweep), encoding="utf-8")
     return md, svg
