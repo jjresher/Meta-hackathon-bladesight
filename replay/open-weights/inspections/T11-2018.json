@@ -1,0 +1,50 @@
+{
+ "summary": {
+  "id": "T11-2018",
+  "turbine_id": "T11",
+  "year": 2018,
+  "n_images": 4,
+  "n_defects": 0,
+  "max_severity": null,
+  "n_needs_review": 0,
+  "n_reinspect": 0
+ },
+ "images": [
+  {
+   "id": "T11-2018/DJI_0442_05_09",
+   "tile_id": "DJI_0442_05_09",
+   "image_url": "/images/DJI_0442_05_09.png",
+   "width": 586,
+   "height": 371,
+   "blade_outline": [],
+   "defects": []
+  },
+  {
+   "id": "T11-2018/DJI_0250_08_03",
+   "tile_id": "DJI_0250_08_03",
+   "image_url": "/images/DJI_0250_08_03.png",
+   "width": 586,
+   "height": 371,
+   "blade_outline": [],
+   "defects": []
+  },
+  {
+   "id": "T11-2018/DJI_0038_01_07",
+   "tile_id": "DJI_0038_01_07",
+   "image_url": "/images/DJI_0038_01_07.png",
+   "width": 586,
+   "height": 371,
+   "blade_outline": [],
+   "defects": []
+  },
+  {
+   "id": "T11-2018/DJI_0450_05_04",
+   "tile_id": "DJI_0450_05_04",
+   "image_url": "/images/DJI_0450_05_04.png",
+   "width": 586,
+   "height": 371,
+   "blade_outline": [],
+   "defects": []
+  }
+ ]
+}

@@ -1,0 +1,17 @@
+{
+ "detection": [
+  {
+   "stage": "detection_proposals",
+   "model": "muse-spark-1.3",
+   "provider": "meta"
+  },
+  {
+   "stage": "segmentation",
+   "model": "sam-3.1",
+   "provider": "meta"
+  }
+ ],
+ "regraded_from": "replay",
+ "chat_model": "meta-models/muse-spark-open",
+ "source": "same stored detections as replay/ (fleet regrade); docs/evidence/open_weights_farm.md"
+}
