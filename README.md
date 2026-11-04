@@ -82,7 +82,7 @@ below) is the number to quote for detection; the dev numbers are where the pipel
 | **Held-out** dirt | precision 0.05, recall 0.44: weak, not offered as a detector | [`eval_heldout.md`](docs/evidence/eval_heldout.md) |
 | Damage detection, box level (IoU 0.3, 300 dev tiles) | precision 0.37 (95% CI 0.31-0.42), recall 0.22 (0.18-0.26) | [`eval_dev.md`](docs/evidence/eval_dev.md) |
 | Damage, image level, dev (a damaged 586x371 tile has at least one damage prediction) | recall 0.77, with a 21% false-alarm rate on tiles that have no box | [`eval_dev.md`](docs/evidence/eval_dev.md) |
-| Dirt detection, dev | weak (precision 0.05 on 36 boxes): reported as weak, not offered as a detector | [`eval_dev.md`](docs/evidence/eval_dev.md) |
+| Dirt detection, dev | weak (precision 0.05, recall 0.31 over 36 truth boxes): reported as weak, not offered as a detector | [`eval_dev.md`](docs/evidence/eval_dev.md) |
 | Severity vs a human applying the rubric (40 crops) | quadratic weighted kappa 0.12 (95% interval -0.05 to 0.29), exact agreement 25%: **advisory only** | [`severity_agreement.md`](docs/evidence/severity_agreement.md) |
 | Same 40 crops on **Muse Spark Open** | kappa 0.19 (0.01 to 0.38), exact agreement 30%: no worse, not shown to be better | [`open_weights.md`](docs/evidence/open_weights.md) |
 | Verification on the synthetic farm (96 defects) | 33 `ok`, 50 `needs_review`, 13 `reinspect` | [`fleet_run.md`](docs/evidence/fleet_run.md) |
@@ -149,8 +149,9 @@ order, trace step and report records the model and provider that produced it.
 ## The demo farm is synthetic
 
 The DTU photos are of **one** Nordtank turbine and carry no real turbine id or inspection year.
-The demo farm (12 turbines, 2017 and 2018 inspections of 4 tiles each) is an invented grouping of
-real photos, labelled as such everywhere in the app and the data. Rankings and 2017-vs-2018 trends
+The demo farm (12 turbines, 2017 and 2018 inspections of 4 tiles each;
+[`fleet_run.md`](docs/evidence/fleet_run.md)) is an invented grouping of real photos, labelled as
+such everywhere in the app and the data. Rankings and 2017-vs-2018 trends
 illustrate the method; they are not findings about a real farm.
 
 ## Run it
@@ -171,8 +172,9 @@ uv run python -m bladesight.api.smoke http://127.0.0.1:8000   # in a second term
 
 - Port 8000 taken? `uv run poe serve --port 8010` (extra arguments go to uvicorn).
 - The tiles step is the slow one (about 10 minutes in the dry run: it reads the archive until all 96
-  demo tiles are found); the rest takes under a minute. You can run it in parallel with the rest; until it finishes, images answer 404, the UI shows "Photo
-  unavailable" next to the defect data, and the smoke check fails on its image request.
+  demo tiles are found); the rest took under a minute with warm uv and npm caches. You can run it
+  in parallel with the rest; until it finishes, images answer 404, the UI shows "Photo unavailable"
+  next to the defect data, and the smoke check fails on its image request.
 - Without `web/dist` (no web build) `/` answers 404 and the API still lives under `/api` and `/docs`.
   The UI build must exist before `poe serve` starts.
 - Both runs are served: `/api/replays` lists them, and `?provider=baseten` on the data endpoints
@@ -205,8 +207,9 @@ BLADESIGHT_MODE=live uv run poe fleet run      # the agent
 
 Re-run the planning half on Muse Spark Open (needs `BASETEN_API_KEY` and `BASETEN_SPEND_LIMIT_USD`
 in `.env` or the environment; no Meta key is needed because detections are reused; about 1.80 USD,
-and 192 grading calls wait for the 15 requests/minute limit, so at least 13 minutes). Write to a
-new folder so the stored replay stays as it is. Re-grading reads the farm tiles, so fetch them first
+and 192 grading calls wait for the 15 requests/minute limit, so at least 13 minutes;
+[`open_weights.md`](docs/evidence/open_weights.md)). Write to a new folder so the stored replay
+stays as it is. Re-grading reads the farm tiles, so fetch them first
 (`uv run python -m bladesight.data.demo`, or `uv run poe data` for the whole dataset):
 
 ```bash

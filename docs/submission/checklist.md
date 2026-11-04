@@ -23,7 +23,7 @@ All times COT (UTC-5). Official deadline: **Wed Nov 4, 9:00 PM COT** (9:00 PM ET
 | Bonus: Most Viral / Community Vote | via the X post and the gallery (#21); nothing to flag in the form beyond the post link |
 | Bonus: Best Creative Build | not targeted |
 | Data | DTU drone images (CC BY-NC 3.0) and the YOLO-annotated derivative (CC BY-NC 4.0), [`DATA.md`](../../DATA.md) |
-| Short description (form) | Drone photos of wind turbine blades go in; a verified, prioritized repair plan comes out. Muse Spark proposes damage boxes and SAM 3.1 segments them with no training; Muse Spark grades each defect against a written rubric; a second look marks it ok, needs review or re-inspect; a fleet agent with tools ranks a synthetic 12-turbine farm and writes work orders that can only cite verified defects. The planning half also runs on Muse Spark Open. Detection was measured once on a preregistered held-out split. |
+| Short description (form) | Drone photos of wind turbine blades go in; a verified, prioritized repair plan comes out. Muse Spark proposes damage boxes and SAM 3.1 segments them with no training; Muse Spark grades each defect against a written rubric; a second look marks it ok, needs review or re-inspect; a fleet agent with seven tools reads a deterministic ranking of a synthetic 12-turbine farm, writes repair orders that can only cite verified defects, and asks for re-inspection of the rest. The planning half also runs on Muse Spark Open. Detection was measured once on a preregistered held-out split. |
 
 ## Done (with evidence)
 
