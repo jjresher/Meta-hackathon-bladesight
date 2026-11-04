@@ -126,3 +126,12 @@ def test_store_is_untouched_by_reads(parts) -> None:
     client.get("/api/fleet")
     assert before == sorted(p.name for p in store.root.rglob("*.json"))
     assert isinstance(store, Store)
+
+
+def test_the_uvicorn_target_is_the_application_not_a_module() -> None:
+    """Regression: `bladesight.api:app` once resolved to a submodule named `app`."""
+    import importlib
+
+    from fastapi import FastAPI
+
+    assert isinstance(importlib.import_module("bladesight.api").app, FastAPI)
