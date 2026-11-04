@@ -40,11 +40,14 @@ def evaluate_tiles(
     *,
     with_blade: bool = False,
     weights: Mapping[str, float] | None = None,
+    detector: str = "v1",
 ) -> list[TileResult]:
     results = []
     for tile in tiles:
         png = image_path(tile, split, data_dir).read_bytes()
-        detection = detect_tile(client, settings, tile.tile_id, png, with_blade=with_blade)
+        detection = detect_tile(
+            client, settings, tile.tile_id, png, with_blade=with_blade, detector=detector
+        )
         results.append(
             TileResult(
                 tile_id=tile.tile_id,

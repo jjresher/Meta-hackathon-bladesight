@@ -94,6 +94,29 @@ in `docs/evidence/eval_fresh_v2.md` and the pipeline default stays v1.
 v1 on 300 tiles at the dev rate (0.0106 USD per tile, 3.18 USD for 300) is about 3.2-4.2 USD;
 v2 adds 0 USD if it only changes post-processing. Cap for this experiment: 8 USD in total.
 
+## Addendum before the run (2026-11-04): v2 as frozen
+
+Written after choosing v2 on the dev sample and before either detector ran on any fresh tile.
+Nothing above changed.
+
+- **v2** = `bladesight.detect.pipeline.V2` = `PostConfig(split_components=True, min_area_px=40,
+  min_part_share=0.1, merge="nms")`: the same model calls as v1 (Spark proposals, SAM box
+  refinement, the two SAM text concepts, no blade call); each mask is split into its
+  8-connected parts, parts under 40 px or under 0.1 of the mask's largest part are dropped, and
+  same-label masks with mask IoU >= 0.5 are suppressed (the higher score is kept, not unioned).
+  One box per part. v1 is `PostConfig()` (unchanged, still the default).
+- Chosen from the dev variant table `docs/evidence/eval_fresh_v2_dev.md` (seed-7 dev sample,
+  cached answers, 0 USD): v1 F1 0.276 -> v2 F1 0.308 at IoU 0.3 on dev, same image recall
+  (0.767) and false-alarm rate (0.210). Quadrant zoom was checked on 20 dev tiles (0.3475 USD),
+  gave the same F1 and was not adopted, so v2 adds no model call and its fresh pass should be
+  served entirely from the cache v1's pass fills (0 USD).
+- **Frozen commit**: the commit that adds this addendum. The run refuses uncommitted changes in
+  `src/`, `pyproject.toml`, `uv.lock`, this file and the manifest, and records
+  `git rev-parse HEAD` in `docs/evidence/eval_fresh_v2.md`.
+- Command: `BLADESIGHT_MODE=live uv run poe eval --split fresh` (v1 pass, then v2 pass, in one
+  process); it refuses a second run once `docs/evidence/eval_fresh_v2.md` exists unless
+  `ALLOW_FRESH_RERUN=1` is set, which would be listed as a deviation.
+
 ## Deviations
 
 None yet.
