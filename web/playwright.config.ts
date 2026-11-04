@@ -16,7 +16,7 @@ export default defineConfig({
   webServer: process.env.SMOKE_BASE_URL
     ? undefined
     : {
-        command: "npm run build && npm run preview -- --port 4173 --strictPort",
+        command: "npm run build && npm run preview -- --host 127.0.0.1 --port 4173 --strictPort",
         url: baseURL,
         reuseExistingServer: !process.env.CI,
         timeout: 120_000,
