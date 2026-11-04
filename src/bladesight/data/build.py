@@ -203,6 +203,11 @@ def _unseal_for_rebuild(heldout: Path) -> None:
             (Path(root) / name).chmod(0o700)
 
 
+def unseal(heldout: Path) -> None:
+    """Directory permissions only (held-out files stay read-only, owner): issue #16 only."""
+    _unseal_for_rebuild(heldout)
+
+
 def seal(heldout: Path) -> None:
     for root, dirs, files in os.walk(heldout):
         for name in files:

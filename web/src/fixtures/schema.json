@@ -326,16 +326,17 @@
           "type": "string"
         },
         "tp": {
+          "description": "matched boxes (sampling-weighted, so not always an integer)",
           "title": "Tp",
-          "type": "integer"
+          "type": "number"
         },
         "fp": {
           "title": "Fp",
-          "type": "integer"
+          "type": "number"
         },
         "fn": {
           "title": "Fn",
-          "type": "integer"
+          "type": "number"
         },
         "precision": {
           "title": "Precision",
@@ -559,6 +560,19 @@
           "title": "Evidence Path",
           "type": "string"
         },
+        "sample_note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "how the tiles were sampled and weighted (precision and false alarms per image are scaled to the full split when clean tiles were subsampled)",
+          "title": "Sample Note"
+        },
         "generated_at": {
           "format": "date-time",
           "title": "Generated At",
@@ -578,6 +592,7 @@
         "prompt_versions",
         "cost_usd",
         "evidence_path",
+        "sample_note",
         "generated_at"
       ],
       "title": "EvalReport",

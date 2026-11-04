@@ -59,6 +59,7 @@ def build_report(
     evidence_path: str,
     n_boot: int = BOOTSTRAP_N,
     needs_review_share: float | None = None,
+    sample_note: str | None = None,
 ) -> EvalReport:
     damage = image_level(results, "damage")
     return EvalReport.model_validate(
@@ -86,6 +87,7 @@ def build_report(
             },
             "cost_usd": cost_usd,
             "evidence_path": evidence_path,
+            "sample_note": sample_note,
             "generated_at": datetime.now(UTC),
         }
     )
