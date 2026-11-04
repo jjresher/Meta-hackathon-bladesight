@@ -125,3 +125,31 @@ def test_crops_are_square_pngs_even_at_the_tile_edge() -> None:
     edge = BBox(x1=0, y1=0, x2=3, y2=3)
     for crop in close_and_context(_png(), edge):
         assert Image.open(io.BytesIO(crop)).size == (SIZE, SIZE)
+
+
+def _red(image: Image.Image, x: int, y: int) -> int:
+    pixel = image.getpixel((x, y))
+    assert isinstance(pixel, tuple)
+    return pixel[0]
+
+
+def test_crops_do_not_distort_and_stay_inside_the_tile() -> None:
+    from bladesight.assess.crops import crop_png
+
+    # a left-to-right gradient makes any stretch or shift visible
+    image = Image.new("RGB", (200, 120))
+    for x in range(200):
+        for y in range(120):
+            image.putpixel((x, y), (x, 0, 0))
+    buffer = io.BytesIO()
+    image.save(buffer, format="PNG")
+    png = buffer.getvalue()
+    thin = BBox(x1=40, y1=60, x2=140, y2=66)  # a 100x6 crack
+    crop = Image.open(io.BytesIO(crop_png(png, thin, pad=0.5, min_side=64)))
+    assert crop.size == (SIZE, SIZE)
+    # side = 100 * 2 = 200 px is clamped to the tile height (120): one square, no stretching
+    left_value, right_value = _red(crop, 0, 10), _red(crop, SIZE - 1, 10)
+    assert right_value - left_value == pytest.approx(119, abs=4)  # 120 px of the tile, 1:1 in x
+    edge = BBox(x1=0, y1=0, x2=3, y2=3)  # at the corner the square moves, it is not stretched
+    corner = Image.open(io.BytesIO(crop_png(png, edge, pad=0.5, min_side=64)))
+    assert _red(corner, 0, 0) == 0

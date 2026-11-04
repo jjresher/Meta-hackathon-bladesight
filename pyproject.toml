@@ -55,6 +55,7 @@ hooks = "pre-commit install"
 secrets-scan = "pre-commit run --all-files"
 check = ["lint", "format-check", "typecheck", "test"]
 data = "python -m bladesight.data"
+fleet = "python -m bladesight.fleet"
 detect = "python -m bladesight.detect"
 eval = "python -m bladesight.eval"
 gold = "python -m bladesight.eval.gold"
