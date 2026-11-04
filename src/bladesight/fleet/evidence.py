@@ -4,12 +4,17 @@ from __future__ import annotations
 
 from collections import Counter
 
+from .compare import autonomy, autonomy_table, latest_run
 from .rank import all_defects, summarize
 from .store import Store
 
 
 def render(
-    store: Store, farm_cost_usd: float, agent_cost_usd: float, command_notes: str = ""
+    store: Store,
+    farm_cost_usd: float,
+    agent_cost_usd: float,
+    command_notes: str = "",
+    open_store: Store | None = None,
 ) -> str:
     inspections = store.inspections()
     defects = [d for i in inspections for d in all_defects(i)]
@@ -74,6 +79,24 @@ def render(
             f"- Report: {'`' + run.report_id + '`' if run.report_id else 'none'}.",
             "",
             "Trace and orders: `replay/runs/`, `replay/work_orders.json`, `replay/reports/`.",
+        ]
+        runs = [(run, orders)]
+        open_run = latest_run(open_store) if open_store is not None else None
+        if open_store is not None and open_run is not None:
+            runs.append((open_run, open_store.work_orders()))
+        lines += [
+            "",
+            "## Agent autonomy",
+            "",
+            "Counted from the stored traces (`fleet/compare.py`). A rejection is a tool call the",
+            "tool refused, with the rule it enforced (`fleet/rules.py`, stable ids); the agent",
+            "reads the refusal and decides what to do next. The rationale is the model's own text",
+            "in the same turn before the call (null when it wrote none); nothing is filled in.",
+            "The Meta run's fields were backfilled from its stored steps (`fleet backfill`).",
+            "The Muse Spark Open run grades its own re-graded farm (`replay/open-weights/`),",
+            "so the two agents saw different verdicts: compare behaviour, not order lists.",
+            "",
+            *autonomy_table([autonomy(r, o) for r, o in runs]),
         ]
     top = sorted(inspections, key=lambda i: (i.summary.turbine_id, i.summary.year))
     lines += [

@@ -13,9 +13,15 @@
       "tool": null,
       "arguments": null,
       "content": "Rank the turbines by their latest verified defects.",
-      "duration_ms": 40,
-      "cost_usd": 0.002,
-      "model": "muse-spark-1.3"
+      "duration_ms": 0,
+      "cost_usd": 0.0,
+      "model": "muse-spark-1.3",
+      "provider": "meta",
+      "turn": 1,
+      "rationale": null,
+      "decision": null,
+      "outcome": null,
+      "blocked_by_rule": null
     },
     {
       "index": 1,
@@ -25,7 +31,13 @@
       "content": "list_turbines()",
       "duration_ms": 1200,
       "cost_usd": 0.002,
-      "model": "muse-spark-1.3"
+      "model": "muse-spark-1.3",
+      "provider": "meta",
+      "turn": 1,
+      "rationale": "Rank the turbines by their latest verified defects.",
+      "decision": "read the farm ranking",
+      "outcome": "accepted",
+      "blocked_by_rule": null
     },
     {
       "index": 2,
@@ -33,9 +45,15 @@
       "tool": "list_turbines",
       "arguments": null,
       "content": "12 turbines, 24 inspections",
-      "duration_ms": 40,
+      "duration_ms": 0,
       "cost_usd": 0.0,
-      "model": null
+      "model": null,
+      "provider": null,
+      "turn": 1,
+      "rationale": null,
+      "decision": null,
+      "outcome": null,
+      "blocked_by_rule": null
     },
     {
       "index": 3,
@@ -47,7 +65,13 @@
       "content": "compare T03 2017 vs 2018",
       "duration_ms": 1200,
       "cost_usd": 0.002,
-      "model": "muse-spark-1.3"
+      "model": "muse-spark-1.3",
+      "provider": "meta",
+      "turn": 2,
+      "rationale": null,
+      "decision": "compare the two inspections of T03",
+      "outcome": "accepted",
+      "blocked_by_rule": null
     },
     {
       "index": 4,
@@ -55,86 +79,200 @@
       "tool": "compare_inspections",
       "arguments": null,
       "content": "max severity 2 -> 4, two new defects",
-      "duration_ms": 40,
+      "duration_ms": 0,
       "cost_usd": 0.0,
-      "model": null
+      "model": null,
+      "provider": null,
+      "turn": 2,
+      "rationale": null,
+      "decision": null,
+      "outcome": null,
+      "blocked_by_rule": null
     },
     {
       "index": 5,
+      "kind": "thought",
+      "tool": null,
+      "arguments": null,
+      "content": "T03 is worse: order the repairs of its verified defects.",
+      "duration_ms": 0,
+      "cost_usd": 0.0,
+      "model": "muse-spark-1.3",
+      "provider": "meta",
+      "turn": 3,
+      "rationale": null,
+      "decision": null,
+      "outcome": null,
+      "blocked_by_rule": null
+    },
+    {
+      "index": 6,
       "kind": "tool_call",
       "tool": "create_work_order",
       "arguments": {
-        "turbine_id": "T03",
+        "inspection_id": "T03-2018",
+        "kind": "repair",
+        "priority": "P1",
+        "defect_ids": [
+          "T03-2018/DJI_0702_04_05/d1",
+          "T03-2018/DJI_0688_04_03/d2"
+        ]
+      },
+      "content": "create_work_order(...)",
+      "duration_ms": 1200,
+      "cost_usd": 0.002,
+      "model": "muse-spark-1.3",
+      "provider": "meta",
+      "turn": 3,
+      "rationale": "T03 is worse: order the repairs of its verified defects.",
+      "decision": "repair work order (P1) for T03-2018: 2 defects",
+      "outcome": "rejected",
+      "blocked_by_rule": {
+        "id": "verified_only",
+        "text": "A repair or monitor work order may only cite defects whose verification verdict is ok."
+      }
+    },
+    {
+      "index": 7,
+      "kind": "tool_result",
+      "tool": "create_work_order",
+      "arguments": null,
+      "content": "{\"error\":\"no work order without a verified assessment; these defects are not verified: ['T03-2018/DJI_0688_04_03/d2 (reinspect)']. Use request_reinspection for them.\"}",
+      "duration_ms": 0,
+      "cost_usd": 0.0,
+      "model": null,
+      "provider": null,
+      "turn": 3,
+      "rationale": null,
+      "decision": null,
+      "outcome": null,
+      "blocked_by_rule": null
+    },
+    {
+      "index": 8,
+      "kind": "tool_call",
+      "tool": "create_work_order",
+      "arguments": {
+        "inspection_id": "T03-2018",
+        "kind": "repair",
+        "priority": "P1",
         "defect_ids": [
           "T03-2018/DJI_0702_04_05/d1"
         ]
       },
-      "content": "WO-001",
+      "content": "create_work_order(...)",
       "duration_ms": 1200,
       "cost_usd": 0.002,
-      "model": "muse-spark-1.3"
-    },
-    {
-      "index": 6,
-      "kind": "tool_result",
-      "tool": "create_work_order",
-      "arguments": null,
-      "content": "WO-001 created",
-      "duration_ms": 40,
-      "cost_usd": 0.0,
-      "model": null
-    },
-    {
-      "index": 7,
-      "kind": "tool_call",
-      "tool": "request_reinspection",
-      "arguments": {
-        "defect_id": "T03-2018/DJI_0688_04_03/d2"
-      },
-      "content": "WO-002",
-      "duration_ms": 1200,
-      "cost_usd": 0.002,
-      "model": "muse-spark-1.3"
-    },
-    {
-      "index": 8,
-      "kind": "tool_result",
-      "tool": "request_reinspection",
-      "arguments": null,
-      "content": "WO-002 created",
-      "duration_ms": 40,
-      "cost_usd": 0.0,
-      "model": null
+      "model": "muse-spark-1.3",
+      "provider": "meta",
+      "turn": 4,
+      "rationale": null,
+      "decision": "repair work order (P1) for T03-2018: 1 defect",
+      "outcome": "accepted",
+      "blocked_by_rule": null
     },
     {
       "index": 9,
-      "kind": "tool_call",
-      "tool": "write_report",
-      "arguments": {},
-      "content": "write the farm report",
-      "duration_ms": 1200,
-      "cost_usd": 0.002,
-      "model": "muse-spark-1.3"
+      "kind": "tool_result",
+      "tool": "create_work_order",
+      "arguments": null,
+      "content": "{\"created\":\"WO-001\"}",
+      "duration_ms": 0,
+      "cost_usd": 0.0,
+      "model": null,
+      "provider": null,
+      "turn": 4,
+      "rationale": null,
+      "decision": null,
+      "outcome": null,
+      "blocked_by_rule": null
     },
     {
       "index": 10,
-      "kind": "tool_result",
-      "tool": "write_report",
-      "arguments": null,
-      "content": "report-example-001",
-      "duration_ms": 40,
-      "cost_usd": 0.0,
-      "model": null
+      "kind": "tool_call",
+      "tool": "request_reinspection",
+      "arguments": {
+        "inspection_id": "T03-2018",
+        "defect_ids": [
+          "T03-2018/DJI_0688_04_03/d2"
+        ]
+      },
+      "content": "request_reinspection(...)",
+      "duration_ms": 1200,
+      "cost_usd": 0.002,
+      "model": "muse-spark-1.3",
+      "provider": "meta",
+      "turn": 5,
+      "rationale": null,
+      "decision": "re-inspection request for T03-2018: 1 defect",
+      "outcome": "accepted",
+      "blocked_by_rule": null
     },
     {
       "index": 11,
+      "kind": "tool_result",
+      "tool": "request_reinspection",
+      "arguments": null,
+      "content": "{\"created\":\"WO-002\"}",
+      "duration_ms": 0,
+      "cost_usd": 0.0,
+      "model": null,
+      "provider": null,
+      "turn": 5,
+      "rationale": null,
+      "decision": null,
+      "outcome": null,
+      "blocked_by_rule": null
+    },
+    {
+      "index": 12,
+      "kind": "tool_call",
+      "tool": "write_report",
+      "arguments": {
+        "markdown": "# Farm report"
+      },
+      "content": "write_report(...)",
+      "duration_ms": 1200,
+      "cost_usd": 0.002,
+      "model": "muse-spark-1.3",
+      "provider": "meta",
+      "turn": 6,
+      "rationale": null,
+      "decision": "write the farm report (13 characters)",
+      "outcome": "accepted",
+      "blocked_by_rule": null
+    },
+    {
+      "index": 13,
+      "kind": "tool_result",
+      "tool": "write_report",
+      "arguments": null,
+      "content": "{\"report_saved\":true}",
+      "duration_ms": 0,
+      "cost_usd": 0.0,
+      "model": null,
+      "provider": null,
+      "turn": 6,
+      "rationale": null,
+      "decision": null,
+      "outcome": null,
+      "blocked_by_rule": null
+    },
+    {
+      "index": 14,
       "kind": "final",
       "tool": null,
       "arguments": null,
       "content": "2 work orders, 1 re-inspection, report written.",
-      "duration_ms": 40,
+      "duration_ms": 1200,
       "cost_usd": 0.002,
-      "model": "muse-spark-1.3"
+      "model": "muse-spark-1.3",
+      "provider": "meta",
+      "turn": 7,
+      "rationale": null,
+      "decision": null,
+      "outcome": null,
+      "blocked_by_rule": null
     }
   ],
   "total_cost_usd": 0.014,

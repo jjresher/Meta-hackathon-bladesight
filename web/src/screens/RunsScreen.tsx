@@ -2,13 +2,17 @@ import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import { api } from "../api/client";
+import { ModelBadge } from "../components/Chips";
 import { Async } from "../components/PageState";
 import { InfoIcon } from "../components/icons";
+import { GUARD_RULES } from "../evidence";
 import { useAsyncData } from "../hooks/useAsyncData";
+import { autonomyOf, latestRun, ordersOfRun } from "../lib/autonomy";
 import { dateTime, duration, usd } from "../lib/format";
-import type { AgentRun, AgentStep } from "../types";
+import { useRun } from "../lib/run";
+import type { AgentRun, AgentStep, WorkOrder } from "../types";
 
-type Filter = "all" | "tools" | "thoughts";
+type View = "decisions" | "all";
 
 const KIND_LABEL: Record<AgentStep["kind"], string> = {
   thought: "Thought",
@@ -40,6 +44,105 @@ function tryPretty(content: string): string {
   }
 }
 
+/** The model's own text before a call, or an explicit "no stated reason": never filled in. */
+function Why({ text }: { text: string | null }) {
+  return text ? (
+    <q className="why__text">{text}</q>
+  ) : (
+    <span className="why__none" data-testid="no-reason">
+      no stated reason
+    </span>
+  );
+}
+
+function Outcome({ step }: { step: AgentStep }) {
+  if (!step.outcome) return null;
+  return (
+    <span className={`outcome outcome--${step.outcome}`} data-testid="outcome">
+      {step.outcome === "accepted" ? "accepted" : "rejected"}
+    </span>
+  );
+}
+
+function BlockedBy({ step }: { step: AgentStep }) {
+  if (!step.blocked_by_rule) return null;
+  return (
+    <p className="blocked" data-testid="blocked-by">
+      Stopped by rule <code>{step.blocked_by_rule.id}</code>: {step.blocked_by_rule.text}
+    </p>
+  );
+}
+
+/** Each tool call with the result the tool returned right after it. */
+function pairCalls(steps: AgentStep[]): { call: AgentStep; result: AgentStep | undefined }[] {
+  const used = new Set<number>();
+  return steps
+    .map((step, i) => ({ step, i }))
+    .filter(({ step }) => step.kind === "tool_call")
+    .map(({ step, i }) => {
+      const result = steps.find((s, j) => j > i && !used.has(j) && s.kind === "tool_result" && s.tool === step.tool);
+      if (result) used.add(steps.indexOf(result));
+      return { call: step, result };
+    });
+}
+
+/** Tool calls grouped by model turn: why (once per turn), then what each call decided. */
+function Decisions({ run }: { run: AgentRun }) {
+  const pairs = pairCalls(run.steps);
+  const turns: { turn: number | null; items: typeof pairs }[] = [];
+  for (const pair of pairs) {
+    const last = turns.at(-1);
+    if (last && last.turn !== null && last.turn === pair.call.turn) last.items.push(pair);
+    else turns.push({ turn: pair.call.turn, items: [pair] });
+  }
+  return (
+    <ol className="turns" data-testid="trace">
+      {turns.map(({ turn, items }) => {
+        const reasons = [...new Set(items.map((p) => p.call.rationale))];
+        const first = items[0].call;
+        return (
+          <li key={first.index} className="turn" data-testid="decision-turn">
+            <header className="turn__head">
+              <span className="turn__label">{turn != null ? `Turn ${turn}` : "Call"}</span>
+              <ModelBadge model={first.model} provider={first.provider} />
+            </header>
+            {reasons.map((reason, i) => (
+              <p key={i} className="why">
+                <span className="why__label">Why</span> <Why text={reason} />
+              </p>
+            ))}
+            <ol className="calls">
+              {items.map(({ call, result }) => (
+                <li
+                  key={call.index}
+                  className={`call${call.outcome === "rejected" ? " is-rejected" : ""}`}
+                  data-testid="trace-step"
+                  data-kind="tool_call"
+                >
+                  <p className="call__line">
+                    <span className="call__index num" aria-label={`Step ${call.index}`}>
+                      {call.index}
+                    </span>
+                    <code className="step__tool">{call.tool}</code>
+                    <span className="call__decision">{call.decision ?? prettyArgs(call.arguments)}</span>
+                    <Outcome step={call} />
+                  </p>
+                  <BlockedBy step={call} />
+                  <details className="call__details">
+                    <summary>Arguments and result</summary>
+                    <pre className="step__args">{prettyArgs(call.arguments)}</pre>
+                    {result && <pre className="step__args">{tryPretty(result.content)}</pre>}
+                  </details>
+                </li>
+              ))}
+            </ol>
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
 function Step({ step }: { step: AgentStep }) {
   const long = step.kind === "tool_result" && step.content.length > 220;
   return (
@@ -51,8 +154,23 @@ function Step({ step }: { step: AgentStep }) {
         <p className="step__head">
           <span className="step__kind">{KIND_LABEL[step.kind]}</span>
           {step.tool && <code className="step__tool">{step.tool}</code>}
+          {step.kind === "tool_call" && <Outcome step={step} />}
+          <ModelBadge model={step.model} provider={step.provider} />
         </p>
-        {step.kind === "tool_call" && <pre className="step__args">{prettyArgs(step.arguments)}</pre>}
+        {step.kind === "tool_call" && (
+          <>
+            <p className="why">
+              <span className="why__label">Why</span> <Why text={step.rationale} />
+            </p>
+            {step.decision && (
+              <p className="why">
+                <span className="why__label">Decided</span> {step.decision}
+              </p>
+            )}
+            <BlockedBy step={step} />
+            <pre className="step__args">{prettyArgs(step.arguments)}</pre>
+          </>
+        )}
         {step.kind === "tool_result" &&
           (long ? (
             <details>
@@ -74,16 +192,87 @@ function Step({ step }: { step: AgentStep }) {
   );
 }
 
-function RunBody({ run }: { run: AgentRun }) {
-  const [filter, setFilter] = useState<Filter>("all");
+function Autonomy({ run, orders }: { run: AgentRun; orders: WorkOrder[] }) {
+  const a = autonomyOf(run);
+  const o = ordersOfRun(run, orders);
+  const nRules = GUARD_RULES.rules.length;
+  return (
+    <div className="autonomy" data-testid="autonomy">
+      <section className="autonomy__box panel" aria-labelledby="autonomy-did">
+        <h2 id="autonomy-did" className="panel__title">
+          What the agent did on its own
+        </h2>
+        <ul className="autonomy__list">
+          <li>
+            <span className="num">{a.turns ?? "n/a"}</span> model turns, <span className="num">{a.calls.length}</span> tool
+            calls, <span className="num">{a.steps}</span> steps in the trace.
+          </li>
+          <li>
+            <ul className="tool-tally" aria-label="Tool calls by tool">
+              {a.byTool.map(([tool, n]) => (
+                <li key={tool}>
+                  <code>{tool}</code> <span className="num">×{n}</span>
+                </li>
+              ))}
+            </ul>
+          </li>
+          <li data-testid="reason-count">
+            {a.withReason === 0 ? (
+              <>The model wrote no text before any call, so every call shows "no stated reason".</>
+            ) : (
+              <>
+                <span className="num">{a.withReason}</span> of <span className="num">{a.calls.length}</span> calls came
+                with the model's own text before them.
+              </>
+            )}
+          </li>
+          <li data-testid="order-count">
+            <span className="num">{o.repair}</span> repair, <span className="num">{o.monitor}</span> monitor and{" "}
+            <span className="num">{o.reinspect}</span> re-inspection orders. Unverified defects can only get a re-inspection
+            request, never a repair (rule <code>verified_only</code>).
+          </li>
+        </ul>
+      </section>
+
+      <section className="autonomy__box panel" aria-labelledby="autonomy-rules">
+        <h2 id="autonomy-rules" className="panel__title">
+          Rules that could stop it
+        </h2>
+        <p className="autonomy__rules" data-testid="rule-summary">
+          {a.rejected.length === 0 && a.unrecorded > 0 ? (
+            <>
+              Rejections were not recorded for <span className="num">{a.unrecorded}</span> of the calls in this run.
+            </>
+          ) : a.rejected.length === 0 ? (
+            <>No call was rejected by a rule in this run.</>
+          ) : (
+            <>
+              <span className="num">{a.rejected.length}</span> call{a.rejected.length === 1 ? " was" : "s were"} rejected:{" "}
+              {a.rejected.map((c) => `step ${c.index} (${c.blocked_by_rule?.id ?? "tool error"})`).join(", ")}.
+            </>
+          )}{" "}
+          These rules are enforced in code by the tools, not only stated in the prompt:
+        </p>
+        <details className="rules">
+          <summary>
+            The {nRules} rules (<code>{GUARD_RULES.file.replace("src/bladesight/", "")}</code>)
+          </summary>
+          <ul className="rules__list" data-testid="guard-rules">
+            {GUARD_RULES.rules.map((rule) => (
+              <li key={rule.id}>
+                <code>{rule.id}</code> {rule.text}
+              </li>
+            ))}
+          </ul>
+        </details>
+      </section>
+    </div>
+  );
+}
+
+function RunBody({ run, orders }: { run: AgentRun; orders: WorkOrder[] }) {
+  const [view, setView] = useState<View>("decisions");
   const calls = run.steps.filter((s) => s.kind === "tool_call");
-  const toolCounts = new Map<string, number>();
-  for (const call of calls) toolCounts.set(call.tool ?? "?", (toolCounts.get(call.tool ?? "?") ?? 0) + 1);
-  const steps = run.steps.filter((s) => {
-    if (filter === "tools") return s.kind === "tool_call" || s.kind === "tool_result";
-    if (filter === "thoughts") return s.kind === "thought" || s.kind === "final" || s.kind === "error";
-    return true;
-  });
   const wallMs = run.finished_at ? new Date(run.finished_at).getTime() - new Date(run.started_at).getTime() : null;
 
   return (
@@ -115,8 +304,10 @@ function RunBody({ run }: { run: AgentRun }) {
           <dd className="stat__value">{STATUS_LABEL[run.status]}</dd>
         </div>
         <div className="stat">
-          <dt className="stat__label">{run.provider === "meta" ? "Meta Model API" : run.provider}</dt>
-          <dd className="stat__value num">{run.model}</dd>
+          <dt className="stat__label">agent model</dt>
+          <dd className="stat__value">
+            <ModelBadge model={run.model} provider={run.provider} />
+          </dd>
         </div>
         <div className="stat">
           <dt className="stat__label">run cost (USD)</dt>
@@ -126,34 +317,25 @@ function RunBody({ run }: { run: AgentRun }) {
           <dt className="stat__label">wall time · {dateTime(run.started_at)}</dt>
           <dd className="stat__value num">{wallMs != null ? duration(wallMs) : "n/a"}</dd>
         </div>
-        <div className="stat">
-          <dt className="stat__label">steps</dt>
-          <dd className="stat__value num">{run.steps.length}</dd>
-        </div>
       </dl>
 
+      <Autonomy run={run} orders={orders} />
+
       <div className="trace-tools">
-        <ul className="tool-tally" aria-label="Tool calls by tool">
-          {[...toolCounts.entries()].map(([tool, n]) => (
-            <li key={tool}>
-              <code>{tool}</code> <span className="num">×{n}</span>
-            </li>
-          ))}
-        </ul>
-        <div className="seg seg--filters" role="group" aria-label="Filter steps">
+        <h2 className="section-title">{view === "decisions" ? "Decisions, turn by turn" : "Every step"}</h2>
+        <div className="seg seg--filters" role="group" aria-label="Trace view">
           {(
             [
+              ["decisions", "Decisions"],
               ["all", "All steps"],
-              ["tools", "Tool calls"],
-              ["thoughts", "Thoughts"],
             ] as const
           ).map(([key, label]) => (
             <button
               key={key}
               type="button"
-              className={`seg__item${filter === key ? " is-active" : ""}`}
-              aria-pressed={filter === key}
-              onClick={() => setFilter(key)}
+              className={`seg__item${view === key ? " is-active" : ""}`}
+              aria-pressed={view === key}
+              onClick={() => setView(key)}
             >
               {label}
             </button>
@@ -161,11 +343,15 @@ function RunBody({ run }: { run: AgentRun }) {
         </div>
       </div>
 
-      <ol className="trace" data-testid="trace">
-        {steps.map((step) => (
-          <Step key={step.index} step={step} />
-        ))}
-      </ol>
+      {view === "decisions" ? (
+        <Decisions run={run} />
+      ) : (
+        <ol className="trace" data-testid="trace">
+          {run.steps.map((step) => (
+            <Step key={step.index} step={step} />
+          ))}
+        </ol>
+      )}
       <p className="trace-foot">
         Output: <Link to="/work-orders">{run.work_order_ids.length} work orders and the report</Link>
         {run.report_id ? <> ({run.report_id})</> : null}.
@@ -176,17 +362,24 @@ function RunBody({ run }: { run: AgentRun }) {
 
 export default function RunsScreen() {
   const { id } = useParams();
+  const { provider } = useRun();
   const state = useAsyncData(async () => {
-    if (id) return api.run(id);
-    const runs = await api.runs();
-    const latest = [...runs].sort((a, b) => a.started_at.localeCompare(b.started_at)).at(-1);
-    if (!latest) throw new Error("No agent run has been recorded yet.");
-    return latest;
-  }, [id]);
+    const [run, orders] = await Promise.all([
+      id
+        ? api.run(id, provider)
+        : api.runs(provider).then((runs) => {
+            const latest = latestRun(runs);
+            if (!latest) throw new Error("No agent run has been recorded yet.");
+            return latest;
+          }),
+      api.workOrders(provider).catch(() => [] as WorkOrder[]),
+    ]);
+    return { run, orders };
+  }, [id, provider]);
   return (
     <section className="screen" aria-label="Agent trace">
       <Async state={state} what="the agent trace">
-        {(run) => <RunBody run={run} />}
+        {({ run, orders }) => <RunBody run={run} orders={orders} />}
       </Async>
     </section>
   );

@@ -43,13 +43,16 @@ function flatPng(width = 586, height = 371): Buffer {
 
 async function mockApi(page: Page) {
   const json = (body: string) => ({ status: 200, contentType: "application/json", body });
-  await page.route("**/api/health", (r) => r.fulfill(json(fixture("health.json"))));
-  await page.route("**/api/fleet", (r) => r.fulfill(json(fixture("fleet.json"))));
-  await page.route("**/api/inspections/*", (r) => r.fulfill(json(fixture("inspection_T03-2018.json"))));
-  await page.route("**/api/work-orders", (r) => r.fulfill(json(fixture("work_orders.json"))));
-  await page.route("**/api/reports/latest", (r) => r.fulfill(json(fixture("report_latest.json"))));
-  await page.route("**/api/runs", (r) => r.fulfill(json(fixture("runs.json"))));
-  await page.route("**/api/eval", (r) => r.fulfill(json(fixture("eval.json"))));
+  // Each path with or without ?provider= (the run selector); the fixtures do not depend on it.
+  const api = (path: string) => new RegExp(`/api/${path}(\\?.*)?$`);
+  await page.route(api("health"), (r) => r.fulfill(json(fixture("health.json"))));
+  await page.route(api("replays"), (r) => r.fulfill(json(fixture("replays.json"))));
+  await page.route(api("fleet"), (r) => r.fulfill(json(fixture("fleet.json"))));
+  await page.route(api("inspections/[^/?]+"), (r) => r.fulfill(json(fixture("inspection_T03-2018.json"))));
+  await page.route(api("work-orders"), (r) => r.fulfill(json(fixture("work_orders.json"))));
+  await page.route(api("reports/latest"), (r) => r.fulfill(json(fixture("report_latest.json"))));
+  await page.route(api("runs"), (r) => r.fulfill(json(fixture("runs.json"))));
+  await page.route(api("eval"), (r) => r.fulfill(json(fixture("eval.json"))));
   const png = flatPng();
   await page.route("**/images/*.png", (r) => r.fulfill({ status: 200, contentType: "image/png", body: png }));
 }
@@ -95,16 +98,39 @@ test("fleet -> inspection -> work order, with no console or network errors", asy
   await page.getByTestId("toggle-masks").check({ force: true });
   await expect(photo.getByTestId("mask").first()).toBeVisible();
 
+  // The overlay key explains every glyph, "?" (never verified) included
+  await expect(page.getByTestId("legend-unverified")).toContainText("Unverified");
+  // Keyboard: a defect card opens with Enter, Escape closes it
+  const head = page.getByTestId("defect-card").first().getByRole("button").first();
+  await head.focus();
+  await page.keyboard.press("Enter");
+  await expect(head).toHaveAttribute("aria-expanded", "true");
+  await page.keyboard.press("Escape");
+  await expect(head).toHaveAttribute("aria-expanded", "false");
+  // No horizontal scroll at 1280 or at phone width
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+    page.viewportSize()!.width,
+  );
+
   // Work order
   await page.getByTestId("wo-link").first().click();
   await expect(page).toHaveURL(/\/work-orders#/);
   await expect(page.getByTestId("work-order").first()).toBeVisible();
   await shot("3-work-orders");
 
-  // The other two screens
+  // The other screens, on the open-weights run: the choice sticks across links
+  await page.getByText("Muse Spark Open (Baseten)", { exact: true }).click();
+  await expect(page).toHaveURL(/provider=baseten/);
   await page.getByRole("link", { name: "Agent trace" }).click();
+  await expect(page).toHaveURL(/\/runs\?provider=baseten/);
+  await expect(page.getByTestId("decision-turn").first()).toBeVisible();
   await expect(page.getByTestId("trace-step").first()).toBeVisible();
+  await expect(page.getByTestId("rule-summary")).toBeVisible();
   await shot("4-trace");
+  await page.getByRole("link", { name: "Compare runs" }).click();
+  await expect(page.getByTestId("compare-run")).toHaveCount(2);
+  await expect(page.getByTestId("agreement")).toBeVisible();
+  await shot("4b-compare");
   await page.getByRole("link", { name: "Evaluation" }).click();
   await expect(page.getByTestId("kappa-value")).toHaveText("0.12");
   await shot("5-eval");

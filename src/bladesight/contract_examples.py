@@ -34,12 +34,15 @@ from .contracts import (
     InspectionSummary,
     Interval,
     Measurement,
+    ReplaySet,
     Report,
+    StageModel,
     SweepPoint,
     Turbine,
     Verification,
     WorkOrder,
 )
+from .fleet.trace import annotate_steps
 
 FIXTURE_DIR = Path("web/src/fixtures")
 NOTE = "EXAMPLE FIXTURE for UI development: made-up values, not results"
@@ -111,6 +114,8 @@ def _defect(
                     "verdict": verdict,
                     "agreement": 1.0 if severity == second else 0.5,
                     "second_severity": second,
+                    "model": "muse-spark-1.3",
+                    "provider": "meta",
                     "checks": [
                         Check(
                             name="inside_blade",
@@ -296,6 +301,8 @@ def work_orders_example() -> list[WorkOrder]:
             evidence=["T03-2018/DJI_0702_04_05/d1: severity 4, verdict ok, agreement 1.0"],
             due_within_days=30,
             run_id=RUN_ID,
+            model="muse-spark-1.3",
+            provider="meta",
         ),
         WorkOrder(
             id="WO-002",
@@ -309,34 +316,72 @@ def work_orders_example() -> list[WorkOrder]:
             evidence=["T03-2018/DJI_0688_04_03/d2: severity 4 vs 2, verdict reinspect"],
             due_within_days=14,
             run_id=RUN_ID,
+            model="muse-spark-1.3",
+            provider="meta",
         ),
     ]
 
 
 def run_example() -> AgentRun:
+    rejected = (
+        '{"error":"no work order without a verified assessment; these defects are not verified: '
+        "['T03-2018/DJI_0688_04_03/d2 (reinspect)']. Use request_reinspection for them.\"}"
+    )
     steps = [
         ("thought", None, None, "Rank the turbines by their latest verified defects."),
         ("tool_call", "list_turbines", {}, "list_turbines()"),
         ("tool_result", "list_turbines", None, "12 turbines, 24 inspections"),
         ("tool_call", "compare_inspections", {"turbine_id": "T03"}, "compare T03 2017 vs 2018"),
         ("tool_result", "compare_inspections", None, "max severity 2 -> 4, two new defects"),
+        ("thought", None, None, "T03 is worse: order the repairs of its verified defects."),
         (
             "tool_call",
             "create_work_order",
-            {"turbine_id": "T03", "defect_ids": ["T03-2018/DJI_0702_04_05/d1"]},
-            "WO-001",
+            {
+                "inspection_id": "T03-2018",
+                "kind": "repair",
+                "priority": "P1",
+                "defect_ids": ["T03-2018/DJI_0702_04_05/d1", "T03-2018/DJI_0688_04_03/d2"],
+            },
+            "create_work_order(...)",
         ),
-        ("tool_result", "create_work_order", None, "WO-001 created"),
+        ("tool_result", "create_work_order", None, rejected),
+        (
+            "tool_call",
+            "create_work_order",
+            {
+                "inspection_id": "T03-2018",
+                "kind": "repair",
+                "priority": "P1",
+                "defect_ids": ["T03-2018/DJI_0702_04_05/d1"],
+            },
+            "create_work_order(...)",
+        ),
+        ("tool_result", "create_work_order", None, '{"created":"WO-001"}'),
         (
             "tool_call",
             "request_reinspection",
-            {"defect_id": "T03-2018/DJI_0688_04_03/d2"},
-            "WO-002",
+            {"inspection_id": "T03-2018", "defect_ids": ["T03-2018/DJI_0688_04_03/d2"]},
+            "request_reinspection(...)",
         ),
-        ("tool_result", "request_reinspection", None, "WO-002 created"),
-        ("tool_call", "write_report", {}, "write the farm report"),
-        ("tool_result", "write_report", None, "report-example-001"),
+        ("tool_result", "request_reinspection", None, '{"created":"WO-002"}'),
+        ("tool_call", "write_report", {"markdown": "# Farm report"}, "write_report(...)"),
+        ("tool_result", "write_report", None, '{"report_saved":true}'),
         ("final", None, None, "2 work orders, 1 re-inspection, report written."),
+    ]
+    first_of_turn = {1, 3, 6, 8, 10, 12, 14}
+    raw = [
+        AgentStep(
+            index=i,
+            kind=kind,  # type: ignore[arg-type]
+            tool=tool,
+            arguments=args,
+            content=content,
+            duration_ms=1200 if i in first_of_turn else 0,
+            cost_usd=0.002 if i in first_of_turn else 0.0,
+            model="muse-spark-1.3" if kind in ("thought", "tool_call", "final") else None,
+        )
+        for i, (kind, tool, args, content) in enumerate(steps)
     ]
     return AgentRun(
         id=RUN_ID,
@@ -346,23 +391,39 @@ def run_example() -> AgentRun:
         provider="meta",
         started_at=T0,
         finished_at=T0 + timedelta(seconds=48),
-        steps=[
-            AgentStep(
-                index=i,
-                kind=kind,  # type: ignore[arg-type]
-                tool=tool,
-                arguments=args,
-                content=content,
-                duration_ms=1200 if kind == "tool_call" else 40,
-                cost_usd=0.002 if kind in ("thought", "tool_call", "final") else 0.0,
-                model="muse-spark-1.3" if kind in ("thought", "tool_call", "final") else None,
-            )
-            for i, (kind, tool, args, content) in enumerate(steps)
-        ],
+        steps=annotate_steps(raw, "meta"),
         total_cost_usd=0.014,
         work_order_ids=["WO-001", "WO-002"],
         report_id="report-example-001",
     )
+
+
+def replays_example() -> list[ReplaySet]:
+    detection = [
+        StageModel(stage="detection_proposals", model="muse-spark-1.3", provider="meta"),
+        StageModel(stage="segmentation", model="sam-3.1", provider="meta"),
+    ]
+    sets = []
+    for provider, model, label in (
+        ("meta", "muse-spark-1.3", "Muse Spark on the Meta Model API"),
+        ("baseten", "meta-models/muse-spark-open", "Muse Spark Open on Baseten"),
+    ):
+        sets.append(
+            ReplaySet(
+                provider=provider,  # type: ignore[arg-type]
+                label=label,
+                default=provider == "meta",
+                stages=detection
+                + [
+                    StageModel(stage=stage, model=model, provider=provider)  # type: ignore[arg-type]
+                    for stage in ("severity", "verification", "agent")
+                ],
+                run_id=RUN_ID if provider == "meta" else "run-example-open",
+                n_inspections=24,
+                note=NOTE,
+            )
+        )
+    return sets
 
 
 def report_example() -> Report:
@@ -434,6 +495,7 @@ def fixtures() -> dict[str, Any]:
         "work_orders.json": work_orders_example(),
         "report_latest.json": report_example(),
         "runs.json": [run],
+        "replays.json": replays_example(),
         f"run_{run.id}.json": run,
         "eval.json": eval_example(),
     }

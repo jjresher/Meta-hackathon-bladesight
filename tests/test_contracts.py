@@ -17,6 +17,7 @@ from bladesight.contracts import (
     Fleet,
     Health,
     Inspection,
+    ReplaySet,
     Report,
     Verification,
     WorkOrder,
@@ -32,6 +33,7 @@ RESPONSE_TYPES: dict[str, Any] = {
     "runs.json": list[AgentRun],
     "run_run-example-001.json": AgentRun,
     "eval.json": list[EvalReport],
+    "replays.json": list[ReplaySet],
 }
 
 

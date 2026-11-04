@@ -4,6 +4,9 @@ import { api, SCHEMA_VERSION } from "./api/client";
 import { BrandMark } from "./components/icons";
 import { useAsyncData } from "./hooks/useAsyncData";
 import ErrorBoundary from "./components/ErrorBoundary";
+import RunBar from "./components/RunBar";
+import { RunScope } from "./lib/run";
+import CompareScreen from "./screens/CompareScreen";
 import EvalScreen from "./screens/EvalScreen";
 import FleetScreen from "./screens/FleetScreen";
 import InspectionScreen from "./screens/InspectionScreen";
@@ -14,6 +17,7 @@ const NAV = [
   { to: "/", label: "Fleet", end: true },
   { to: "/work-orders", label: "Work orders", end: false },
   { to: "/runs", label: "Agent trace", end: false },
+  { to: "/compare", label: "Compare runs", end: false },
   { to: "/eval", label: "Evaluation", end: false },
 ];
 
@@ -46,6 +50,7 @@ function ModeBadge() {
 
 export default function App() {
   return (
+    <RunScope>
     <div className="app-shell">
       <a className="skip" href="#main">
         Skip to content
@@ -72,6 +77,7 @@ export default function App() {
         </nav>
         <ModeBadge />
       </header>
+      <RunBar />
 
       <main id="main" className="app-main">
         <ErrorBoundary>
@@ -81,6 +87,7 @@ export default function App() {
           <Route path="/work-orders" element={<WorkOrdersScreen />} />
           <Route path="/runs" element={<RunsScreen />} />
           <Route path="/runs/:id" element={<RunsScreen />} />
+          <Route path="/compare" element={<CompareScreen />} />
           <Route path="/eval" element={<EvalScreen />} />
           <Route path="*" element={<FleetScreen />} />
         </Routes>
@@ -92,5 +99,6 @@ export default function App() {
         severity is advisory
       </footer>
     </div>
+    </RunScope>
   );
 }

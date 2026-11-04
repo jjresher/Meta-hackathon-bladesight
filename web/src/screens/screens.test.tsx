@@ -8,7 +8,11 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import App from "../App";
 import evalReports from "../fixtures/eval.json";
+import inspectionFixture from "../fixtures/inspection_T03-2018.json";
+import type { Inspection } from "../types";
 import { stubApi, type Overrides } from "../test/mockApi";
+
+const inspection = inspectionFixture as Inspection;
 
 function open(path: string, overrides: Overrides = {}) {
   const fetchMock = stubApi(overrides);
@@ -104,6 +108,65 @@ describe("Inspection viewer", () => {
     expect(within(card).getByText(/Graded by/)).toBeInTheDocument();
   });
 
+  it("lists every defect collapsed, with severity, verdict, why and the grading model", async () => {
+    await openViewer();
+    const cards = screen.getAllByTestId("defect-card");
+    expect(cards).toHaveLength(2);
+    for (const card of cards) expect(card).toHaveAttribute("data-selected", "false");
+    expect(within(cards[0]).getByText(/severity \d of 5/)).toBeInTheDocument();
+    expect(within(cards[0]).getByText("Verified")).toBeInTheDocument();
+    expect(within(cards[0]).getByTestId("model-badge")).toHaveTextContent("Muse Spark (Model API)");
+    // a flagged defect leads with the verification reason, taken as is from the data
+    const flagged = inspection.images[0].defects[1];
+    expect(within(cards[1]).getByText(flagged.verification!.reasons[0])).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /2 defects on this tile/i })).toHaveTextContent(
+      "1 verified, 1 needs review",
+    );
+  });
+
+  it("labels the open-weights grader from Assessment.provider", async () => {
+    const data = structuredClone(inspection);
+    data.images[0].defects[0].assessment!.provider = "baseten";
+    data.images[0].defects[0].assessment!.model = "meta-models/muse-spark-open";
+    open("/inspections/T03-2018", { "/api/inspections/T03-2018": () => ({ body: data }) });
+    const card = (await screen.findAllByTestId("defect-card"))[0];
+    expect(within(card).getByTestId("model-badge")).toHaveTextContent("Muse Spark Open (Baseten)");
+  });
+
+  it("lights up a defect's overlay when its card is hovered, and the card when its mask is", async () => {
+    const { photo } = await openViewer();
+    const [first, second] = screen.getAllByTestId("defect-card");
+    fireEvent.mouseEnter(second);
+    const masks = within(photo).getAllByTestId("mask");
+    const lit = masks.filter((m) => m.classList.contains("is-hover"));
+    expect(lit).toHaveLength(1);
+    expect(photo).toHaveClass("has-hover");
+    fireEvent.mouseLeave(second);
+    expect(within(photo).getAllByTestId("mask").some((m) => m.classList.contains("is-hover"))).toBe(false);
+
+    fireEvent.mouseEnter(masks.find((m) => !m.classList.contains("ov-mask--needs_review"))!);
+    expect(first).toHaveClass("is-hover");
+  });
+
+  it("explains every overlay glyph, including ? for a defect that was never verified", async () => {
+    const data = structuredClone(inspection);
+    data.images[0].defects[0].verification = null;
+    open("/inspections/T03-2018", { "/api/inspections/T03-2018": () => ({ body: data }) });
+    const photo = await screen.findByTestId("photo-viewer");
+    fireEvent.load(within(photo).getByRole("img", { name: /Drone photo/ }));
+    const tags = (await within(photo).findAllByTestId("box-tag")).map((t) => t.textContent);
+    expect(tags).toEqual(["? d1", "◆ d2"]);
+    expect(screen.getByTestId("legend-unverified")).toHaveTextContent(/\?\s*Unverified: not checked/);
+    for (const v of ["ok", "needs_review", "reinspect"]) expect(screen.getByTestId(`legend-${v}`)).toBeInTheDocument();
+    const card = screen.getAllByTestId("defect-card")[0];
+    expect(within(card).getByText("Unverified")).toHaveAttribute("title", expect.stringMatching(/did not run/));
+  });
+
+  it("counts tiles, not photos, in the inspection header", async () => {
+    await openViewer();
+    expect(screen.getByText(/2 tiles · 4 defects/)).toBeInTheDocument();
+  });
+
   it("reports an unknown inspection as not found", async () => {
     open("/inspections/NOPE");
     expect(await screen.findByRole("alert")).toHaveTextContent(/not found/i);
@@ -170,7 +233,7 @@ describe("real stored data", () => {
     expect(await screen.findByTestId("tab-heldout")).toHaveAttribute("aria-pressed", "true");
     const damage = held.classes.find((c: { label: string }) => c.label === "damage");
     expect((await screen.findAllByText(`${(damage.recall * 100).toFixed(1)}%`)).length).toBeGreaterThan(0);
-    expect(screen.getByTestId("image-recall-caption")).toHaveTextContent(/300 held-out photos[\s\S]*24%/);
+    expect(screen.getByTestId("image-recall-caption")).toHaveTextContent(/300 held-out tiles[\s\S]*24%/);
     expect(screen.queryByTestId("heldout-pending")).toBeNull();
   });
 
@@ -181,6 +244,7 @@ describe("real stored data", () => {
     fireEvent.load(within(photo).getByRole("img", { name: /Drone photo/ }));
     expect((await within(photo).findAllByTestId("mask")).length).toBeGreaterThan(0);
     expect(screen.getByTestId("toggle-blade")).toBeDisabled();
+    await userEvent.setup().click(within(screen.getAllByTestId("defect-card")[0]).getAllByRole("button")[0]);
     expect(screen.getAllByText(/not determined \(no blade mask\)/).length).toBeGreaterThan(0);
   });
 });

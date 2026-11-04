@@ -930,7 +930,9 @@
       "reasons": [
        "combined confidence 0.15 is below 0.3",
        "rule check failed: severity_vs_size (severity 1 but it covers 7.6% of the photo)"
-      ]
+      ],
+      "model": "muse-spark-1.3",
+      "provider": "meta"
      },
      "error": null
     },
@@ -1050,7 +1052,9 @@
       ],
       "reasons": [
        "combined confidence 0.25 is below 0.3"
-      ]
+      ],
+      "model": "muse-spark-1.3",
+      "provider": "meta"
      },
      "error": null
     }

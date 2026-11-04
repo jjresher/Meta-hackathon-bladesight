@@ -182,7 +182,9 @@
       ],
       "reasons": [
        "combined confidence 0.15 is below 0.3"
-      ]
+      ],
+      "model": "muse-spark-1.3",
+      "provider": "meta"
      },
      "error": null
     },
@@ -400,7 +402,9 @@
        "both looks agree on severity 1",
        "combined confidence 0.32",
        "all rule checks passed"
-      ]
+      ],
+      "model": "muse-spark-1.3",
+      "provider": "meta"
      },
      "error": null
     },
@@ -632,7 +636,9 @@
       ],
       "reasons": [
        "rule check failed: detector_score (detector confidence 0.34)"
-      ]
+      ],
+      "model": "muse-spark-1.3",
+      "provider": "meta"
      },
      "error": null
     },
@@ -826,7 +832,9 @@
        "both looks agree on severity 1",
        "combined confidence 0.35",
        "all rule checks passed"
-      ]
+      ],
+      "model": "muse-spark-1.3",
+      "provider": "meta"
      },
      "error": null
     }

@@ -6,6 +6,7 @@ import { Async } from "../components/PageState";
 import SeverityScale from "../components/SeverityScale";
 import { InfoIcon } from "../components/icons";
 import { useAsyncData } from "../hooks/useAsyncData";
+import { useRun } from "../lib/run";
 import { defectsLabel, latestInspection } from "../lib/format";
 import type { Fleet, Turbine } from "../types";
 
@@ -139,7 +140,8 @@ function FleetBody({ fleet }: { fleet: Fleet }) {
 }
 
 export default function FleetScreen() {
-  const state = useAsyncData(() => api.fleet(), []);
+  const { provider } = useRun();
+  const state = useAsyncData(() => api.fleet(provider), [provider]);
   return (
     <section className="screen" aria-label="Fleet">
       <Async state={state} what="the fleet">

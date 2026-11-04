@@ -2,15 +2,17 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 
 import { api, imageUrl } from "../api/client";
-import { TrendBadge, VerdictChip } from "../components/Chips";
+import { TrendBadge } from "../components/Chips";
 import DefectCard from "../components/DefectCard";
-import PhotoViewer, { type Layers } from "../components/PhotoViewer";
+import OverlayLegend from "../components/OverlayLegend";
+import PhotoViewer, { VERDICT_TEXT, type Layers } from "../components/PhotoViewer";
 import { Async } from "../components/PageState";
 import SeverityScale from "../components/SeverityScale";
 import { ArrowLeftIcon, InfoIcon } from "../components/icons";
 import { SEVERITY_AGREEMENT } from "../evidence";
 import { useAsyncData } from "../hooks/useAsyncData";
-import { defectsLabel, worseVerdict } from "../lib/format";
+import { useRun } from "../lib/run";
+import { defectsLabel, tilesLabel, worseVerdict } from "../lib/format";
 import type { Fleet, Inspection, InspectionImage, Verdict, WorkOrder } from "../types";
 
 function worstVerdict(image: InspectionImage): Verdict | null {
@@ -65,7 +67,7 @@ function Thumb({ image, active, onClick }: { image: InspectionImage; active: boo
     >
       <span className="thumb__frame" style={{ aspectRatio: `${image.width} / ${image.height}` }}>
         {failed ? (
-          <span className="thumb__missing">no photo</span>
+          <span className="thumb__missing">no image</span>
         ) : (
           <img src={imageUrl(image.image_url)} alt="" loading="lazy" decoding="async" onError={() => setFailed(true)} />
         )}
@@ -80,25 +82,38 @@ function InspectionBody({ inspection, fleet, orders }: { inspection: Inspection;
   const [params, setParams] = useSearchParams();
   const { summary, images } = inspection;
   const [layers, setLayers] = useState<Layers>({ masks: true, boxes: true, blade: true });
+  const [hoverId, setHoverState] = useState<string | null>(null);
+  // Touch screens emulate mouseenter on tap and never send mouseleave, so a highlight would stick:
+  // follow the pointer only where it can really hover. Keyboard focus still lights the pair.
+  const canHover = useMemo(
+    () => typeof window.matchMedia !== "function" || !window.matchMedia("(hover: none)").matches,
+    [],
+  );
 
   const imageParam = params.get("image");
   const image = images.find((i) => i.id === imageParam) ?? images.find((i) => i.defects.length > 0) ?? images[0];
   const defectParam = params.get("defect");
-  const selectedId =
-    image?.defects.find((d) => d.defect.id === defectParam)?.defect.id ?? (defectParam === "" ? null : (image?.defects[0]?.defect.id ?? null));
+  // Nothing is opened by default, so every defect on the tile reads at a glance (severity, verdict,
+  // why); a link with ?defect= (from a work order) opens that one.
+  const selectedId = image?.defects.find((d) => d.defect.id === defectParam)?.defect.id ?? null;
 
   const turbine = fleet?.turbines.find((t) => t.id === summary.turbine_id);
   const inspectionOrders = orders.filter((o) => o.inspection_id === summary.id);
   const hasBlade = (image?.blade_outline.length ?? 0) > 0;
 
+  const setHoverId = (id: string | null, fromFocus = false) => {
+    if (id === null || fromFocus || canHover) setHoverState(id);
+  };
+
   const setSelection = (imageId: string, defectId: string | null) => {
+    setHoverState(null);
     const next = new URLSearchParams(params);
     next.set("image", imageId);
     next.set("defect", defectId ?? "");
     setParams(next, { replace: true });
   };
 
-  // Left/right arrows move between the tiles of the inspection.
+  // Left/right arrows move between the tiles of the inspection; Escape clears the selection.
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
@@ -108,7 +123,7 @@ function InspectionBody({ inspection, fleet, orders }: { inspection: Inspection;
       if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
       const at = images.findIndex((i) => i.id === image?.id);
       const next = images[at + (event.key === "ArrowRight" ? 1 : -1)];
-      if (next) setSelection(next.id, next.defects[0]?.defect.id ?? null);
+      if (next) setSelection(next.id, null);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -137,15 +152,23 @@ function InspectionBody({ inspection, fleet, orders }: { inspection: Inspection;
     return (
       <p className="note">
         <InfoIcon className="note__icon" />
-        <span>This inspection has no images.</span>
+        <span>This inspection has no tiles.</span>
       </p>
     );
   }
 
+  // "2 verified, 2 needs review": the verdicts of this tile at a glance, counted from the data.
+  const tally = (["ok", "needs_review", "reinspect", "unverified"] as const)
+    .map((v) => [v, image.defects.filter((d) => (d.verification?.verdict ?? "unverified") === v).length] as const)
+    .filter(([, n]) => n > 0)
+    .map(([v, n]) => `${n} ${VERDICT_TEXT[v].toLowerCase()}`)
+    .join(", ");
+  const citing = (defectId: string) => orders.filter((o) => o.defect_ids.includes(defectId)).map((o) => o.id);
+
   return (
     <>
       <header className="insp-head">
-        <div>
+        <div className="insp-head__main">
           <Link to="/" className="back">
             <ArrowLeftIcon /> Fleet
           </Link>
@@ -153,10 +176,14 @@ function InspectionBody({ inspection, fleet, orders }: { inspection: Inspection;
             {turbine?.name ?? `Turbine ${summary.turbine_id}`} <span className="insp-head__year">{summary.year}</span>
           </h1>
           <p className="insp-head__meta">
-            {turbine && <span>Rank {turbine.rank} of {fleet?.turbines.length}</span>}
+            {turbine && (
+              <span>
+                Rank {turbine.rank} of {fleet?.turbines.length}
+              </span>
+            )}
             {turbine && <TrendBadge trend={turbine.trend} />}
             <span>
-              {summary.n_images} photos · {defectsLabel(summary.n_defects)}
+              {tilesLabel(summary.n_images)} · {defectsLabel(summary.n_defects)}
             </span>
             <span>
               {summary.n_needs_review} to review · {summary.n_reinspect} to reinspect
@@ -195,56 +222,49 @@ function InspectionBody({ inspection, fleet, orders }: { inspection: Inspection;
       </header>
 
       <div className="insp-grid">
-        <div className="insp-main">
-          <div className="stage">
-            <PhotoViewer
-              key={image.id}
-              image={image}
-              layers={layers}
-              selectedId={selectedId}
-              onSelect={(defectId) => setSelection(image.id, defectId)}
-            />
-            <div className="stage__bar">
-              <div className="stage__layers" role="group" aria-label="Overlay layers">
-                <LayerToggle label="Masks" name="masks" on={layers.masks} onChange={(v) => setLayers({ ...layers, masks: v })} />
-                <LayerToggle label="Boxes" name="boxes" on={layers.boxes} onChange={(v) => setLayers({ ...layers, boxes: v })} />
-                <LayerToggle
-                  label="Blade"
-                  name="blade"
-                  on={layers.blade}
-                  disabled={!hasBlade}
-                  hint={hasBlade ? undefined : "No blade outline was segmented on this photo"}
-                  onChange={(v) => setLayers({ ...layers, blade: v })}
-                />
-              </div>
-              <p className="stage__meta num">
-                {image.tile_id} · {image.width}×{image.height}px
-              </p>
+        <div className="stage">
+          <PhotoViewer
+            key={image.id}
+            image={image}
+            layers={layers}
+            selectedId={selectedId}
+            onSelect={(defectId) => setSelection(image.id, defectId)}
+            hoverId={hoverId}
+            onHover={(id) => setHoverId(id)}
+          />
+          <div className="stage__bar">
+            <div className="stage__layers" role="group" aria-label="Overlay layers">
+              <LayerToggle label="Masks" name="masks" on={layers.masks} onChange={(v) => setLayers({ ...layers, masks: v })} />
+              <LayerToggle label="Boxes" name="boxes" on={layers.boxes} onChange={(v) => setLayers({ ...layers, boxes: v })} />
+              <LayerToggle
+                label="Blade"
+                name="blade"
+                on={layers.blade}
+                disabled={!hasBlade}
+                hint={hasBlade ? undefined : "No blade outline was segmented on this tile"}
+                onChange={(v) => setLayers({ ...layers, blade: v })}
+              />
             </div>
+            <p className="stage__meta num">
+              {image.tile_id} · {image.width}×{image.height}px tile
+            </p>
           </div>
-
-          <div className="legend" aria-label="Overlay colours">
-            <span className="legend__item legend__item--ok">✓ Verified</span>
-            <span className="legend__item legend__item--needs_review">◆ Needs review</span>
-            <span className="legend__item legend__item--reinspect">▲ Reinspect</span>
-            <span className="legend__hint">
-              SAM 3.1 masks and boxes, coloured by verdict. <strong>Verified</strong> means two looks agreed and the rule checks
-              passed, not that the defect is confirmed on the blade. ← → switch photo.
-            </span>
-          </div>
-
-          <ul className="filmstrip" aria-label="Photos in this inspection">
-            {images.map((i) => (
-              <li key={i.id}>
-                <Thumb image={i} active={i.id === image.id} onClick={() => setSelection(i.id, i.defects[0]?.defect.id ?? null)} />
-              </li>
-            ))}
-          </ul>
         </div>
 
-        <aside className="insp-side" ref={sideRef} aria-label="Defects on this photo">
+        <OverlayLegend />
+
+        <ul className="filmstrip" aria-label="Tiles in this inspection">
+          {images.map((i) => (
+            <li key={i.id}>
+              <Thumb image={i} active={i.id === image.id} onClick={() => setSelection(i.id, null)} />
+            </li>
+          ))}
+        </ul>
+
+        <aside className="insp-side" ref={sideRef} aria-label="Defects on this tile">
           <h2 className="side-title">
-            {image.defects.length === 0 ? "No defects on this photo" : `${defectsLabel(image.defects.length)} on this photo`}
+            {image.defects.length === 0 ? "No defects on this tile" : `${defectsLabel(image.defects.length)} on this tile`}
+            {tally && <span className="side-title__tally">{tally}</span>}
           </h2>
           {image.defects.length === 0 && (
             <p className="note">
@@ -258,28 +278,18 @@ function InspectionBody({ inspection, fleet, orders }: { inspection: Inspection;
                 key={item.defect.id}
                 item={item}
                 selected={item.defect.id === selectedDefect?.defect.id}
+                hovered={item.defect.id === hoverId}
+                onHover={(on, fromFocus) => setHoverId(on ? item.defect.id : null, fromFocus)}
+                workOrders={citing(item.defect.id)}
                 onSelect={() =>
                   setSelection(image.id, item.defect.id === selectedDefect?.defect.id ? null : item.defect.id)
                 }
               />
             ))}
           </div>
-          {selectedDefect && orders.some((o) => o.defect_ids.includes(selectedDefect.defect.id)) && (
-            <p className="side-foot side-foot--cites">
-              Cited by{" "}
-              {orders
-                .filter((o) => o.defect_ids.includes(selectedDefect.defect.id))
-                .map((o) => (
-                  <Link key={o.id} to={`/work-orders#${o.id}`} className="year-chip">
-                    {o.id}
-                  </Link>
-                ))}
-            </p>
-          )}
-          {selectedDefect?.verification && (
+          {image.defects.some((d) => d.assessment) && (
             <p className="side-foot">
-              <VerdictChip verdict={selectedDefect.verification.verdict} small /> Severity is advisory: agreement with a
-              human grader is low (kappa {SEVERITY_AGREEMENT.kappa}).{" "}
+              Severity is advisory: agreement with a human grader is low (kappa {SEVERITY_AGREEMENT.kappa}).{" "}
               <Link to="/eval">See the evaluation</Link>
             </p>
           )}
@@ -291,10 +301,11 @@ function InspectionBody({ inspection, fleet, orders }: { inspection: Inspection;
 
 export default function InspectionScreen() {
   const { id = "" } = useParams();
-  const inspection = useAsyncData(() => api.inspection(id), [id]);
+  const { provider } = useRun();
+  const inspection = useAsyncData(() => api.inspection(id, provider), [id, provider]);
   // Siblings, name and rank come from the fleet; the viewer works without it.
-  const fleet = useAsyncData(() => api.fleet(), []);
-  const orders = useAsyncData(() => api.workOrders().catch(() => [] as WorkOrder[]), []);
+  const fleet = useAsyncData(() => api.fleet(provider), [provider]);
+  const orders = useAsyncData(() => api.workOrders(provider).catch(() => [] as WorkOrder[]), [provider]);
 
   return (
     <section className="screen screen--wide" aria-label="Inspection viewer">

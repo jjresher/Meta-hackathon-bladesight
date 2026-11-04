@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import { FALSE_ALARM_RATE, SEVERITY_AGREEMENT as s } from "./evidence";
+import { FALSE_ALARM_RATE, GUARD_RULES, OPEN_WEIGHTS_FARM as ow, SEVERITY_AGREEMENT as s } from "./evidence";
 
 /** AGENTS.md rule 5: a number shown in the UI must match the evidence file it links to. */
 describe("SEVERITY_AGREEMENT matches its evidence file", () => {
@@ -34,4 +34,52 @@ describe("FALSE_ALARM_RATE matches its evidence files", () => {
       );
     });
   }
+});
+
+describe("OPEN_WEIGHTS_FARM matches its evidence file", () => {
+  const text = readFileSync(resolve(process.cwd(), "..", ow.file), "utf8");
+  const v = ow.verdicts;
+
+  it("per-defect agreement and verdict counts", () => {
+    expect(text).toContain(`Defects graded and verified in both runs: ${ow.defects} (Meta ${ow.defects}, Open ${ow.defects};`);
+    expect(text).toContain(
+      `Same severity: **${ow.sameSeverity} of ${ow.defects}** (${ow.sameSeverityPct}%); within one level: ${ow.withinOne} (${ow.withinOnePct}%).`,
+    );
+    expect(text).toContain(
+      `Same verdict: **${ow.sameVerdict} of ${ow.defects}** (${ow.sameVerdictPct}%). Verdict counts: ` +
+        `Meta \`ok\` ${v.meta.ok}, \`needs_review\` ${v.meta.needs_review}, \`reinspect\` ${v.meta.reinspect}; ` +
+        `Open \`ok\` ${v.baseten.ok}, \`needs_review\` ${v.baseten.needs_review}, \`reinspect\` ${v.baseten.reinspect}.`,
+    );
+  });
+
+  it("verdict matrix", () => {
+    const rows = ["`ok`", "`needs_review`", "`reinspect`"];
+    ow.verdictMatrix.forEach((row, i) => expect(text).toContain(`| ${rows[i]} | ${row.join(" | ")} |`));
+  });
+
+  it("ranking and work orders", () => {
+    expect(text).toContain(`Spearman rank correlation over the ${ow.turbines} turbines: ${ow.spearman}.`);
+    expect(text).toContain(`in both: ${ow.topSixInBoth} of 6.`);
+    expect(text).toContain(
+      `Meta run \`${ow.orders.metaRun}\`: ${ow.orders.meta} orders; Open run \`${ow.orders.openRun}\`: ${ow.orders.baseten} orders.`,
+    );
+    const r = ow.repairDefects;
+    expect(text).toContain(`Defects in a repair order in both runs: ${r.both} of ${r.union} (Meta ${r.meta}, Open ${r.baseten}).`);
+    const x = ow.reinspectDefects;
+    expect(text).toContain(
+      `Defects in a re-inspection request in both runs: ${x.both} of ${x.union} (Meta ${x.meta}, Open ${x.baseten}).`,
+    );
+  });
+});
+
+describe("GUARD_RULES matches src/bladesight/fleet/rules.py", () => {
+  it("same ids, same order, same text", () => {
+    const source = readFileSync(resolve(process.cwd(), "..", GUARD_RULES.file), "utf8");
+    const found = [...source.matchAll(/_rule\(\s*"([a-z_]+)",\s*((?:"(?:[^"\\]|\\.)*"\s*)+),/g)].map((m) => ({
+      id: m[1],
+      text: [...m[2].matchAll(/"((?:[^"\\]|\\.)*)"/g)].map((part) => part[1]).join(""),
+    }));
+    expect(found.length).toBeGreaterThan(0);
+    expect(found).toEqual(GUARD_RULES.rules.map((r) => ({ id: r.id, text: r.text })));
+  });
 });
