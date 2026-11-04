@@ -116,7 +116,7 @@ def test_cli_refuses_without_the_flag_and_without_a_preregistration(
 ) -> None:
     monkeypatch.chdir(tmp_path)
     monkeypatch.setattr(heldout, "PREREGISTRATION", tmp_path / "missing.md")
-    # the real evidence file exists once the run is done; this test is about the missing preregistration
+    # the real evidence file exists once the run is done; this test is about the preregistration
     monkeypatch.setattr(heldout, "EVIDENCE", tmp_path / "docs" / "evidence" / "eval_heldout.md")
     monkeypatch.delenv("ALLOW_HELDOUT", raising=False)
     assert eval_main(["--split", "heldout", "--data-dir", str(tmp_path / "data")]) == 2
