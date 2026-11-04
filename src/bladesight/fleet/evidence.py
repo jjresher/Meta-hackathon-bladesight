@@ -63,7 +63,8 @@ def render(
         lines += [
             f"- Run `{run.id}`: status `{run.status}`, model `{run.model}`, {len(run.steps)} steps "
             f"({kinds['tool_call']} tool calls, {kinds['thought']} notes), "
-            f"cost {agent_cost_usd:.4f} USD, replayable from the cache: yes.",
+            f"cost {agent_cost_usd:.4f} USD; the run replays with no model call when the response "
+            "cache (`.cache/`, not committed) is present, and the demo reads the stored results.",
             f"- Work orders: {len(orders)} "
             f"({sum(o.kind == 'repair' for o in orders)} repair, "
             f"{sum(o.kind == 'monitor' for o in orders)} monitor, "

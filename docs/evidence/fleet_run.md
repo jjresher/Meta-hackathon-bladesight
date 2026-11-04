@@ -20,7 +20,7 @@ completed (`docs/decision_ledger.md`); the shares above therefore depend on that
 
 ## Agent run
 
-- Run `run-final`: status `completed`, model `muse-spark-1.3`, 60 steps (23 tool calls, 13 notes), cost 0.0645 USD, replayable from the cache: yes.
+- Run `run-final`: status `completed`, model `muse-spark-1.3`, 60 steps (23 tool calls, 13 notes), cost 0.0645 USD; the run replays with no model call when the response cache (`.cache/`, not committed) is present, and the demo reads the stored results.
 - Work orders: 9 (3 repair, 0 monitor, 6 re-inspection); every repair order cites only defects with an `ok` verdict (enforced by the tool, tested).
 - Report: `report-run-final`.
 
