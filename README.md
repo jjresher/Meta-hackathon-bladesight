@@ -11,9 +11,8 @@ open-weights **Muse Spark Open**.
   It runs on a free plan that sleeps when idle: the first visit after a quiet period waits for it to
   wake (21.5 s measured after 3.5 h idle; Render documents about a minute,
   [`deploy.md`](docs/evidence/deploy.md)).
-- **Video (3 minutes):** the link is added at submission, in
-  [`docs/submission/checklist.md`](docs/submission/checklist.md). There is no GIF in the repository:
-  images and video are never committed (data licence and repo rules), so the video is the demo clip.
+- **Video (3 minutes):** <https://youtu.be/xJRrVH76CBA>. There is no GIF in the repository: images and video are never
+  committed (data licence and repo rules), so the video is the demo clip.
 - Plan, decisions, known gaps: [`docs/plan/implementation_plan.md`](docs/plan/implementation_plan.md),
   [`docs/decision_ledger.md`](docs/decision_ledger.md), [`docs/limitations.md`](docs/limitations.md).
 
@@ -293,7 +292,10 @@ third-party libraries: FastAPI, pydantic, httpx, NumPy, Pillow, uvicorn (API and
 React Router, Vite, TypeScript, Vitest, Testing Library, Playwright, json-schema-to-typescript (web
 UI and its tests); and [`meta-sam-parser`](https://pypi.org/project/meta-sam-parser/) (Meta
 Platforms, SAM License) to decode SAM 3.1 output (a dependency, not vendored; its licence text ships
-with the package). The code was written with Claude Code
+with the package). The web UI's fonts are self-hosted from [Fontsource](https://fontsource.org/)
+packages, so the page requests no font from a third party: Figtree (text), Bricolage Grotesque
+(headings) and Geist Mono (monospace), all under the SIL Open Font License 1.1. The code was written
+with Claude Code
 (the first scaffold of the web UI with Kiro, then rebuilt against the real API); the decisions, the
 labels and the review are the author's, and every decision, spend and cut is in
 [`docs/decision_ledger.md`](docs/decision_ledger.md).
