@@ -2,7 +2,7 @@
 
 Command: `uv run poe eval --split dev --n 300`. Split: `dev`. Tiles: 300 (176 with damage boxes, 100 with no box at all). Cost: 3.1759 USD (documented prices, not invoice-checked).
 
-Sample: two thirds of the tiles have dataset boxes, one third none (seeded, `eval/runner.py`); the dev split is about 22% labeled, so recall is measurable but per-image false-alarm rates are not those of a real inspection.
+Sample: two thirds of the tiles have dataset boxes, one third none (seeded, `eval/runner.py`); the dev split is about 22% labeled, so recall is measurable but per-image false-alarm rates are not those of a real inspection (box precision and false alarms per image are optimistic for that reason; see `docs/limitations.md`). Image-level recall is per tile and location-free: read it together with the false-alarm rate on tiles with no box. The run was 1,093 live and 19 cached calls.
 
 ## Box matching (IoU 0.3 primary, 0.5 also reported)
 
