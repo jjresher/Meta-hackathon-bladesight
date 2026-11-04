@@ -46,15 +46,19 @@ Prompt versions: {'propose': 'detect/v1', 'assess': 'assess/v1', 'verify': 'veri
 ## Deviations
 
 1. **Interrupted once, resumed from the cache (2026-11-03).** The first segment ended at 21:46:16
-   (UTC-5) with `model_not_found` (HTTP 404) from the Muse Spark endpoint, the same model that had
-   answered 1,381 calls before and answered every call after. The same command was repeated at
+   (UTC-5) with `model_not_found` (HTTP 404) from the Muse Spark endpoint, the same models that had
+   answered 1,381 calls before (358 Muse Spark, 1,023 SAM) and answered every call after. The same command was repeated at
    21:46:45 on the same commit with nothing changed, as `eval/preregistration.md` step 5 allows; the
    cache replayed the finished calls (no real call repeated). No number was computed, written or seen
    before the run completed. Details: "Deviations" in `eval/preregistration.md`.
 2. **The cost above is corrected.** The tool wrote 3.8623 USD in the first version of this file and
    in `eval_heldout.json`, because it sums the call records of the restarted process only. The spend
    log (`.spend/spend_log.jsonl`, Spark and SAM calls between 20:28 and 22:51) gives 4.2073 USD for
-   the first segment and 3.8654 USD for the second: 8.0727 USD in total (within the preregistered
+   the first segment and 3.8654 USD for the second: 8.0727 USD in total. The second segment includes
+   two minimal probe calls (one Muse Spark chat, one SAM segment, about 0.0031 USD) made at
+   21:46:34-35 to check that the models answered before restarting; the tool's 3.8623 USD is what
+   the restarted process itself spent. The 112 Muse Spark Open calls of issue #15 in the same
+   window are not counted (within the preregistered
    "about 8 USD, ceiling 11"). Only the `cost_usd` field of the JSON and the cost sentence of this
    file were edited; no metric was touched. The generated versions had sha256
    `277e90736eaf26a7f14573c67d53a8f7fb9adc0f403704f0bdf86d4b29c55ce1` (json) and `7d498f382143b6b7b39849b8c26010d2e3d4c7cd025c5f4bf171ca6861500c6a` (md).

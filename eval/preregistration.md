@@ -114,8 +114,8 @@ call counts and cost.
   Deviations section was added afterwards and is the only change to the file.
 - **Cut.** At 21:46:16 the process ended with `error: meta: /v1/responses failed ...
   model_not_found ... status=404` (the Muse Spark chat endpoint answered "The requested model was
-  not found."). The same model had answered 1,381 calls in the 78 minutes before and answered
-  every call after the restart, so this reads as a transient server-side error, not a
+  not found."). The two models had answered 1,381 calls in the 78 minutes before (358 Muse Spark, 1,023
+  SAM) and answered every call after the restart, so this reads as a transient server-side error, not a
   configuration problem. The CLI raised `MetaError` inside the tile loop and returned before any
   aggregation: the `finally` resealed `data/heldout/`, and the manifest was re-verified afterwards
   (2,029 files match).
@@ -131,7 +131,10 @@ call counts and cost.
   that failed with the 404 was never completed), and the run then continued with new real calls.
 - **Spend** (from `.spend/spend_log.jsonl`, documented prices, not invoice-checked): first segment
   4.2073 USD, second segment 3.8654 USD (the first segment's 1,381 real calls were replayed from the
-  cache), 8.0727 USD in total. The CLI wrote only the second segment's cost (3.8623 USD) in the
-  report, because it sums the call records of the restarted process; the report's cost field was
+  cache), 8.0727 USD in total. The second segment's 3.8654 USD includes two minimal probe calls (one
+  Muse Spark chat, one SAM segment, about 0.0031 USD) made at 21:46:34-35 to check that the models
+  answered before restarting. The CLI wrote 3.8623 USD, what the restarted process itself spent,
+  because it sums the call records of that process; the 112 Muse Spark Open calls of issue #15 in the
+  same window are not part of the run; the report's cost field was
   corrected and the correction is listed in `docs/evidence/eval_heldout.md`.
 - **No tuning.** No code, prompt, threshold, sample or metric changed between the two segments.
