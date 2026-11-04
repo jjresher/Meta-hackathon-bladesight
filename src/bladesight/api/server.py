@@ -120,7 +120,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         if (
             not cfg.admin_key
             or not x_admin_key
-            or not secrets.compare_digest(x_admin_key, cfg.admin_key)
+            or not secrets.compare_digest(x_admin_key.encode(), cfg.admin_key.encode())
         ):
             raise HTTPException(status_code=403, detail="admin key required")
 
@@ -157,7 +157,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         def spa(path: str) -> Response:
             if path.startswith(("api/", "images/")):
                 raise not_found(path)
-            candidate = (cfg.web_dir / path).resolve()
+            try:
+                candidate = (cfg.web_dir / path).resolve()
+            except ValueError:  # e.g. a NUL byte in the path
+                return FileResponse(index)
             if path and candidate.is_file() and cfg.web_dir.resolve() in candidate.parents:
                 return FileResponse(candidate)
             return FileResponse(index)
