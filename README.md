@@ -153,13 +153,13 @@ uv run poe serve
 curl -s http://127.0.0.1:8000/api/replays                    # which model ran each stage
 curl -s "http://127.0.0.1:8000/api/fleet?provider=baseten"   # ranking from the Open grades
 curl -s "http://127.0.0.1:8000/api/runs?provider=baseten"    # the Open agent trace
-uv run poe fleet compare                                     # rewrite the comparison (free)
+uv run poe fleet compare --farm-cost 1.63 --open-farm-cost 1.7406  # rewrite the comparison (free; the flags are the recorded farm costs, without them the cost lines read 0)
 ```
 
 Re-run it live on Baseten (needs `BASETEN_API_KEY` and `BASETEN_SPEND_LIMIT_USD` in `.env` or
 the environment, set by name; no Meta key is needed because detections are reused; about 1.80 USD,
 192 grading calls wait for the 15 requests/minute limit, so at least 13 minutes). Write to a new folder so the stored
-replay stays as it is:
+replay stays as it is. Re-grading reads the farm tiles, so fetch them first (`uv run python -m bladesight.data.demo` for only the tiles the replay names, or `uv run poe data` for the whole dataset):
 
 ```bash
 BLADESIGHT_MODE=live uv run poe fleet regrade --chat-provider baseten \
@@ -181,7 +181,7 @@ Counted from the stored traces in [`fleet_run.md`](docs/evidence/fleet_run.md):
   workflow; the loop does not fix which tool comes next or which defects to act on.
 - It acts on uncertainty instead of hiding it: in both runs 6 of the orders are re-inspection
   requests for defects that verification did not confirm.
-- Rules are enforced by the tools, not by the prompt: a repair or monitor order citing a defect
+- Rules are enforced in code by the tools, not only stated in the prompt: a repair or monitor order citing a defect
   that is not `ok` is rejected (`verified_only`), as are reports citing unknown orders or defects
   (`src/bladesight/fleet/rules.py`, tested in `tests/test_open_weights.py`). The rejection goes back
   to the model, which must change its plan. Neither stored run triggered a rejection: both agents
