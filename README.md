@@ -11,9 +11,9 @@ open-weights **Muse Spark Open**.
   It runs on a free plan that sleeps when idle: the first visit after a quiet period waits for it to
   wake (21.5 s measured after 3.5 h idle; Render documents about a minute,
   [`deploy.md`](docs/evidence/deploy.md)).
-<!-- TODO(#19): replace VIDEO_URL with the published link before this line is merged. -->
 - **Video (3 minutes):** VIDEO_URL. There is no GIF in the repository: images and video are never
   committed (data licence and repo rules), so the video is the demo clip.
+  <!-- TODO(#19): replace VIDEO_URL with the published link before this line is merged. -->
 - Plan, decisions, known gaps: [`docs/plan/implementation_plan.md`](docs/plan/implementation_plan.md),
   [`docs/decision_ledger.md`](docs/decision_ledger.md), [`docs/limitations.md`](docs/limitations.md).
 
