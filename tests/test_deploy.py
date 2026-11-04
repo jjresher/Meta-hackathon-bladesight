@@ -75,7 +75,13 @@ def test_smoke_check_passes_on_a_good_app_and_fails_on_an_empty_one(tmp_path: Pa
 
 
 @pytest.mark.parametrize(
-    "needle", ["BLADESIGHT_MODE=replay", "--locked --no-dev", "bladesight.data.demo --strict"]
+    "needle",
+    [
+        "BLADESIGHT_MODE=replay",
+        "--locked --no-dev",
+        "bladesight.data.demo --strict",
+        "COPY eval/heldout_manifest.sha256",
+    ],
 )
 def test_dockerfile_is_replay_only_and_never_copies_data_or_secrets(needle: str) -> None:
     text = (ROOT / "Dockerfile").read_text(encoding="utf-8")

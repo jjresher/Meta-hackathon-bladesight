@@ -43,10 +43,13 @@ Fresh `git clone` from GitHub into `/tmp`, no `.env`, warm uv and npm caches.
 
 So the app reached the UI in replay mode without the photos, but this run did **not** get all the
 photos: the archive host (`assets.supervisely.com`) delivered 0.36 MB/s to this machine in a 20 s
-check at 10:13 COT, against the 4 MB/s of the original download. One slow day on one network; the
-speed Render's builder sees is not measured. The same day the public demo served 96 of 96 tiles
+check at 10:13 COT, against the about 4 MB/s noted in `docs/limitations.md` for the original
+download. One slow day on one network. Render's speed is not measured directly: GitHub's deployment
+status shows `b3984b9` deployed in about 3 minutes, which suggests its fetch was much faster
+(inferred, not observed). The same day the public demo served 96 of 96 tiles
 with HTTP 200, from an image built earlier. Because of this run the Docker build is now strict
-(`--strict`): a missing tile fails the build and Render keeps the last good deploy.
+(`--strict`): a missing tile fails the build and, per https://render.com/docs/deploys, the running
+instance continues (documented, not yet observed here).
 
 ## What the README was missing (fixed in this PR)
 

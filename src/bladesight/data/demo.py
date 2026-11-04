@@ -3,8 +3,9 @@
 The deployed image never contains the dataset: at build time this reads the 2.8 GB tar as a
 stream, extracts the few PNGs named by `replay/` into `data/dev/img/` and stops as soon as all
 are found. The held-out split is never touched (only dev tile ids from the replay store are
-accepted). If the download fails the build continues without images: the API answers 404 for
-them and the UI shows its image placeholder.
+accepted). If the download fails a local run warns and continues without images (the API answers
+404 for them and the UI shows its image placeholder); the image build uses `--strict` and fails,
+so the host keeps the last good deploy.
 """
 
 from __future__ import annotations
