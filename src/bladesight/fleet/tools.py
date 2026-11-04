@@ -210,6 +210,11 @@ class FleetTools:
             raise ToolError("cite at least one defect id")
         inspection = self._inspection(args["inspection_id"])
         defects = self._defects(inspection, defect_ids)
+        already_ok = [d.defect.id for d in defects if verified(d)]
+        if already_ok:
+            raise ToolError(
+                f"these defects are already verified (ok): {already_ok}; use create_work_order"
+            )
         evidence = []
         for d in defects:
             if d.verification is None and d.error is None:

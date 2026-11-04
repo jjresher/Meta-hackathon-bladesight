@@ -22,8 +22,8 @@ from ..contracts import Assessment, Check, Defect, Measurement, Verification
 from ..meta import ChatMessage, ChatRequest, ImagePart, MetaClient, MetaError, MetaSettings
 
 THRESHOLDS = {
-    "ok_confidence": 0.5,  # combined confidence below this is never `ok`
-    "reinspect_confidence": 0.25,  # combined confidence below this asks for new photos
+    "ok_confidence": 0.3,  # combined confidence below this is never `ok`
+    "reinspect_confidence": 0.15,  # combined confidence below this asks for new photos
     "reinspect_gap": 2,  # severity gap (levels) from which the looks are "disagreeing"
     "min_detector_score": 0.5,
     "min_inside_blade": 0.5,
@@ -149,7 +149,7 @@ def second_look(
 ) -> Assessment:
     prompt = resources.files("bladesight.verify").joinpath("prompts/v1.md").read_text("utf-8")
     image = ImagePart(
-        data=crop_png(png, defect.bbox, pad=1.5, min_side=64.0), mime_type="image/png"
+        data=crop_png(png, defect.bbox, pad=1.5, min_side=96.0), mime_type="image/png"
     )
     problem = ""
     for attempt in range(2):

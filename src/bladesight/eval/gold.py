@@ -20,7 +20,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from importlib import resources
 from pathlib import Path
 
-from ..assess.crops import crop_png
+from PIL import Image
+
 from ..contracts import BBox
 from ..data import TileLabel, image_path, load_split
 
@@ -125,10 +126,29 @@ def set_severity(path: Path, crop_id: str, severity: str, note: str | None = Non
     raise ValueError(f"unknown crop id {crop_id!r}")
 
 
+def _frozen_crop(png: bytes, box: BBox, pad: float, min_side: float) -> bytes:
+    """The crop function the labeller saw (stretched to 256 px). FROZEN: do not change it, or the
+    model would be compared on different images than the human labelled."""
+    image = Image.open(io.BytesIO(png)).convert("RGB")
+    width, height = image.size
+    bw, bh = max(box.x2 - box.x1, min_side), max(box.y2 - box.y1, min_side)
+    cx, cy = (box.x1 + box.x2) / 2, (box.y1 + box.y2) / 2
+    half_w, half_h = bw * (0.5 + pad), bh * (0.5 + pad)
+    region = (
+        max(0, int(cx - half_w)),
+        max(0, int(cy - half_h)),
+        min(width, int(cx + half_w) + 1),
+        min(height, int(cy + half_h) + 1),
+    )
+    out = io.BytesIO()
+    image.crop(region).resize((256, 256), Image.Resampling.LANCZOS).save(out, format="PNG")
+    return out.getvalue()
+
+
 def crop_for(row: dict[str, str], data_dir: Path, pad: float) -> bytes:
     png = image_path(row["tile_id"], "dev", data_dir).read_bytes()
     box = BBox(x1=float(row["x1"]), y1=float(row["y1"]), x2=float(row["x2"]), y2=float(row["y2"]))
-    return crop_png(png, box, pad=pad, min_side=96.0 if pad > 1 else 40.0)
+    return _frozen_crop(png, box, pad, min_side=96.0 if pad > 1 else 40.0)
 
 
 def page() -> bytes:

@@ -13,7 +13,7 @@ from datetime import UTC, datetime
 from typing import Any
 
 from ..contracts import AgentRun, AgentStep
-from ..meta import ChatMessage, ChatRequest, MetaClient, MetaSettings, ToolCall
+from ..meta import ChatMessage, ChatRequest, MetaClient, MetaError, MetaSettings, ToolCall
 from .store import Store
 from .tools import FleetTools, tool_specs
 
@@ -93,14 +93,23 @@ def run_agent(
         turns += 1
         t0 = time.monotonic()
         before = len(client.records)
-        reply = client.chat(
-            ChatRequest(
-                model=settings.chat_model,
-                messages=messages,
-                tools=tool_specs(),
-                max_tokens=MAX_TOKENS,
+        try:
+            reply = client.chat(
+                ChatRequest(
+                    model=settings.chat_model,
+                    messages=messages,
+                    tools=tool_specs(),
+                    max_tokens=MAX_TOKENS,
+                )
             )
-        )
+        except MetaError as error:  # keep the partial trace instead of losing it
+            status = "error"
+            add(
+                "error",
+                f"model call failed: {str(error)[:300]}",
+                int((time.monotonic() - t0) * 1000),
+            )
+            break
         ms = int((time.monotonic() - t0) * 1000)
         cost = sum(r.cost_usd for r in client.records[before:])
         spent += cost
