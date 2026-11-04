@@ -38,6 +38,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--out", type=Path, default=Path("docs/evidence"))
     parser.add_argument("--provider", choices=["meta", "stub"], default="meta")
     parser.add_argument("--stem", help="output file stem (default eval_<split>)")
+    parser.add_argument(
+        "--cost-usd", type=float, help="cost of the live run when this is a cached re-render"
+    )
     args = parser.parse_args(argv)
     if args.split == "dev" and args.n > 300:
         parser.error("the dev evaluation is limited to 300 tiles (sprint rule)")
@@ -84,7 +87,7 @@ def main(argv: list[str] | None = None) -> int:
     finally:
         if heldout:
             reseal(args.data_dir)
-    cost = sum(r.cost_usd for r in client.records)
+    cost = args.cost_usd if args.cost_usd is not None else sum(r.cost_usd for r in client.records)
     stem = args.stem or f"eval_{args.split}"
     if heldout:
         n_clean = sum(not r.has_label for r in results)

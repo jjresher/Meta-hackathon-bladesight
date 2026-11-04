@@ -71,7 +71,7 @@ Images: 1a/1b/2c `.../thumb/4/44/Ice-at-rotor-blade-of-wind-turbine.jpg/1280px-.
   - Checked visually: overlays of the masks on both photos (kept locally, not committed) show the
     masks following the cars and the turbines (tower and blades) inside their boxes.
 
-## Early observations for the #3 go/no-go (n = 2 images, no ground truth: NOT tuning)
+## Early observations for the #3 go/no-go (n = 2 images, no reference labels: NOT tuning)
 
 - "car" and "wind turbine" found every obvious object at confidence 0.68-0.95; the 6 turbines in
   2b-1 include the two small distant ones on the left and the one cut by the right edge.

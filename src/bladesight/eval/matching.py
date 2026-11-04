@@ -1,4 +1,4 @@
-"""Box IoU and one-to-one greedy matching of predictions to ground truth (highest score first)."""
+"""Box IoU and one-to-one greedy matching of predictions to the dataset boxes (best score first)."""
 
 from __future__ import annotations
 

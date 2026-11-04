@@ -19,9 +19,9 @@ build/
 eval/heldout/
 .cache/
 .spend/
-cache/
-outputs/
-runs/
+/cache/
+/outputs/
+/runs/
 *.jpg
 *.jpeg
 *.tif
