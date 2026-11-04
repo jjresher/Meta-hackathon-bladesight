@@ -13,6 +13,7 @@ import { SEVERITY_AGREEMENT } from "../evidence";
 import { useAsyncData } from "../hooks/useAsyncData";
 import { useRun } from "../lib/run";
 import { defectsLabel, tilesLabel, worseVerdict } from "../lib/format";
+import { sortTilesBySeverity } from "../lib/tiles";
 import type { Fleet, Inspection, InspectionImage, Verdict, WorkOrder } from "../types";
 
 function worstVerdict(image: InspectionImage): Verdict | null {
@@ -80,7 +81,9 @@ function Thumb({ image, active, onClick }: { image: InspectionImage; active: boo
 
 function InspectionBody({ inspection, fleet, orders }: { inspection: Inspection; fleet: Fleet | null; orders: WorkOrder[] }) {
   const [params, setParams] = useSearchParams();
-  const { summary, images } = inspection;
+  const { summary } = inspection;
+  // Most severe tile first: the filmstrip, the arrow keys and the tile opened on entry follow it.
+  const images = useMemo(() => sortTilesBySeverity(inspection.images), [inspection.images]);
   const [layers, setLayers] = useState<Layers>({ masks: true, boxes: true, blade: true });
   const [hoverId, setHoverState] = useState<string | null>(null);
   // Touch screens emulate mouseenter on tap and never send mouseleave, so a highlight would stick:
@@ -91,7 +94,7 @@ function InspectionBody({ inspection, fleet, orders }: { inspection: Inspection;
   );
 
   const imageParam = params.get("image");
-  const image = images.find((i) => i.id === imageParam) ?? images.find((i) => i.defects.length > 0) ?? images[0];
+  const image = images.find((i) => i.id === imageParam) ?? images[0];
   const defectParam = params.get("defect");
   // Nothing is opened by default, so every defect on the tile reads at a glance (severity, verdict,
   // why); a link with ?defect= (from a work order) opens that one.
