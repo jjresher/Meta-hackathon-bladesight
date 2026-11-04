@@ -1,5 +1,8 @@
 # Sprint log
 
+> Historical log of Nov 3-4: states and costs are as of each entry; current numbers are in
+> `docs/evidence/`.
+
 Progress of the final sprint (Nov 3-4, 2026) under the temporary rules in
 `docs/decision_ledger.md` (2026-11-03, process). Spend is the cumulative real USD of Meta calls
 from `.spend/spend_log.jsonl` (documented prices, not invoice-checked). Every PR is stacked on the

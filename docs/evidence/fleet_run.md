@@ -35,6 +35,8 @@ in the same turn before the call (null when it wrote none); nothing is filled in
 Both runs recorded these fields as they ran (`fleet backfill` changes nothing).
 The Muse Spark Open run grades its own re-graded farm (`replay/open-weights/`),
 so the two agents saw different verdicts: compare behaviour, not order lists.
+`fleet/tools.py` defines seven tools and `fleet/rules.py` 14 rules; both stored runs
+used six tools (neither called `assess_image`).
 
 | | `run-final` (muse-spark-1.3) | `run-open-weights` (meta-models/muse-spark-open) |
 |---|---|---|

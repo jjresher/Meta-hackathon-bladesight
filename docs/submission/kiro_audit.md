@@ -1,5 +1,8 @@
 # Independent submission audit (Kiro)
 
+> Snapshot of Nov 4, before the video link; superseded where the current files differ. Its rounding
+> notes are also loose: held-out precision 0.187 rounds up to 0.19, not down.
+
 Independent review of `main` on 2026-11-04 by an agent with no prior context on the build, for the
 Meta Global AI Developer Hackathon submission. Read-only except for this file. Scope: the six
 checks requested (claims vs evidence, honesty, `AGENTS.md` rules, open-weights verifiability,
