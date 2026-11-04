@@ -24,6 +24,9 @@ class TileResult:
     tile_id: str
     truths: list[tuple[str, Box]]  # (label, box)
     preds: list[tuple[str, float, Box]]  # (label, score, box)
+    # Sampling weight: a clean tile sampled from N clean tiles stands for N / n of them, so
+    # false positives and per-image rates can be scaled back to the full split.
+    weight: float = 1.0
 
     @property
     def has_label(self) -> bool:
@@ -32,9 +35,9 @@ class TileResult:
 
 @dataclass(frozen=True)
 class Counts:
-    tp: int = 0
-    fp: int = 0
-    fn: int = 0
+    tp: float = 0
+    fp: float = 0
+    fn: float = 0
 
     def __add__(self, other: Counts) -> Counts:
         return Counts(self.tp + other.tp, self.fp + other.fp, self.fn + other.fn)
@@ -69,7 +72,8 @@ def tile_counts(
 ) -> Counts:
     boxes, scores, truths = _select(result, label, min_score)
     m = match(boxes, scores, truths, iou)
-    return Counts(m.tp, m.fp, m.fn)
+    w = result.weight
+    return Counts(m.tp * w, m.fp * w, m.fn * w)
 
 
 def aggregate(
@@ -117,7 +121,8 @@ def sweep(
     thresholds: Sequence[float] = (0.0, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9),
     iou: float = PRIMARY_IOU,
 ) -> list[dict[str, float]]:
-    """Missed defects vs false alarms as the score threshold moves."""
+    """Missed defects vs false alarms as the score threshold moves (per sampling-weighted image)."""
+    total_weight = sum(r.weight for r in results)
     points = []
     for threshold in thresholds:
         c = aggregate(results, label, iou, threshold)
@@ -126,7 +131,7 @@ def sweep(
                 "threshold": threshold,
                 "recall": c.recall,
                 "precision": c.precision,
-                "false_alarms_per_image": c.fp / len(results) if results else 0.0,
+                "false_alarms_per_image": c.fp / total_weight if total_weight else 0.0,
                 "image_recall": image_level(results, label, threshold)["image_recall"],
             }
         )
@@ -159,11 +164,17 @@ def bootstrap(
     """95% percentile intervals, resampling tiles with replacement (counts are summed per tile)."""
     per_tile = [tile_counts(r, label, iou) for r in results]
     rng = random.Random(seed)
+    # Resample inside each stratum (tiles with boxes / tiles with none) so the sample design is
+    # kept: a plain bootstrap could draw a different number of labeled tiles than the run had.
+    strata: dict[bool, list[Counts]] = {True: [], False: []}
+    for r, c in zip(results, per_tile, strict=True):
+        strata[r.has_label].append(c)
     samples = []
     for _ in range(n_boot):
         total = Counts()
-        for _ in per_tile:
-            total = total + per_tile[rng.randrange(len(per_tile))]
+        for group in strata.values():
+            for _ in group:
+                total = total + group[rng.randrange(len(group))]
         samples.append(total)
 
     def interval(values: list[float]) -> Interval:
