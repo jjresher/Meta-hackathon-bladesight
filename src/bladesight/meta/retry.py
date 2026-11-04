@@ -16,6 +16,9 @@ class RetryPolicy:
     base_delay: float = 0.5
     max_delay: float = 8.0
     max_retry_after: float = 120.0
+    # A 2xx whose body cannot be parsed is retried this many times by `MetaClient` (each such
+    # attempt is settled at its estimate, never released as free). Not part of `max_attempts`.
+    invalid_response_retries: int = 1
 
     def delay(self, attempt: int, error: MetaError, rng: Callable[[], float]) -> float:
         """Seconds to wait after failed attempt number `attempt` (1-based).

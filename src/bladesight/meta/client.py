@@ -13,7 +13,7 @@ from typing import Any, Literal
 
 from .cache import DiskCache, cache_key
 from .config import MetaSettings
-from .errors import CacheMissError, MetaConfigError
+from .errors import CacheMissError, MetaConfigError, MetaInvalidResponseError
 from .http_provider import HttpProvider
 from .models import (
     CallRecord,
@@ -158,14 +158,51 @@ class MetaClient:
                 "(replay mode; set BLADESIGHT_MODE=live for a real call)"
             )
 
+        simulated = self.provider.simulated
+        source: Literal["live", "stub"] = "stub" if simulated else "live"
+        garbled: list[MetaInvalidResponseError] = []
+        earlier_attempts = 0
         reservation = self.spend.reserve(estimate)
-        try:
-            result, retried = call_with_retry(call, self.retry, sleep=self._sleep, rng=self._rng)
-        except Exception:
-            # A failed call is released as free. A KeyboardInterrupt / SystemExit is deliberately
-            # NOT caught: the request may already be billed, so its reservation stays counted.
-            self.spend.release(reservation)
-            raise
+        while True:
+            try:
+                result, retried = call_with_retry(
+                    call, self.retry, sleep=self._sleep, rng=self._rng
+                )
+                break
+            except MetaInvalidResponseError as error:
+                # A 2xx whose body cannot be parsed was almost certainly billed: settle it at the
+                # worst-case estimate (never free), never cache it, and retry it once on a fresh
+                # reservation so the cap is checked again before the second call.
+                earlier_attempts += error.attempts
+                error.attempts = earlier_attempts
+                self.spend.settle(
+                    reservation,
+                    operation=operation,
+                    model=model,
+                    usage=Usage(),
+                    cost=0.0 if simulated else reservation.estimate_usd,
+                    simulated_cost=reservation.estimate_usd if simulated else 0.0,
+                    source=source,
+                    attempts=earlier_attempts,
+                    request_id=error.request_id,
+                )
+                log.warning(
+                    "%s/%s: unparsable 2xx (%s); settled at the estimate",
+                    self.provider.name,
+                    operation,
+                    error.message,
+                )
+                if len(garbled) >= self.retry.invalid_response_retries:
+                    raise
+                garbled.append(error)
+                self._sleep(self.retry.delay(len(garbled), error, self._rng))
+                reservation = self.spend.reserve(estimate)
+            except Exception:
+                # A failed call is released as free. A KeyboardInterrupt / SystemExit is
+                # deliberately NOT caught: the request may already be billed, so its reservation
+                # stays counted.
+                self.spend.release(reservation)
+                raise
         usage = result.usage
         no_usage = operation == "chat" and usage.input_tokens == 0 and usage.output_tokens == 0
         if no_usage:
@@ -177,10 +214,8 @@ class MetaClient:
                 operation,
             )
         cost = reservation.estimate_usd if no_usage else cost_usd(model, usage)
-        simulated = self.provider.simulated
         real_cost, simulated_cost = (0.0, cost) if simulated else (cost, 0.0)
-        attempts = len(retried) + 1
-        source: Literal["live", "stub"] = "stub" if simulated else "live"
+        attempts = earlier_attempts + len(retried) + 1
         self.spend.settle(
             reservation,
             operation=operation,
@@ -195,7 +230,7 @@ class MetaClient:
         if caching and result.status == "completed":
             assert self.cache is not None
             self.cache.put(key, result)
-        codes = [e.code for e in retried]
+        codes = [e.code for e in garbled] + [e.code for e in retried]
         self._record(
             operation, model, result, source, attempts, codes, real_cost, simulated_cost, no_usage
         )
