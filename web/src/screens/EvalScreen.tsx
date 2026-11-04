@@ -107,9 +107,9 @@ function Detection({ report }: { report: EvalReport }) {
           <RangeBar value={report.image_recall} interval={null} />
           <p className="headline__ci num">no interval reported</p>
           <p className="headline__caption" data-testid="image-recall-caption">
-            Damaged photos with at least one damage prediction, <strong>wherever it is</strong>: it does not check the
-            location, and a detector that fired on every photo would score 100%.{" "}
-            On the {FALSE_ALARM_RATE[report.split].cleanTiles} {report.split === "dev" ? "dev" : "held-out"} photos with
+            Damaged tiles with at least one damage prediction, <strong>wherever it is</strong>: it does not check the
+            location, and a detector that fired on every tile would score 100%.{" "}
+            On the {FALSE_ALARM_RATE[report.split].cleanTiles} {report.split === "dev" ? "dev" : "held-out"} tiles with
             no dataset box, {pct(FALSE_ALARM_RATE[report.split].rate)} still got a damage prediction.
           </p>
         </div>
@@ -258,7 +258,7 @@ function EvalBody({ reports }: { reports: EvalReport[] }) {
         <p className="note" data-testid="heldout-pending">
           <InfoIcon className="note__icon" />
           <span>
-            The held-out run is a single, pre-registered evaluation on photos nobody tuned on. Its result is not published
+            The held-out run is a single, pre-registered evaluation on tiles from photos nobody tuned on. Its result is not published
             here yet; when it is, it appears in this tab exactly as measured. The dev split is where the pipeline was
             developed and its thresholds were set, so quote the held-out numbers when they exist, not these.
           </span>
