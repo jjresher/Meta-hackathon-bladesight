@@ -119,4 +119,7 @@ Nothing above changed.
 
 ## Deviations
 
-None yet.
+Added after the run (2026-11-04); nothing above changed. One: on one tile (`DJI_0248_08_02`)
+v1's Muse Spark answer was not cacheable (status not `completed`), so the v2 pass called it again
+live and the two detectors saw different answers there; a free replay with the same answer for
+both gives identical metrics and the same verdict. Details in `docs/evidence/eval_fresh_v2.md`.

@@ -1,6 +1,6 @@
 # Choosing detection v2 on the dev sample (issue #22)
 
-Command: `BLADESIGHT_MODE=replay uv run python -m bladesight.eval.fresh --dev-table`. Commit `78dc6a82ec80c7c8750fdec90d3c2e8ce8dcd3e6`. The 300-tile seed-7 dev sample of `eval_dev.md` (the tiles v1 was tuned on; 176 with damage boxes, 100 with no box), damage class, IoU 0.3, unweighted. Model answers replayed from the cache: 0 live and 1112 cached calls, 0 USD. The first row reproduces `eval_dev.md` (TP 137, FP 237, FN 482).
+Command: `BLADESIGHT_MODE=replay uv run python -m bladesight.eval.fresh --dev-table`. Commit `78dc6a82ec80c7c8750fdec90d3c2e8ce8dcd3e6` plus the uncommitted v2 code, committed unchanged as `9cfd7bc` (the frozen commit of the fresh run). The 300-tile seed-7 dev sample of `eval_dev.md` (the tiles v1 was tuned on; 176 with damage boxes, 100 with no box), damage class, IoU 0.3, unweighted. Model answers replayed from the cache: 0 live and 1112 cached calls, 0 USD. The first row reproduces `eval_dev.md` (TP 137, FP 237, FN 482).
 
 Hypothesis (from `eval_heldout.md`): boxes are too large. On this dev sample, for the 207 damage truth boxes that some v1 box overlaps without matching them, the best-overlapping v1 box is a median 9.5 times the truth box's area (88% are larger).
 

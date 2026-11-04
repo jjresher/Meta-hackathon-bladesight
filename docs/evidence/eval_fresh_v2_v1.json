@@ -1,0 +1,126 @@
+{
+ "split": "dev",
+ "n_images": 300,
+ "iou_threshold": 0.3,
+ "classes": [
+  {
+   "label": "damage",
+   "tp": 90.0,
+   "fp": 225.0,
+   "fn": 400.0,
+   "precision": 0.2857142857142857,
+   "recall": 0.1836734693877551,
+   "f1": 0.22360248447204972,
+   "precision_ci": {
+    "low": 0.23492063492063492,
+    "high": 0.34201954397394135,
+    "method": "bootstrap"
+   },
+   "recall_ci": {
+    "low": 0.1378640776699029,
+    "high": 0.23809523809523808,
+    "method": "bootstrap"
+   }
+  },
+  {
+   "label": "dirt",
+   "tp": 10.0,
+   "fp": 197.0,
+   "fn": 27.0,
+   "precision": 0.04830917874396135,
+   "recall": 0.2702702702702703,
+   "f1": 0.0819672131147541,
+   "precision_ci": {
+    "low": 0.02197802197802198,
+    "high": 0.08050847457627118,
+    "method": "bootstrap"
+   },
+   "recall_ci": {
+    "low": 0.13333333333333333,
+    "high": 0.41379310344827586,
+    "method": "bootstrap"
+   }
+  }
+ ],
+ "classes_iou50": [
+  {
+   "label": "damage",
+   "tp": 66.0,
+   "fp": 249.0,
+   "fn": 424.0,
+   "precision": 0.20952380952380953,
+   "recall": 0.1346938775510204,
+   "f1": 0.16397515527950313,
+   "precision_ci": null,
+   "recall_ci": null
+  },
+  {
+   "label": "dirt",
+   "tp": 7.0,
+   "fp": 200.0,
+   "fn": 30.0,
+   "precision": 0.033816425120772944,
+   "recall": 0.1891891891891892,
+   "f1": 0.05737704918032787,
+   "precision_ci": null,
+   "recall_ci": null
+  }
+ ],
+ "image_recall": 0.7294117647058823,
+ "sweep": [
+  {
+   "threshold": 0.0,
+   "recall": 0.1836734693877551,
+   "precision": 0.2857142857142857,
+   "false_alarms_per_image": 0.75
+  },
+  {
+   "threshold": 0.3,
+   "recall": 0.1816326530612245,
+   "precision": 0.2986577181208054,
+   "false_alarms_per_image": 0.6966666666666667
+  },
+  {
+   "threshold": 0.5,
+   "recall": 0.17346938775510204,
+   "precision": 0.3148148148148148,
+   "false_alarms_per_image": 0.6166666666666667
+  },
+  {
+   "threshold": 0.6,
+   "recall": 0.12653061224489795,
+   "precision": 0.33879781420765026,
+   "false_alarms_per_image": 0.4033333333333333
+  },
+  {
+   "threshold": 0.7,
+   "recall": 0.09387755102040816,
+   "precision": 0.41818181818181815,
+   "false_alarms_per_image": 0.21333333333333335
+  },
+  {
+   "threshold": 0.8,
+   "recall": 0.053061224489795916,
+   "precision": 0.4262295081967213,
+   "false_alarms_per_image": 0.11666666666666667
+  },
+  {
+   "threshold": 0.9,
+   "recall": 0.0163265306122449,
+   "precision": 0.42105263157894735,
+   "false_alarms_per_image": 0.03666666666666667
+  }
+ ],
+ "needs_review_share": null,
+ "severity_kappa": null,
+ "prompt_versions": {
+  "propose": "detect/v1",
+  "assess": "assess/v1",
+  "verify": "verify/v1",
+  "postprocess": "detect-post/v1"
+ },
+ "cost_usd": 3.16666885,
+ "evidence_path": "docs/evidence/eval_fresh_v2_v1.md",
+ "sample_note": "Fresh dev set of issue #22 (eval/preregistration_v2.md): 300 tiles from `eval/fresh_v2_manifest.sha256` (sha256 46ec38864cc90dd9cb7ce2eb7dd6e1e9ce0bf577c48ef187d9afb69d04e62610), every file verified; seed 20261122, two thirds labeled, photos disjoint from the tuned dev sample. Code commit 9cfd7bc1ad8516ad0801b6ea13dbcebef45e5411; run 2026-11-04T08:44:50+00:00 to 2026-11-04T09:42:25+00:00.",
+ "generated_at": "2026-11-04T09:42:25.788250Z"
+}
