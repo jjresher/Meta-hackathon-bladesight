@@ -254,3 +254,31 @@ def test_a_recorded_run_replays_from_the_cache_without_a_call(store: Store, tmp_
     )
     assert second.call_count == 0 and run2.replay is True
     assert run2.work_order_ids == run1.work_order_ids
+
+
+def test_reinspection_is_refused_for_defects_that_are_already_verified(store: Store) -> None:
+    tools = FleetTools(store, "r")
+    refused = _call(tools, "request_reinspection", inspection_id="T01-2018",
+                    defect_ids=[VERIFIED], reason="r")  # fmt: skip
+    assert "already verified" in refused["error"] and not tools.orders
+
+
+def test_a_client_error_mid_run_keeps_the_partial_trace(store: Store) -> None:
+    from bladesight.meta import MetaAuthError
+
+    stub = StubProvider(chat_responses=[_calls(("list_turbines", {}))],
+                        failures=[])  # fmt: skip
+    client = build_client(MetaSettings(), provider="stub", stub=stub)
+    original = stub.chat
+    calls = {"n": 0}
+
+    def flaky(request):  # first call works, the second one raises
+        calls["n"] += 1
+        if calls["n"] == 2:
+            raise MetaAuthError("boom")
+        return original(request)
+
+    stub.chat = flaky  # type: ignore[method-assign]
+    run = run_agent(client, MetaSettings(), store, run_id="run-err", provider="stub")
+    assert run.status == "error" and run.steps[-1].kind == "error"
+    assert any(s.kind == "tool_call" for s in run.steps) and store.run("run-err").status == "error"

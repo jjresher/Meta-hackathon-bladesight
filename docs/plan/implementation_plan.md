@@ -335,7 +335,7 @@ DoD: [ ] post live before submission · [ ] post link in the submission · [ ] r
 | Credits run out | Cache everything, spend cap, small dev subsets; card charges beyond credits |
 | Scope creep, solo | Cut order, freeze Tue EOD, daily check |
 | Licence (NC) | Non-commercial hackathon use with attribution; no data in repo; note in `DATA.md` |
-| Severity has no ground truth | Own rubric labelled illustrative + hand gold set + agreement metric |
+| Severity has no public reference labels | Own rubric labelled illustrative + hand gold set + agreement metric |
 | Demo breaks live | Replay mode default; video recorded from the deployed URL |
 
 ## 11. Open questions

@@ -74,8 +74,8 @@ def test_reinspect_when_the_looks_differ_by_two_or_more_levels() -> None:
 
 
 def test_moderate_confidence_needs_review_and_very_low_confidence_reinspects() -> None:
-    assert decide(_assessment(3, 0.4), _assessment(3, 0.9), GOOD_CHECKS).verdict == "needs_review"
-    assert decide(_assessment(3, 0.9), _assessment(3, 0.2), GOOD_CHECKS).verdict == "reinspect"
+    assert decide(_assessment(3, 0.2), _assessment(3, 0.9), GOOD_CHECKS).verdict == "needs_review"
+    assert decide(_assessment(3, 0.9), _assessment(3, 0.1), GOOD_CHECKS).verdict == "reinspect"
 
 
 def test_a_failed_rule_check_downgrades_an_otherwise_ok_verdict() -> None:
@@ -173,8 +173,8 @@ def test_verify_defect_retries_the_second_look_once_then_abstains() -> None:
 
 def test_thresholds_are_the_documented_ones() -> None:
     assert THRESHOLDS == {
-        "ok_confidence": 0.5,
-        "reinspect_confidence": 0.25,
+        "ok_confidence": 0.3,
+        "reinspect_confidence": 0.15,
         "reinspect_gap": 2,
         "min_detector_score": 0.5,
         "min_inside_blade": 0.5,
@@ -184,10 +184,10 @@ def test_thresholds_are_the_documented_ones() -> None:
 
 
 def test_confidence_boundaries_are_strict_less_than() -> None:
-    assert decide(_assessment(3, 0.5), _assessment(3, 0.5), GOOD_CHECKS).verdict == "ok"
-    assert decide(_assessment(3, 0.25), _assessment(3, 0.25), GOOD_CHECKS).verdict == "needs_review"
-    assert decide(_assessment(3, 0.24), _assessment(3, 0.24), GOOD_CHECKS).verdict == "reinspect"
-    assert decide(_assessment(3, 0.2), _assessment(4, 0.2), GOOD_CHECKS).verdict == "reinspect"
+    assert decide(_assessment(3, 0.3), _assessment(3, 0.3), GOOD_CHECKS).verdict == "ok"
+    assert decide(_assessment(3, 0.15), _assessment(3, 0.15), GOOD_CHECKS).verdict == "needs_review"
+    assert decide(_assessment(3, 0.14), _assessment(3, 0.14), GOOD_CHECKS).verdict == "reinspect"
+    assert decide(_assessment(3, 0.1), _assessment(4, 0.1), GOOD_CHECKS).verdict == "reinspect"
 
 
 def test_size_check_boundaries_pass_exactly_at_the_threshold() -> None:

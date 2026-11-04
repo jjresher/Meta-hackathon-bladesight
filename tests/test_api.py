@@ -126,3 +126,33 @@ def test_store_is_untouched_by_reads(parts) -> None:
     client.get("/api/fleet")
     assert before == sorted(p.name for p in store.root.rglob("*.json"))
     assert isinstance(store, Store)
+
+
+def test_the_uvicorn_target_is_the_application_not_a_module() -> None:
+    """Regression: `bladesight.api:app` once resolved to a submodule named `app`."""
+    import importlib
+
+    from fastapi import FastAPI
+
+    assert isinstance(importlib.import_module("bladesight.api").app, FastAPI)
+
+
+def test_odd_inputs_do_not_crash_the_server(parts, tmp_path: Path) -> None:
+    _, settings, _ = parts
+    dist = tmp_path / "dist2"
+    dist.mkdir()
+    (dist / "index.html").write_text("<!doctype html><title>BladeSight</title>", encoding="utf-8")
+    (tmp_path / "secret.txt").write_text("TOP-SECRET", encoding="utf-8")
+    client = TestClient(create_app(Settings(**{**settings.__dict__, "web_dir": dist})))
+    assert client.get("/%00").status_code == 200  # falls back to the index, no 500
+    for probe in ["/%2e%2e/secret.txt", "/..%2fsecret.txt"]:
+        assert "TOP-SECRET" not in client.get(probe).text
+    live = Settings(**{**settings.__dict__, "mode": "live", "admin_key": "s3cret"})
+    odd = TestClient(create_app(live)).post("/api/runs", headers={"X-Admin-Key": "clé-ñ".encode()})
+    assert odd.status_code == 403  # a non-ASCII key is refused, not a 500
+
+
+def test_the_environment_default_is_replay(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("BLADESIGHT_MODE", raising=False)
+    monkeypatch.delenv("META_API_KEY", raising=False)
+    assert Settings().mode == "replay" and Settings().admin_key == ""
