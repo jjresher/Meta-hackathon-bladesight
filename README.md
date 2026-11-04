@@ -47,6 +47,7 @@ below) is the number to quote for detection; the dev numbers are where the pipel
 | Severity vs a human applying the rubric (40 crops) | quadratic weighted kappa 0.12 (95% interval -0.05 to 0.29), exact agreement 25%: **advisory only** | [`severity_agreement.md`](docs/evidence/severity_agreement.md) |
 | Verification on the synthetic farm (96 defects) | 33 `ok`, 50 `needs_review`, 13 `reinspect` | [`fleet_run.md`](docs/evidence/fleet_run.md) |
 | Fleet agent run | 60 steps, 23 tool calls, 9 work orders (3 repair on `ok` defects, 6 re-inspections), 0.06 USD | [`fleet_run.md`](docs/evidence/fleet_run.md) |
+| Same farm, grading + verification + agent on **Muse Spark Open** (open weights) | same severity as Muse Spark on 74 of 96 defects, same verdict on 63; 8 work orders; 1.74 + 0.06 USD | [`open_weights.md`](docs/evidence/open_weights.md) |
 | Cost of detection | about 0.014 USD per tile | [`detect.md`](docs/evidence/detect.md) |
 
 How to read them honestly: most dataset boxes are about 14x14 px, so box-level recall is low for
@@ -130,10 +131,64 @@ decision, spend and cut is in [`docs/decision_ledger.md`](docs/decision_ledger.m
 
 ## Models
 
-Meta Muse Spark (`muse-spark-1.3`) and SAM 3.1 (`sam-3.1`) through the Meta Model API. Muse Spark
-Open (`meta-models/muse-spark-open`, Baseten) was run on the severity gold set and is no worse than
-the API on that small check (both agree only weakly with the labels) ([`open_weights.md`](docs/evidence/open_weights.md)); the agent, the
-report and detection run on the API only.
+Meta Muse Spark (`muse-spark-1.3`) and SAM 3.1 (`sam-3.1`) through the Meta Model API, and Meta's
+open-weights **Muse Spark Open** (`meta-models/muse-spark-open`) on Baseten. Severity, the second
+look, the fleet agent and its report run on either one (`--chat-provider meta|baseten`); detection
+(Muse Spark box proposals and SAM 3.1 masks) runs on the Meta Model API only, because SAM 3.1 has
+no open-weights path here ([`open_weights.md`](docs/evidence/open_weights.md)).
+
+## Runs on Meta open weights
+
+The whole planning half of the pipeline (severity, verification, the agent with its tool calls,
+and the report) has run end to end on Muse Spark Open, stored as a second replay
+(`replay/open-weights/`) next to the Muse Spark one, on the same stored detections. The two runs
+agree on the severity of 74 of 96 defects and on the verdict of 63
+([`open_weights.md`](docs/evidence/open_weights.md),
+[`open_weights_farm.md`](docs/evidence/open_weights_farm.md)).
+
+View the stored Open run (no key, no model call):
+
+```bash
+uv run poe serve
+curl -s http://127.0.0.1:8000/api/replays                    # which model ran each stage
+curl -s "http://127.0.0.1:8000/api/fleet?provider=baseten"   # ranking from the Open grades
+curl -s "http://127.0.0.1:8000/api/runs?provider=baseten"    # the Open agent trace
+uv run poe fleet compare                                     # rewrite the comparison (free)
+```
+
+Re-run it live on Baseten (needs `BASETEN_API_KEY` and `BASETEN_SPEND_LIMIT_USD` in `.env` or
+the environment, set by name; no Meta key is needed because detections are reused; about 1.80 USD,
+192 grading calls wait for the 15 requests/minute limit, so at least 13 minutes). Write to a new folder so the stored
+replay stays as it is:
+
+```bash
+BLADESIGHT_MODE=live uv run poe fleet regrade --chat-provider baseten \
+  --source-dir replay --replay-dir /tmp/bladesight-open --workers 3
+BLADESIGHT_MODE=live uv run poe fleet run --chat-provider baseten \
+  --replay-dir /tmp/bladesight-open --run-id run-open-check
+```
+
+`BLADESIGHT_CHAT_PROVIDER=baseten` sets the same choice for every command, including
+`uv run poe fleet process` (which also needs `META_API_KEY` for detection).
+
+## Why it is agentic
+
+Counted from the stored traces in [`fleet_run.md`](docs/evidence/fleet_run.md):
+
+- The agent decides its own sequence of tool calls over seven tools (rank, read, compare, assess,
+  order, re-inspect, report): 23 calls in 14 model turns on Muse Spark, 22 calls in 7 turns on
+  Muse Spark Open, each ending with a report it wrote. The prompt gives the rules and a suggested
+  workflow; the loop does not fix which tool comes next or which defects to act on.
+- It acts on uncertainty instead of hiding it: in both runs 6 of the orders are re-inspection
+  requests for defects that verification did not confirm.
+- Rules are enforced by the tools, not by the prompt: a repair or monitor order citing a defect
+  that is not `ok` is rejected (`verified_only`), as are reports citing unknown orders or defects
+  (`src/bladesight/fleet/rules.py`, tested in `tests/test_open_weights.py`). The rejection goes back
+  to the model, which must change its plan. Neither stored run triggered a rejection: both agents
+  followed the rule on the first try.
+- Every step is in the trace with the tool, the arguments, a `decision` summary, the `outcome`,
+  the rule that blocked it if any, and the model's own text before the call as `rationale` when it
+  wrote one (the Muse Spark run did before all 23 calls; the Muse Spark Open run wrote none).
 
 ## License
 
