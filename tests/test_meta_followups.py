@@ -331,7 +331,7 @@ def test_baseten_chat_completions_never_gets_store_or_reasoning_fields() -> None
         supports_segment=False,
     )
     request = ChatRequest(
-        model="meta-models/muse-spark-open-1026",
+        model="meta-models/muse-spark-open",
         messages=[ChatMessage.user("hi")],
         store=False,
         reasoning_effort="low",

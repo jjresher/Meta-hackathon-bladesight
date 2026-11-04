@@ -15,7 +15,7 @@ beside it. Items marked **human** need the author (accounts, links, the X post).
 | Video | **human:** link of the 3:00 video (`docs/submission/video_script.md`) |
 | X post | **human:** link of the post with #MetaAIHackathon (issue #21) |
 | Bonus: Best Agentic Use-Case | yes: fleet agent with tools, verification and abstention (`docs/evidence/fleet_run.md`) |
-| Bonus: Build on Meta Open Weight Models | **no**: the Baseten path (#15) was not built; do not claim it |
+| Bonus: Build on Meta Open Weight Models | **partial**: Muse Spark Open on Baseten grades the severity gold set (`docs/evidence/open_weights.md`, comparable to the API on 40 crops); the agent, the report and the UI badge were not built: claim only that, or do not flag it |
 | Bonus: Most Viral / Community Vote | via the X post and the gallery (#21), not claimed here |
 | Models used | Muse Spark `muse-spark-1.3`, SAM 3.1 `sam-3.1` (Meta Model API) |
 | Data | DTU drone images (CC BY-NC 3.0) and the YOLO-annotated derivative (CC BY-NC 4.0), `DATA.md` |

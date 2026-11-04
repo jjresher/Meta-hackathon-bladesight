@@ -17,10 +17,13 @@ from pathlib import Path
 
 from ..assess import AssessError, assess_defect
 from ..contracts import Assessment, BBox, Defect, Measurement
-from ..meta import MetaClient, MetaSettings
+from ..meta import MUSE_SPARK_OPEN_MODEL, MetaClient, MetaSettings
 from .gold import GOLD_CSV, crop_for, read_rows
 
 LEVELS = (1, 2, 3, 4, 5)
+# Muse Spark Open reasons before answering and the reasoning counts against the output budget
+# (1500 tokens left an empty reply on 23 of 40 crops), so it gets a much larger budget.
+OPEN_WEIGHTS_MAX_TOKENS = 6000
 
 
 def weighted_kappa(a: Sequence[int], b: Sequence[int], weights: str = "quadratic") -> float:
@@ -81,6 +84,8 @@ def grade_gold(
     data_dir: Path,
     csv_path: Path = GOLD_CSV,
     provider: str = "meta",
+    model: str | None = None,
+    max_tokens: int | None = None,
 ) -> list[Graded]:
     """Muse Spark grades every labelled crop (on the crops the human saw)."""
     graded = []
@@ -109,7 +114,8 @@ def grade_gold(
         try:
             a = assess_defect(
                 client, settings, b"", defect, measurement, provider=provider,
-                crops=(close, wide), with_score=False,
+                crops=(close, wide), with_score=False, model=model,
+                **({"max_tokens": max_tokens} if max_tokens else {}),
             )  # fmt: skip
             graded.append(Graded(row["crop_id"], int(row["severity"]), a))
         except AssessError as error:
@@ -149,7 +155,15 @@ def summarize(graded: Sequence[Graded]) -> dict[str, object]:
     return out
 
 
-def render_markdown(summary: dict[str, object], graded: Sequence[Graded], cost_usd: float) -> str:
+def render_markdown(
+    summary: dict[str, object],
+    graded: Sequence[Graded],
+    cost_usd: float,
+    *,
+    name: str = "Muse Spark",
+    model_line: str = "(`muse-spark-1.3`, `reasoning.effort=low`, `store=false`)",
+    grades_file: str = "model_grades.csv",
+) -> str:
     conf = summary.get("confusion")
     matrix = ""
     if isinstance(conf, list):
@@ -184,19 +198,19 @@ def render_markdown(summary: dict[str, object], graded: Sequence[Graded], cost_u
     exact = float(summary.get("exact", nan))  # type: ignore[arg-type]
     within_one = float(summary.get("within_one", nan))  # type: ignore[arg-type]
     mean_diff = float(summary.get("mean_signed_diff", nan))  # type: ignore[arg-type]
-    return f"""# Severity agreement: Muse Spark vs the human labels (issue #10)
+    return f"""# Severity agreement: {name} vs the human labels (issues #10, #15)
 
 **What this measures.** The 40 gold crops were labelled by one person with no wind-energy
 experience, applying `docs/rubric.md` (our own illustrative rubric, observable criteria) blind to
-the model on these crops. This file reports how much Muse Spark agrees with that person
+the model on these crops. This file reports how much {name} agrees with that person
 applying the rubric. It is agreement with the rubric applied by a non-specialist, **not**
 severity validated by a wind-turbine specialist.
 
 Crops: the dataset's own damage boxes (one per source photo, four size quartiles, seed 20261030;
-`eval/gold/severity.csv` holds ids, boxes and the human labels, no images). Muse Spark
-(`muse-spark-1.3`, `reasoning.effort=low`, `store=false`) graded the same crops the labeller saw,
+`eval/gold/severity.csv` holds ids, boxes and the human labels, no images). {name}
+{model_line} graded the same crops the labeller saw,
 with the `assess/v1` prompt and without a detector confidence (the boxes come from the dataset).
-Model grades are in `eval/gold/model_grades.csv`. Cost of the run: {cost_usd:.4f} USD (documented
+Model grades are in `eval/gold/{grades_file}`. Cost of the run: {cost_usd:.4f} USD (documented
 prices, not invoice-checked).
 
 ## Counts
@@ -245,22 +259,41 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="python -m bladesight.eval.agreement")
     parser.add_argument("--data-dir", type=Path, default=Path("data"))
     parser.add_argument("--csv", type=Path, default=GOLD_CSV)
-    parser.add_argument("--provider", choices=["meta", "stub"], default="meta")
-    parser.add_argument("--out", type=Path, default=Path("docs/evidence/severity_agreement.md"))
+    parser.add_argument("--provider", choices=["meta", "baseten", "stub"], default="meta")
+    parser.add_argument("--out", type=Path)
     parser.add_argument(
         "--cost-usd", type=float, help="cost of the live run when this is a cached re-render"
     )
     args = parser.parse_args(argv)
     settings = MetaSettings.from_env()
     client = build_client(settings, provider=args.provider)
+    open_weights = args.provider == "baseten"
+    model = MUSE_SPARK_OPEN_MODEL if open_weights else None
+    out = args.out or Path(
+        "docs/evidence/severity_agreement_open_weights.md"
+        if open_weights
+        else "docs/evidence/severity_agreement.md"
+    )
+    grades_file = "model_grades_open_weights.csv" if open_weights else "model_grades.csv"
     try:
-        graded = grade_gold(client, settings, args.data_dir, args.csv, args.provider)
+        graded = grade_gold(
+            client, settings, args.data_dir, args.csv, args.provider, model,
+            OPEN_WEIGHTS_MAX_TOKENS if open_weights else None,
+        )  # fmt: skip
     except (MetaError, ValueError) as error:
         print(f"error: {error}", file=sys.stderr)
         return 1
     cost = args.cost_usd if args.cost_usd is not None else sum(r.cost_usd for r in client.records)
     summary = summarize(graded)
-    args.out.write_text(render_markdown(summary, graded, cost), encoding="utf-8")
+    if open_weights:
+        text = render_markdown(
+            summary, graded, cost, name="Muse Spark Open (Baseten)",
+            model_line=f"(`{MUSE_SPARK_OPEN_MODEL}`, chat completions on Baseten)",
+            grades_file=grades_file,
+        )  # fmt: skip
+    else:
+        text = render_markdown(summary, graded, cost)
+    out.write_text(text, encoding="utf-8")
     buffer = io.StringIO()
     writer = csv.writer(buffer, lineterminator="\n")
     writer.writerow(["crop_id", "human", "model_type", "model_severity", "model_confidence"])
@@ -270,7 +303,7 @@ def main(argv: list[str] | None = None) -> int:
             [g.crop_id, g.human, a.defect_type if a else "", a.severity if a else "",
              f"{a.confidence:.2f}" if a else ""]
         )  # fmt: skip
-    args.csv.with_name("model_grades.csv").write_text(buffer.getvalue(), encoding="utf-8")
+    args.csv.with_name(grades_file).write_text(buffer.getvalue(), encoding="utf-8")
     print(
         f"graded {len(graded)} crops: live={sum(r.source == 'live' for r in client.records)} "
         f"cached={sum(r.source == 'cache' for r in client.records)} cost_usd={cost:.4f}; "
