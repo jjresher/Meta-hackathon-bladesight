@@ -70,6 +70,7 @@ Python 3.12 managed by uv. Tasks run through poethepoet: `uv run poe <task>`.
 | `uv run poe gold prepare` / `label` / `status` | severity gold set (#10): write 40 dev crop ids to `eval/gold/severity.csv`, label them locally in a browser page (keys 1-5, blind to the model), count labels |
 | `uv run poe fleet build/process/run/status` | the synthetic farm (#11): write the layout, run the vision pipeline over it (live: ~0.04 USD per tile), run the agent, show the replay store `replay/` |
 | `uv run poe serve` | the API on 127.0.0.1:8000 (replay mode by default; serves `web/dist` at `/` when built) |
+| `uv run python -m bladesight.api.smoke <url>` | post-deploy smoke check: health, fleet, one inspection, one image, the home page |
 | `uv run poe contract` | regenerate `web/src/fixtures/*.json` (examples + JSON Schema) from `bladesight.contracts` (`docs/api.md`) |
 
 Later issues add `data`, `detect`, `eval`, `serve`, `web-*` tasks; keep this table current.
