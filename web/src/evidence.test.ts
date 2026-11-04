@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import { DEV_FALSE_ALARM_RATE as far, SEVERITY_AGREEMENT as s } from "./evidence";
+import { FALSE_ALARM_RATE, SEVERITY_AGREEMENT as s } from "./evidence";
 
 /** AGENTS.md rule 5: a number shown in the UI must match the evidence file it links to. */
 describe("SEVERITY_AGREEMENT matches its evidence file", () => {
@@ -24,9 +24,14 @@ describe("SEVERITY_AGREEMENT matches its evidence file", () => {
   });
 });
 
-describe("DEV_FALSE_ALARM_RATE matches its evidence file", () => {
-  it("false-alarm rate on tiles with no dataset box", () => {
-    const text = readFileSync(resolve(process.cwd(), "..", far.file), "utf8");
-    expect(text).toContain(`False-alarm rate on tiles with no box at all: **${far.rate.toFixed(3)}** over ${far.cleanTiles} tiles`);
-  });
+describe("FALSE_ALARM_RATE matches its evidence files", () => {
+  for (const split of ["dev", "heldout"] as const) {
+    it(`${split}: false-alarm rate on tiles with no dataset box`, () => {
+      const far = FALSE_ALARM_RATE[split];
+      const text = readFileSync(resolve(process.cwd(), "..", far.file), "utf8");
+      expect(text).toContain(
+        `False-alarm rate on tiles with no box at all: **${far.rate.toFixed(3)}** over ${far.cleanTiles} tiles`,
+      );
+    });
+  }
 });
