@@ -148,7 +148,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             path, media_type="image/png", headers={"Cache-Control": "public, max-age=3600"}
         )
 
-    if cfg.web_dir.is_dir():
+    if (cfg.web_dir / "index.html").is_file():  # no build, no UI: `/` is then a plain 404
         index = cfg.web_dir / "index.html"
         if (cfg.web_dir / "assets").is_dir():
             app.mount("/assets", StaticFiles(directory=cfg.web_dir / "assets"), name="assets")
