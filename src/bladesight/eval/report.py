@@ -227,7 +227,10 @@ def write_outputs(
         report.model_dump_json(indent=1) + "\n", encoding="utf-8"
     )
     md.write_text(
-        render_markdown(report, results, title=title, command=command, notes=notes), "utf-8"
+        render_markdown(
+            report, results, title=title, command=command, notes=notes, svg_name=svg.name
+        ),
+        "utf-8",
     )
-    svg.write_text(sweep_svg(report.sweep), encoding="utf-8")
+    svg.write_text(sweep_svg(report.sweep) + "\n", encoding="utf-8")
     return md, svg
