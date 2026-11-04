@@ -72,6 +72,12 @@ describe("Inspection viewer", () => {
     expect(within(photo).getAllByTestId("mask")).toHaveLength(2);
   });
 
+  it("marks each box with its verdict shape, not colour alone", async () => {
+    const { photo } = await openViewer();
+    const tags = within(photo).getAllByTestId("box-tag").map((t) => t.textContent);
+    expect(tags).toEqual(["✓ d1", "◆ d2"]); // ok, needs_review in the fixture
+  });
+
   it("offers the blade layer only when the photo has a blade outline", async () => {
     const { photo } = await openViewer();
     expect(within(photo).getByTestId("blade-outline")).toBeInTheDocument();
