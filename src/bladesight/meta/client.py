@@ -25,6 +25,7 @@ from .models import (
     Usage,
 )
 from .provider import Provider
+from .ratelimit import RateLimitedProvider, limiter_for
 from .retry import RetryPolicy, call_with_retry
 from .spend import (
     SpendTracker,
@@ -290,12 +291,17 @@ def build_client(
             )
             # Basic accounts default to ~15 RPM / 100k TPM (unverified): back off much more slowly.
             retry = retry or RetryPolicy(max_attempts=5, base_delay=4.0, max_delay=30.0)
-            backend = HttpProvider(
-                "baseten",
-                settings.baseten_base_url,
-                settings.baseten_api_key,
-                chat_format="chat_completions",
-                supports_segment=False,
+            # The account allows 15 requests/minute: every attempt waits for a slot in a
+            # process-wide sliding window instead of relying on 429 retries.
+            backend = RateLimitedProvider(
+                HttpProvider(
+                    "baseten",
+                    settings.baseten_base_url,
+                    settings.baseten_api_key,
+                    chat_format="chat_completions",
+                    supports_segment=False,
+                ),
+                limiter_for("baseten", settings.baseten_requests_per_minute),
             )
     defaults = (
         ChatDefaults(store=settings.store, reasoning_effort=settings.reasoning_effort)
