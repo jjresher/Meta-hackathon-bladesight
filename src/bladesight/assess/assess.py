@@ -92,6 +92,8 @@ def assess_defect(
     provider: str = "meta",
     crops: tuple[bytes, bytes] | None = None,
     with_score: bool = True,
+    model: str | None = None,
+    max_tokens: int = MAX_TOKENS,
 ) -> Assessment:
     """`crops` (close, context) overrides the default crops, e.g. the exact crops a human saw."""
     close, wide = crops or close_and_context(png, BBox.model_validate(defect.bbox))
@@ -112,9 +114,9 @@ def assess_defect(
         )
         reply = client.chat(
             ChatRequest(
-                model=settings.chat_model,
+                model=model or settings.chat_model,
                 messages=[ChatMessage.user(text, *images)],
-                max_tokens=MAX_TOKENS,
+                max_tokens=max_tokens,
             )
         )
         try:
@@ -128,7 +130,7 @@ def assess_defect(
                     "confidence": fields["confidence"],
                     "rubric_version": RUBRIC_VERSION,
                     "prompt_version": PROMPT_VERSION,
-                    "model": reply.model or settings.chat_model,
+                    "model": reply.model or model or settings.chat_model,
                     "provider": provider,
                 }
             )

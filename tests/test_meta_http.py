@@ -72,7 +72,7 @@ def sam_body(text: str = SAM_TEXT) -> dict:
 def completions_body(text: str = "ok") -> dict:
     return {
         "id": "cc-1",
-        "model": "meta-models/muse-spark-open-1026",
+        "model": "meta-models/muse-spark-open",
         "choices": [{"message": {"content": text}}],
         "usage": {
             "prompt_tokens": 11,
@@ -584,7 +584,7 @@ def test_baseten_uses_chat_completions_at_the_documented_base_url() -> None:
     p = baseten_provider()
 
     client = client_for(p)
-    result = client.chat(chat_request(model="meta-models/muse-spark-open-1026"))
+    result = client.chat(chat_request(model="meta-models/muse-spark-open"))
 
     assert result.text == "open"
     assert result.usage.cached_input_tokens == 2
@@ -604,13 +604,13 @@ def test_baseten_payment_required_is_permanent_and_529_is_retried() -> None:
         side_effect=[httpx.Response(529), httpx.Response(200, json=completions_body())]
     )
     client = client_for(baseten_provider())
-    client.chat(chat_request(model="meta-models/muse-spark-open-1026"))
+    client.chat(chat_request(model="meta-models/muse-spark-open"))
     assert client.records[0].retried_codes == ["529"]
 
     route.mock(side_effect=[httpx.Response(402)])
     route.reset()
     with pytest.raises(MetaPaymentRequiredError):
-        client_for(baseten_provider()).chat(chat_request(model="meta-models/muse-spark-open-1026"))
+        client_for(baseten_provider()).chat(chat_request(model="meta-models/muse-spark-open"))
 
 
 def test_provider_requires_a_base_url() -> None:

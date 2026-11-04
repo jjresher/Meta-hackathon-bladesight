@@ -79,3 +79,37 @@ def test_prompt_without_a_detector_score_says_so() -> None:
                     elongation=0.0, position="unknown")  # fmt: skip
     assert "detector confidence 1.00" in build_prompt(defect, m)
     assert "no detector confidence" in build_prompt(defect, m, with_score=False)
+
+
+def test_assess_defect_forwards_model_and_budget_and_keeps_defaults() -> None:
+    import io
+
+    from PIL import Image
+
+    from bladesight.assess import assess_defect
+    from bladesight.meta import ChatResult, MetaSettings, StubProvider, Usage, build_client
+
+    box = BBox(x1=10, y1=10, x2=40, y2=40)
+    defect = Defect(id="x", image_id="i", concept="c", label="damage", score=0.9, bbox=box,
+                    mask_area_px=900)  # fmt: skip
+    m = Measurement(defect_id="x", area_px=900, tile_area_ratio=0.01, length_px=30, width_px=30,
+                    elongation=0.0, position="unknown")  # fmt: skip
+    buffer = io.BytesIO()
+    Image.new("RGB", (100, 100)).save(buffer, format="PNG")
+    reply = ChatResult(
+        text='{"defect_type":"dirt","severity":1,"rationale":"r","confidence":0.5}',
+        usage=Usage(input_tokens=1, output_tokens=1),
+        model="",
+    )
+
+    def run(**kwargs: object) -> StubProvider:
+        stub = StubProvider(chat_responses=[reply])
+        client = build_client(MetaSettings(), provider="stub", stub=stub)
+        result = assess_defect(client, MetaSettings(), buffer.getvalue(), defect, m, **kwargs)  # type: ignore[arg-type]
+        assert result.severity == 1
+        return stub
+
+    default = run().chat_calls[0]
+    assert default.model == MetaSettings().chat_model and default.max_tokens == 1500
+    custom = run(model="meta-models/muse-spark-open", max_tokens=6000).chat_calls[0]
+    assert custom.model == "meta-models/muse-spark-open" and custom.max_tokens == 6000

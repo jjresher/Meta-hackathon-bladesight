@@ -221,7 +221,7 @@ def test_prices_are_keyed_by_exact_model_id() -> None:
     assert rate_for("muse-spark-1.2") == rate_for("muse-spark-1.1") == spark
     assert rate_for("muse-spark-1.3-contributor").output_per_mtok == 0.20
     assert rate_for("sam-3.1").per_call == 0.0025
-    assert rate_for("meta-models/muse-spark-open-1026").output_per_mtok == 4.25
+    assert rate_for("meta-models/muse-spark-open").output_per_mtok == 4.25
     assert all(r.documented for r in PRICING.values())
 
 

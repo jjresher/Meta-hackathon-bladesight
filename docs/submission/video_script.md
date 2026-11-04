@@ -23,4 +23,6 @@ Timings add up to 2:55.
 - Say "synthetic farm" when the fleet appears. Never present the severity labels as specialist-validated, and
   never state a real inspection year.
 - Numbers are the ones in the table above; if any evidence file changes, update the line first.
-- Do not claim the open-weights path or the held-out result unless their evidence files exist.
+- Open weights: say at most "we also ran Muse Spark Open on Baseten on the severity check and both agree only weakly with
+  the rubric and the open model is no worse" (`docs/evidence/open_weights.md`); never claim the agent or the app run on it. The
+  held-out result only if `docs/evidence/eval_heldout.md` exists.

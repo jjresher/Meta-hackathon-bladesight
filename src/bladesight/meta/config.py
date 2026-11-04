@@ -26,7 +26,7 @@ DEFAULT_BASETEN_BASE_URL = "https://inference.baseten.co/v1"  # docs.baseten.co
 # META_SAM_MODEL.
 MUSE_SPARK_MODEL = "muse-spark-1.3"
 SAM_MODEL = "sam-3.1"
-MUSE_SPARK_OPEN_MODEL = "meta-models/muse-spark-open-1026"
+MUSE_SPARK_OPEN_MODEL = "meta-models/muse-spark-open"  # the id the Baseten /models listing shows
 
 
 def project_root() -> Path:
