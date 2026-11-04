@@ -69,13 +69,14 @@ Replay mode (the default: no API key, no model call) serves the stored results i
 ```bash
 uv sync
 uv run python -m bladesight.data.demo     # streams the 2.8 GB archive, keeps only the demo tiles
-(cd web && npm ci && npm run build)       # the web UI (issue #13); skip it to use the API alone
+[ -f web/package.json ] && (cd web && npm ci && npm run build)   # the web UI (issue #13), when present
 uv run poe serve                          # API at http://127.0.0.1:8000 (interactive docs at /docs)
 uv run python -m bladesight.api.smoke http://127.0.0.1:8000
 ```
 
 Without the tiles the API still works and images answer 404. The UI is served at `/` when
-`web/dist` exists; without it `/` answers 404 and the API lives under `/api` and `/docs`.
+`web/dist/index.html` exists; without it (the UI is built on a separate branch, issue #13, and may
+not be merged) `/` answers 404 and the API lives under `/api` and `/docs`.
 Endpoints: [`docs/api.md`](docs/api.md).
 
 Live mode spends money; follow [`meta-api-check`](.claude/skills/meta-api-check/SKILL.md):
