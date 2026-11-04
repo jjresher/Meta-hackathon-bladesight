@@ -103,4 +103,38 @@ the spend log.
 
 ## Deviations
 
-(None before the run. Filled in `docs/evidence/eval_heldout.md` if any.)
+One entry so far; the run's own report (`docs/evidence/eval_heldout.md`) repeats it with the final
+call counts and cost.
+
+**1. The run stopped once on a server error and was resumed from the cache (2026-11-03).**
+
+- **Start.** `ALLOW_HELDOUT=1 BLADESIGHT_MODE=live uv run poe eval --split heldout` started at
+  20:28 (UTC-5) on commit `ade7d9c`, as preregistered. This file's sha256 at that commit, which the
+  run records, is `cef25034242668ce81e7e27252e64330efc53bd81498f664fa47017439b4f3e9`; this
+  Deviations section was added afterwards and is the only change to the file.
+- **Cut.** At 21:46:16 the process ended with `error: meta: /v1/responses failed ...
+  model_not_found ... status=404` (the Muse Spark chat endpoint answered "The requested model was
+  not found."). The two models had answered 1,381 calls in the 78 minutes before (358 Muse Spark, 1,023
+  SAM) and answered every call after the restart, so this reads as a transient server-side error, not a
+  configuration problem. The CLI raised `MetaError` inside the tile loop and returned before any
+  aggregation: the `finally` resealed `data/heldout/`, and the manifest was re-verified afterwards
+  (2,029 files match).
+- **No number was produced.** Metrics are computed and written only after every tile finished
+  (`bladesight.eval.__main__`: `evaluate_tiles`, then `build_report`, then `write_outputs`). The
+  aborted run printed no metric, wrote no `eval_heldout.*` file and left no partial result; its log
+  has four lines (the task line, the error, the manifest check, the exit code). Nobody saw a held-out
+  number before the run finished.
+- **Restart.** At 21:46:45 the same command was run again on the same commit, with nothing changed
+  (step 2 and step 5 above: an infrastructure failure is resumed from the cache, so it is the same
+  run, not a second one). By the cache files' timestamps, all 1,381 calls the first segment had
+  finished were replayed from the cache after the restart (zero real calls repeated; only the call
+  that failed with the 404 was never completed), and the run then continued with new real calls.
+- **Spend** (from `.spend/spend_log.jsonl`, documented prices, not invoice-checked): first segment
+  4.2073 USD, second segment 3.8654 USD (the first segment's 1,381 real calls were replayed from the
+  cache), 8.0727 USD in total. The second segment's 3.8654 USD includes two minimal probe calls (one
+  Muse Spark chat, one SAM segment, about 0.0031 USD) made at 21:46:34-35 to check that the models
+  answered before restarting. The CLI wrote 3.8623 USD, what the restarted process itself spent,
+  because it sums the call records of that process; the 112 Muse Spark Open calls of issue #15 in the
+  same window are not part of the run; the report's cost field was
+  corrected and the correction is listed in `docs/evidence/eval_heldout.md`.
+- **No tuning.** No code, prompt, threshold, sample or metric changed between the two segments.

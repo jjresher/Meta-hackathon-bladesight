@@ -1,0 +1,125 @@
+{
+ "split": "heldout",
+ "n_images": 760,
+ "iou_threshold": 0.3,
+ "classes": [
+  {
+   "label": "damage",
+   "tp": 216.0,
+   "fp": 938.9866666666683,
+   "fn": 1098.0,
+   "precision": 0.18701514591799012,
+   "recall": 0.1643835616438356,
+   "f1": 0.1749705682223205,
+   "precision_ci": {
+    "low": 0.15212808386986473,
+    "high": 0.22203403833443464,
+    "method": "bootstrap"
+   },
+   "recall_ci": {
+    "low": 0.1364329268292683,
+    "high": 0.19407407407407407,
+    "method": "bootstrap"
+   }
+  },
+  {
+   "label": "dirt",
+   "tp": 47.0,
+   "fp": 879.1733333333343,
+   "fn": 60.0,
+   "precision": 0.050746440551084696,
+   "recall": 0.4392523364485981,
+   "f1": 0.09098182944455908,
+   "precision_ci": {
+    "low": 0.03643709168083659,
+    "high": 0.06731520889429332,
+    "method": "bootstrap"
+   },
+   "recall_ci": {
+    "low": 0.34513274336283184,
+    "high": 0.5257731958762887,
+    "method": "bootstrap"
+   }
+  }
+ ],
+ "classes_iou50": [
+  {
+   "label": "damage",
+   "tp": 176.0,
+   "fp": 978.9866666666684,
+   "fn": 1138.0,
+   "precision": 0.15238271148873267,
+   "recall": 0.1339421613394216,
+   "f1": 0.14256861114411298,
+   "precision_ci": null,
+   "recall_ci": null
+  },
+  {
+   "label": "dirt",
+   "tp": 34.0,
+   "fp": 892.1733333333343,
+   "fn": 73.0,
+   "precision": 0.03671019103695489,
+   "recall": 0.3177570093457944,
+   "f1": 0.06581664257691507,
+   "precision_ci": null,
+   "recall_ci": null
+  }
+ ],
+ "image_recall": 0.6983695652173914,
+ "sweep": [
+  {
+   "threshold": 0.0,
+   "recall": 0.1643835616438356,
+   "precision": 0.18701514591799012,
+   "false_alarms_per_image": 0.4630111768573315
+  },
+  {
+   "threshold": 0.3,
+   "recall": 0.1628614916286149,
+   "precision": 0.19819953321231404,
+   "false_alarms_per_image": 0.42688362919132217
+  },
+  {
+   "threshold": 0.5,
+   "recall": 0.16057838660578386,
+   "precision": 0.2203547955887265,
+   "false_alarms_per_image": 0.36811965811965863
+  },
+  {
+   "threshold": 0.6,
+   "recall": 0.14079147640791476,
+   "precision": 0.2656264956446825,
+   "false_alarms_per_image": 0.25220249835634473
+  },
+  {
+   "threshold": 0.7,
+   "recall": 0.10426179604261795,
+   "precision": 0.3595548867970747,
+   "false_alarms_per_image": 0.12032873109796181
+  },
+  {
+   "threshold": 0.8,
+   "recall": 0.05251141552511415,
+   "precision": 0.4102909696345041,
+   "false_alarms_per_image": 0.04890203813280736
+  },
+  {
+   "threshold": 0.9,
+   "recall": 0.00989345509893455,
+   "precision": 0.21376891032668274,
+   "false_alarms_per_image": 0.023576594345825114
+  }
+ ],
+ "needs_review_share": null,
+ "severity_kappa": null,
+ "prompt_versions": {
+  "propose": "detect/v1",
+  "assess": "assess/v1",
+  "verify": "verify/v1"
+ },
+ "cost_usd": 8.0727,
+ "evidence_path": "docs/evidence/eval_heldout.md",
+ "sample_note": "Preregistered sample of the held-out split: all 460 labeled tiles plus 300 of its 1568 clean tiles (seed 20261104); each clean tile weighs 5.23, so precision, false positives and false alarms per image are scaled to the whole split. Recall and image-level rates are not affected. Unweighted damage counts at IoU 0.3: TP 216, FP 529, FN 1098. Preregistration sha256 cef25034242668ce81e7e27252e64330efc53bd81498f664fa47017439b4f3e9. Code commit ade7d9cc469a845ca671b56e50d3750321faee6b (no uncommitted changes in src/, pyproject.toml, uv.lock or the preregistration). Models muse-spark-1.3 and sam-3.1, reasoning effort low, store false (checked against the preregistered values before the run).",
+ "generated_at": "2026-11-04T03:51:11.778257Z"
+}
