@@ -1,10 +1,9 @@
 """The rules the agent's tools enforce in code, with stable ids for the trace.
 
 Each rule is raised by exactly one kind of `ToolError` in `tools.py`. The tool result the model
-reads is unchanged (so recorded runs still replay from the cache); the rule id travels on the side
-(`ToolError.rule`, `FleetTools.last_rule`). For runs recorded before rule ids existed,
-`rule_for_error` maps the stored error text back to its rule: the messages are fixed strings in
-`tools.py`, so the mapping is exact, and an unrecognised error maps to no rule rather than a guess.
+reads is unchanged (so recorded runs still replay from the cache). The rule id is recovered from
+the error text by `rule_for_error`: the messages are fixed strings in `tools.py`, so the mapping is
+exact, and an unrecognised error maps to no rule rather than a guess.
 """
 
 from __future__ import annotations
