@@ -1,4 +1,4 @@
-import type { Trend, TurbineStatus, Verdict } from "../types";
+import type { Provider, Trend, TurbineStatus, Verdict } from "../types";
 import { ToneGlyph, TrendIcon, type Tone } from "./icons";
 
 function Chip({ tone, label, small, title }: { tone: Tone; label: string; small?: boolean; title?: string }) {
@@ -20,6 +20,24 @@ const VERDICT: Record<Verdict, { tone: Tone; label: string; title: string }> = {
 export function VerdictChip({ verdict, small }: { verdict: Verdict; small?: boolean }) {
   const { tone, label, title } = VERDICT[verdict];
   return <Chip tone={tone} label={label} title={title} small={small} />;
+}
+
+/**
+ * A defect with no verification result (a stage failed, so the second look never ran). The "?"
+ * matches the glyph on its overlay; it means "not checked", never "probably fine".
+ */
+export function UnverifiedChip({ small }: { small?: boolean }) {
+  return (
+    <span
+      className={`chip chip--none${small ? " chip--sm" : ""}`}
+      title="Not checked: the verification step did not run for this defect"
+    >
+      <span className="chip__q" aria-hidden="true">
+        ?
+      </span>
+      Unverified
+    </span>
+  );
 }
 
 const TURBINE: Record<TurbineStatus, { tone: Tone; label: string }> = {
@@ -47,6 +65,21 @@ export function TrendBadge({ trend }: { trend: Trend }) {
     <span className={`trend trend--${trend}`}>
       <TrendIcon trend={trend} />
       {TREND_LABEL[trend]}
+    </span>
+  );
+}
+
+const MODEL_BADGE: Record<Provider, string> = {
+  meta: "Muse Spark (Model API)",
+  baseten: "Muse Spark Open (Baseten)",
+  stub: "Stub (no model)",
+};
+
+/** Which model graded an assessment, from `Assessment.provider`; the exact model id is in the title. */
+export function ModelBadge({ model, provider }: { model: string; provider: Provider }) {
+  return (
+    <span className={`model-badge model-badge--${provider}`} title={`Graded by ${model}`} data-testid="model-badge">
+      {MODEL_BADGE[provider]}
     </span>
   );
 }
