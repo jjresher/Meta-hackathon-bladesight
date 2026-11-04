@@ -12,7 +12,7 @@ import time
 import httpx
 
 
-def check(client: httpx.Client, base: str = "") -> list[str]:
+def check(client: httpx.Client, base: str = "", ui: bool = True) -> list[str]:
     """Run the checks; returns a list of failures (empty when everything passed)."""
     failures: list[str] = []
 
@@ -45,18 +45,21 @@ def check(client: httpx.Client, base: str = "") -> list[str]:
                 if images:
                     get(images[0]["image_url"], "image/png")
     get("/api/work-orders", "json")
-    get("/", "text/html")
+    if ui:
+        get("/", "text/html")
     return failures
 
 
 def main(argv: list[str] | None = None) -> int:
     args = argv if argv is not None else sys.argv[1:]
+    ui = "--api-only" not in args
+    args = [a for a in args if a != "--api-only"]
     if len(args) != 1:
-        print("usage: python -m bladesight.api.smoke https://host", file=sys.stderr)
+        print("usage: python -m bladesight.api.smoke https://host [--api-only]", file=sys.stderr)
         return 2
     started = time.monotonic()
     with httpx.Client(base_url=args[0].rstrip("/"), timeout=60.0, follow_redirects=True) as client:
-        failures = check(client)
+        failures = check(client, ui=ui)
     seconds = time.monotonic() - started
     for failure in failures:
         print(f"FAIL {failure}", file=sys.stderr)

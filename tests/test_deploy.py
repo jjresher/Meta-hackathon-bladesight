@@ -90,3 +90,16 @@ def test_render_blueprint_sets_replay_and_a_health_check_and_no_secret() -> None
     assert "healthCheckPath: /api/health" in text and "value: replay" in text
     for secret_name in ("META_API_KEY", "BASETEN_API_KEY", "BLADESIGHT_ADMIN_KEY", "sk-"):
         assert secret_name not in text
+
+
+def test_a_web_dir_without_an_index_does_not_break_the_api(tmp_path: Path) -> None:
+    """Regression found running the Docker image: an empty web/dist made `/` answer 500."""
+    store = make_store(tmp_path)
+    empty = tmp_path / "dist"
+    empty.mkdir()
+    settings = Settings(replay_dir=store.root, data_dir=tmp_path, web_dir=empty,
+                        evidence_dir=tmp_path, mode="replay", admin_key="")  # fmt: skip
+    client = TestClient(create_app(settings))
+    assert client.get("/").status_code == 404
+    assert client.get("/api/health").status_code == 200
+    assert [f for f in check(client, ui=False) if "/api/fleet" in f or "/api/health" in f] == []
