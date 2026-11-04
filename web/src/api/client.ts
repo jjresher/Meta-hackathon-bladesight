@@ -10,9 +10,13 @@ import type {
   Fleet,
   Health,
   Inspection,
+  ReplaySet,
   Report,
   WorkOrder,
 } from "../types";
+
+/** A stored replay the data endpoints can serve (`?provider=`, docs/api.md). */
+export type RunProvider = ReplaySet["provider"];
 
 const BASE = (import.meta.env.VITE_API_BASE ?? "").replace(/\/$/, "");
 
@@ -61,14 +65,19 @@ async function get<T>(path: string): Promise<T> {
   }
 }
 
+/** `?provider=` when a run is chosen; without it the API serves its default replay. */
+const q = (provider?: RunProvider): string => (provider ? `?provider=${provider}` : "");
+
 export const api = {
   health: () => get<Health>("/api/health"),
-  fleet: () => get<Fleet>("/api/fleet"),
-  inspection: (id: string) => get<Inspection>(`/api/inspections/${encodeURIComponent(id)}`),
-  workOrders: () => get<WorkOrder[]>("/api/work-orders"),
-  latestReport: () => get<Report>("/api/reports/latest"),
-  runs: () => get<AgentRun[]>("/api/runs"),
-  run: (id: string) => get<AgentRun>(`/api/runs/${encodeURIComponent(id)}`),
+  replays: () => get<ReplaySet[]>("/api/replays"),
+  fleet: (provider?: RunProvider) => get<Fleet>(`/api/fleet${q(provider)}`),
+  inspection: (id: string, provider?: RunProvider) =>
+    get<Inspection>(`/api/inspections/${encodeURIComponent(id)}${q(provider)}`),
+  workOrders: (provider?: RunProvider) => get<WorkOrder[]>(`/api/work-orders${q(provider)}`),
+  latestReport: (provider?: RunProvider) => get<Report>(`/api/reports/latest${q(provider)}`),
+  runs: (provider?: RunProvider) => get<AgentRun[]>(`/api/runs${q(provider)}`),
+  run: (id: string, provider?: RunProvider) => get<AgentRun>(`/api/runs/${encodeURIComponent(id)}${q(provider)}`),
   evaluations: () => get<EvalReport[]>("/api/eval"),
 };
 

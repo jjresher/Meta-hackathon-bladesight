@@ -11,6 +11,7 @@ import SeverityScale from "../components/SeverityScale";
 import { ArrowLeftIcon, InfoIcon } from "../components/icons";
 import { SEVERITY_AGREEMENT } from "../evidence";
 import { useAsyncData } from "../hooks/useAsyncData";
+import { useRun } from "../lib/run";
 import { defectsLabel, tilesLabel, worseVerdict } from "../lib/format";
 import type { Fleet, Inspection, InspectionImage, Verdict, WorkOrder } from "../types";
 
@@ -81,7 +82,13 @@ function InspectionBody({ inspection, fleet, orders }: { inspection: Inspection;
   const [params, setParams] = useSearchParams();
   const { summary, images } = inspection;
   const [layers, setLayers] = useState<Layers>({ masks: true, boxes: true, blade: true });
-  const [hoverId, setHoverId] = useState<string | null>(null);
+  const [hoverId, setHoverState] = useState<string | null>(null);
+  // Touch screens emulate mouseenter on tap and never send mouseleave, so a highlight would stick:
+  // follow the pointer only where it can really hover. Keyboard focus still lights the pair.
+  const canHover = useMemo(
+    () => typeof window.matchMedia !== "function" || !window.matchMedia("(hover: none)").matches,
+    [],
+  );
 
   const imageParam = params.get("image");
   const image = images.find((i) => i.id === imageParam) ?? images.find((i) => i.defects.length > 0) ?? images[0];
@@ -94,7 +101,12 @@ function InspectionBody({ inspection, fleet, orders }: { inspection: Inspection;
   const inspectionOrders = orders.filter((o) => o.inspection_id === summary.id);
   const hasBlade = (image?.blade_outline.length ?? 0) > 0;
 
+  const setHoverId = (id: string | null, fromFocus = false) => {
+    if (id === null || fromFocus || canHover) setHoverState(id);
+  };
+
   const setSelection = (imageId: string, defectId: string | null) => {
+    setHoverState(null);
     const next = new URLSearchParams(params);
     next.set("image", imageId);
     next.set("defect", defectId ?? "");
@@ -218,7 +230,7 @@ function InspectionBody({ inspection, fleet, orders }: { inspection: Inspection;
             selectedId={selectedId}
             onSelect={(defectId) => setSelection(image.id, defectId)}
             hoverId={hoverId}
-            onHover={setHoverId}
+            onHover={(id) => setHoverId(id)}
           />
           <div className="stage__bar">
             <div className="stage__layers" role="group" aria-label="Overlay layers">
@@ -267,7 +279,7 @@ function InspectionBody({ inspection, fleet, orders }: { inspection: Inspection;
                 item={item}
                 selected={item.defect.id === selectedDefect?.defect.id}
                 hovered={item.defect.id === hoverId}
-                onHover={(on) => setHoverId(on ? item.defect.id : null)}
+                onHover={(on, fromFocus) => setHoverId(on ? item.defect.id : null, fromFocus)}
                 workOrders={citing(item.defect.id)}
                 onSelect={() =>
                   setSelection(image.id, item.defect.id === selectedDefect?.defect.id ? null : item.defect.id)
@@ -289,10 +301,11 @@ function InspectionBody({ inspection, fleet, orders }: { inspection: Inspection;
 
 export default function InspectionScreen() {
   const { id = "" } = useParams();
-  const inspection = useAsyncData(() => api.inspection(id), [id]);
+  const { provider } = useRun();
+  const inspection = useAsyncData(() => api.inspection(id, provider), [id, provider]);
   // Siblings, name and rank come from the fleet; the viewer works without it.
-  const fleet = useAsyncData(() => api.fleet(), []);
-  const orders = useAsyncData(() => api.workOrders().catch(() => [] as WorkOrder[]), []);
+  const fleet = useAsyncData(() => api.fleet(provider), [provider]);
+  const orders = useAsyncData(() => api.workOrders(provider).catch(() => [] as WorkOrder[]), [provider]);
 
   return (
     <section className="screen screen--wide" aria-label="Inspection viewer">

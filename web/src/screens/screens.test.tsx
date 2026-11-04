@@ -127,6 +127,7 @@ describe("Inspection viewer", () => {
   it("labels the open-weights grader from Assessment.provider", async () => {
     const data = structuredClone(inspection);
     data.images[0].defects[0].assessment!.provider = "baseten";
+    data.images[0].defects[0].assessment!.model = "meta-models/muse-spark-open";
     open("/inspections/T03-2018", { "/api/inspections/T03-2018": () => ({ body: data }) });
     const card = (await screen.findAllByTestId("defect-card"))[0];
     expect(within(card).getByTestId("model-badge")).toHaveTextContent("Muse Spark Open (Baseten)");
