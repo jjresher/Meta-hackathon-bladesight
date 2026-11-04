@@ -45,6 +45,7 @@ def check(client: httpx.Client, base: str = "", ui: bool = True) -> list[str]:
                 if images:
                     get(images[0]["image_url"], "image/png")
     get("/api/work-orders", "json")
+    get("/api/eval", "json")
     if ui:
         get("/", "text/html")
     return failures

@@ -65,8 +65,16 @@ URL on a real phone stays a human check in `docs/submission/checklist.md`.
 
 ## Keep-alive
 
+The first schedule (`*/10 * * * *`, merged 08:50Z on Nov 4) produced no scheduled run in its first
+2.5 hours; only the manual run was green. GitHub's status page listed Actions as degraded from
+09:50Z, as part of an incident on Pull Requests, Git Operations and Issues, so that explains at most
+the later part of the gap. The cron then moved off the top of the hour, which GitHub's docs call a
+high-load time. A request at 06:28 COT during that gap found the instance asleep and took 12.47 s
+(`curl -w`, HTTP 200; the idle time before it is unknown).
+
 The `keep-alive` workflow (`.github/workflows/keepalive.yml`) GETs `/api/health` every
-10 minutes (`*/10 * * * *`) and on demand (`workflow_dispatch`), with a 90 s timeout per try, up to
+10 minutes (`7,17,27,37,47,57 * * * *`) and on demand (`workflow_dispatch`), with a 90 s timeout per
+try, up to
 5 tries 15 s apart (a cold wake fits), and fails the run on anything but HTTP 200 with
 `"status":"ok"`. Permissions: `contents: read` only. Limits: scheduled workflows run only from the
 default branch, so it starts working once merged to `main`; GitHub may delay or drop scheduled runs
