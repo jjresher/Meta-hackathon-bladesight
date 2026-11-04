@@ -33,12 +33,14 @@ BladeSight turns inspection photos into a plan, and it says "I am not sure" inst
 
 ## Results (every number links to its evidence file)
 
-All detection numbers are on **dev** tiles with the frozen pipeline; the single held-out run is
-described in [`eval/preregistration.md`](eval/preregistration.md) and reported in
-`docs/evidence/eval_heldout.md` once it is done (see "Held-out" below).
+The held-out run (preregistered, run once on 760 tiles of photos nobody tuned on, see "Held-out"
+below) is the number to quote for detection; the dev numbers are where the pipeline was developed.
 
 | What | Result | Evidence |
 |---|---|---|
+| **Held-out** damage detection, box level (IoU 0.3, 760 tiles) | precision 0.19 (95% CI 0.15-0.22), recall 0.16 (0.14-0.19) | [`eval_heldout.md`](docs/evidence/eval_heldout.md) |
+| **Held-out** damage, image level | recall 0.70 over 368 damaged tiles, with a 24% false-alarm rate on the 300 tiles that have no box | [`eval_heldout.md`](docs/evidence/eval_heldout.md) |
+| **Held-out** dirt | precision 0.05, recall 0.44: weak, not offered as a detector | [`eval_heldout.md`](docs/evidence/eval_heldout.md) |
 | Damage detection, box level (IoU 0.3, 300 dev tiles) | precision 0.37 (95% CI 0.31-0.42), recall 0.22 (0.18-0.26) | [`eval_dev.md`](docs/evidence/eval_dev.md) |
 | Damage, image level (a damaged 586x371 tile has at least one damage prediction) | recall 0.77, with a 21% false-alarm rate on tiles that have no box | [`eval_dev.md`](docs/evidence/eval_dev.md) |
 | Dirt detection | weak (precision 0.05 on 36 boxes): reported as weak, not offered as a detector | [`eval_dev.md`](docs/evidence/eval_dev.md) |
@@ -101,7 +103,11 @@ split whose hashes are in [`eval/heldout_manifest.sha256`](eval/heldout_manifest
 only by one preregistered run: all 460 labeled held-out tiles plus 300 sampled clean tiles,
 weighted so precision and false alarms describe the whole split, with the models, the code state
 and the metrics frozen in [`eval/preregistration.md`](eval/preregistration.md). The result is
-`docs/evidence/eval_heldout.md` once the run is done.
+[`docs/evidence/eval_heldout.md`](docs/evidence/eval_heldout.md): the run was interrupted once by a
+server-side 404 and resumed from the cache on the same commit, with no number seen before it finished;
+that and a cost correction (8.07 USD in total) are listed under Deviations there and in the
+preregistration. Held-out precision and recall are lower than on dev; the two samples are weighted
+differently (see each evidence file), so compare them with care.
 
 ## Data
 

@@ -130,8 +130,8 @@ call counts and cost.
   finished were replayed from the cache after the restart (zero real calls repeated; only the call
   that failed with the 404 was never completed), and the run then continued with new real calls.
 - **Spend** (from `.spend/spend_log.jsonl`, documented prices, not invoice-checked): first segment
-  1,381 real calls, 4.2073 USD; after the restart 973 real calls, 2.7247 USD, counted up to 22:32
-  while the run was still going (final totals in `docs/evidence/eval_heldout.md`). Note: the cost
-  the CLI writes in the report comes from the call records of the restarted process, which does
-  not include the first segment; the true cost of the run is the sum of both from the spend log.
+  4.2073 USD, second segment 3.8654 USD (the first segment's 1,381 real calls were replayed from the
+  cache), 8.0727 USD in total. The CLI wrote only the second segment's cost (3.8623 USD) in the
+  report, because it sums the call records of the restarted process; the report's cost field was
+  corrected and the correction is listed in `docs/evidence/eval_heldout.md`.
 - **No tuning.** No code, prompt, threshold, sample or metric changed between the two segments.
