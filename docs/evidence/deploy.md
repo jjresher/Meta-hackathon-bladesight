@@ -72,11 +72,16 @@ the later part of the gap. The cron then moved off the top of the hour, which Gi
 high-load time. A request at 06:28 COT during that gap found the instance asleep and took 12.47 s
 (`curl -w`, HTTP 200; the idle time before it is unknown).
 
+As of 10:27 COT on Nov 4 the workflow still had 0 runs with `event=schedule`, almost 4 hours after
+the cron moved, with the workflow `active` and GitHub's status page at "All Systems Operational".
+The incident therefore does not explain it and the cause is unknown: **the keep-alive is not
+keeping the demo warm**, and only the manual run is evidence that the job itself works.
+
 The `keep-alive` workflow (`.github/workflows/keepalive.yml`) GETs `/api/health` every
 10 minutes (`7,17,27,37,47,57 * * * *`) and on demand (`workflow_dispatch`), with a 90 s timeout per
 try, up to
 5 tries 15 s apart (a cold wake fits), and fails the run on anything but HTTP 200 with
 `"status":"ok"`. Permissions: `contents: read` only. Limits: scheduled workflows run only from the
-default branch, so it starts working once merged to `main`; GitHub may delay or drop scheduled runs
+default branch; GitHub may delay or drop scheduled runs
 under load, so a cold start remains possible; one service awake all month uses at most 744 of the
 750 Free instance hours, which fits only while it is the workspace's only always-on Free service.

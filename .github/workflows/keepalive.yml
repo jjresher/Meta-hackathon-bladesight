@@ -1,10 +1,10 @@
 # Keep the public demo awake (#14).
 #
 # Render's Free plan spins a web service down after 15 minutes without inbound traffic and needs
-# about a minute to wake (https://render.com/docs/free). A GET to /api/health every 10 minutes
-# keeps it warm for judges and the video. Notes:
+# about a minute to wake (https://render.com/docs/free). This GETs /api/health every 10 minutes
+# to keep it warm, but no scheduled run has fired yet (docs/evidence/deploy.md). Notes:
 # - Scheduled workflows run only from the default branch (main) and GitHub may delay or skip
-#   runs when it is busy, so this lowers the chance of a cold start; it does not guarantee none.
+#   runs when it is busy, so even when it runs it does not guarantee no cold start.
 # - GitHub disables scheduled workflows after 60 days without repository activity.
 # - Render grants 750 Free instance hours per workspace per month; one service awake 24/7 uses
 #   at most 744 (31 days), so this fits only while it is the workspace's only always-on Free
