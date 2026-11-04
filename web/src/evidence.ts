@@ -26,3 +26,59 @@ export const FALSE_ALARM_RATE = {
 } as const;
 
 export const evidenceUrl = (path: string): string => `${EVIDENCE_BASE_URL}${path}`;
+
+/**
+ * Muse Spark (Model API) vs Muse Spark Open (Baseten) on the same stored detections of the farm:
+ * agreement between two models, not accuracy (neither run is a reference).
+ */
+export const OPEN_WEIGHTS_FARM = {
+  file: "docs/evidence/open_weights_farm.md",
+  defects: 96,
+  sameSeverity: 74,
+  sameSeverityPct: 77,
+  withinOne: 85,
+  withinOnePct: 89,
+  sameVerdict: 63,
+  sameVerdictPct: 66,
+  /** Verdict counts per run. */
+  verdicts: {
+    meta: { ok: 33, needs_review: 50, reinspect: 13 },
+    baseten: { ok: 22, needs_review: 60, reinspect: 14 },
+  },
+  /** Rows: Meta verdict ok / needs_review / reinspect; columns: Open verdict, same order. */
+  verdictMatrix: [
+    [17, 11, 5],
+    [3, 42, 5],
+    [2, 7, 4],
+  ],
+  turbines: 12,
+  spearman: 0.77,
+  topSixInBoth: 4,
+  orders: { meta: 9, baseten: 8, metaRun: "run-final", openRun: "run-open-weights" },
+  repairDefects: { both: 2, union: 5, meta: 4, baseten: 3 },
+  reinspectDefects: { both: 16, union: 30, meta: 19, baseten: 27 },
+} as const;
+
+/**
+ * The rules the agent's tools enforce in code (`src/bladesight/fleet/rules.py`, stable ids). No
+ * endpoint lists them; `src/evidence.test.ts` checks this copy against the source.
+ */
+export const GUARD_RULES = {
+  file: "src/bladesight/fleet/rules.py",
+  rules: [
+    { id: "verified_only", text: "A repair or monitor work order may only cite defects whose verification verdict is ok." },
+    { id: "reinspect_unverified_only", text: "Re-inspection is only for defects that are not verified; verified ones get a work order." },
+    { id: "assessed_before_reinspection", text: "A defect must have been assessed before a re-inspection can be requested." },
+    { id: "defects_in_inspection", text: "Every cited defect must exist in the named inspection." },
+    { id: "cite_a_defect", text: "Every order cites at least one defect id." },
+    { id: "order_kind", text: "A work order is a repair or a monitor order; anything else is a re-inspection." },
+    { id: "order_priority", text: "Priority is P1, P2 or P3." },
+    { id: "report_cites_existing_orders", text: "The report may only cite work orders that exist." },
+    { id: "report_cites_assessed_defects", text: "The report may only cite defects that were assessed and verified." },
+    { id: "two_inspections_to_compare", text: "A comparison needs two inspections of the turbine." },
+    { id: "known_image", text: "Image ids must exist in the store." },
+    { id: "known_tool", text: "Only the seven fleet tools exist." },
+    { id: "known_ids", text: "Inspection and defect ids must exist, and required arguments must be given." },
+    { id: "valid_arguments", text: "Arguments must have the documented types." },
+  ],
+} as const;
