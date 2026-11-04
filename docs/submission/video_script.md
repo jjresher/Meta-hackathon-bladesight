@@ -20,7 +20,7 @@ Timings add up to 2:55.
 
 - English captions; under 3:00; no login to view; the link in the submission opens without sign-in.
 - Show only the deployed URL in replay mode. No live model call on screen.
-- Say "synthetic farm" when the fleet appears. Never say expert-labelled, ground truth, or a real
-  inspection year.
+- Say "synthetic farm" when the fleet appears. Never present the severity labels as specialist-validated, and
+  never state a real inspection year.
 - Numbers are the ones in the table above; if any evidence file changes, update the line first.
 - Do not claim the open-weights path or the held-out result unless their evidence files exist.

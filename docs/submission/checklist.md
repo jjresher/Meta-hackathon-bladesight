@@ -25,7 +25,7 @@ beside it. Items marked **human** need the author (accounts, links, the X post).
 - [ ] `main` is green in CI and the last merge is the one you want judged (`gh run list --branch main`)
 - [ ] `README.md` shows the live URL and the video link (replace the pointer to this file)
 - [ ] Every number in the README links to an evidence file (`docs/evidence/`): grep the README
-- [ ] `docs/limitations.md` is current; no "expert-labelled" or "ground truth" anywhere
+- [ ] `docs/limitations.md` is current; the severity labels are described only as one non-specialist applying the rubric (see `docs/evidence/severity_agreement.md`)
 - [ ] No secret, data, image or held-out file in git: `uv run poe secrets-scan`
 - [ ] Held-out: `eval/preregistration.md` merged **before** `docs/evidence/eval_heldout.md` exists
 - [ ] Repo is public and the licence file is present (MIT code; data attribution in `DATA.md`)
