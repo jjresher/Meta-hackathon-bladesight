@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import random
+from collections.abc import Mapping
 from pathlib import Path
 
 from ..data import Split, TileLabel, image_path, load_split
@@ -38,6 +39,7 @@ def evaluate_tiles(
     data_dir: Path,
     *,
     with_blade: bool = False,
+    weights: Mapping[str, float] | None = None,
 ) -> list[TileResult]:
     results = []
     for tile in tiles:
@@ -55,6 +57,7 @@ def evaluate_tiles(
                     )
                     for d in detection.defects
                 ],
+                weight=(weights or {}).get(tile.tile_id, 1.0),
             )
         )
     return results

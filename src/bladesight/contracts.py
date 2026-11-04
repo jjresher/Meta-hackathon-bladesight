@@ -257,9 +257,9 @@ class Interval(Contract):
 
 class ClassMetrics(Contract):
     label: EvalLabel
-    tp: int
-    fp: int
-    fn: int
+    tp: float = Field(description="matched boxes (sampling-weighted, so not always an integer)")
+    fp: float
+    fn: float
     precision: float
     recall: float
     f1: float
@@ -287,6 +287,11 @@ class EvalReport(Contract):
     prompt_versions: dict[str, str] = Field(default_factory=dict)
     cost_usd: float = Field(ge=0)
     evidence_path: str = Field(description="docs/evidence/... file that backs these numbers")
+    sample_note: str | None = Field(
+        default=None,
+        description="how the tiles were sampled and weighted (precision and false alarms per "
+        "image are scaled to the full split when clean tiles were subsampled)",
+    )
     generated_at: datetime
 
 
