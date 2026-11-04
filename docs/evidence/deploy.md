@@ -65,30 +65,28 @@ URL on a real phone stays a human check in `docs/submission/checklist.md`.
 
 ## Keep-alive
 
-**Update, Nov 4:** the keep-alive is now an external job on cron-job.org that requests the demo
-every 10 minutes. It is configured outside this repository, so its run history is not recorded
-here. The GitHub Actions workflow below stays in place as a second pinger; after the note below it
-had its first scheduled run (18:51Z, success). The rest of this section is the record of that
-workflow up to 10:27 COT, and "not keeping the demo warm" describes that workflow, not the external
-job. A cold start remains possible either way.
+**External keep-alive (current):** a job on cron-job.org sends `GET /api/health` to the public URL
+every 10 minutes, since Nov 4, 16:10 COT. It is configured outside this repository, so its run
+history is not recorded here. It replaces the paid instance the plan had in mind for the judging
+period. A cold start remains possible (for example if a request is missed or Render restarts the
+instance). One service awake all month uses at most 744 of the 750 Free instance hours, which fits
+only while it is the workspace's only always-on Free service.
 
-The first schedule (`*/10 * * * *`, merged 08:50Z on Nov 4) produced no scheduled run in its first
-2.5 hours; only the manual run was green. GitHub's status page listed Actions as degraded from
-09:50Z, as part of an incident on Pull Requests, Git Operations and Issues, so that explains at most
-the later part of the gap. The cron then moved off the top of the hour, which GitHub's docs call a
-high-load time. A request at 06:28 COT during that gap found the instance asleep and took 12.47 s
-(`curl -w`, HTTP 200; the idle time before it is unknown).
-
-As of 10:27 COT on Nov 4 the workflow still had 0 runs with `event=schedule`, almost 4 hours after
-the cron moved, with the workflow `active` and GitHub's status page at "All Systems Operational".
-The incident therefore does not explain it and the cause is unknown: **the keep-alive is not
-keeping the demo warm**, and only the manual run is evidence that the job itself works.
-
-The `keep-alive` workflow (`.github/workflows/keepalive.yml`) GETs `/api/health` every
-10 minutes (`7,17,27,37,47,57 * * * *`) and on demand (`workflow_dispatch`), with a 90 s timeout per
-try, up to
+**GitHub Actions workflow (second pinger, unreliable):** the `keep-alive` workflow
+(`.github/workflows/keepalive.yml`) GETs `/api/health` on the schedule
+`7,17,27,37,47,57 * * * *` and on demand (`workflow_dispatch`), with a 90 s timeout per try, up to
 5 tries 15 s apart (a cold wake fits), and fails the run on anything but HTTP 200 with
-`"status":"ok"`. Permissions: `contents: read` only. Limits: scheduled workflows run only from the
-default branch; GitHub may delay or drop scheduled runs
-under load, so a cold start remains possible; one service awake all month uses at most 744 of the
-750 Free instance hours, which fits only while it is the workspace's only always-on Free service.
+`"status":"ok"`. Permissions: `contents: read` only. Scheduled workflows run only from the default
+branch, and GitHub may delay or drop them under load.
+
+Its record on Nov 4, which is why the external job exists: the first schedule (`*/10 * * * *`,
+merged 08:50Z) produced no scheduled run in its first 2.5 hours; only the manual run was green.
+GitHub's status page listed Actions as degraded from 09:50Z, as part of an incident on Pull
+Requests, Git Operations and Issues, which explains at most the later part of the gap. The cron then
+moved off the top of the hour, which GitHub's docs call a high-load time. A request at 06:28 COT
+during that gap found the instance asleep and took 12.47 s (`curl -w`, HTTP 200; the idle time
+before it is unknown). At 10:27 COT the workflow still had 0 runs with `event=schedule`, almost
+4 hours after the cron moved, with the workflow `active` and GitHub's status page at "All Systems
+Operational", so the cause is unknown. Its first scheduled run came at 18:51Z (success), and at
+23:10Z that was still the only one (`gh run list --workflow keepalive.yml`). The workflow alone
+would not keep the demo awake; it is a backup to the external job, not the mechanism.

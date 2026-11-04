@@ -1,5 +1,10 @@
 # BladeSight
 
+**[▶ Video](https://youtu.be/xJRrVH76CBA)** · **[Live demo](https://bladesight.onrender.com)** ·
+**[Code](https://github.com/jjresher/Meta-hackathon-bladesight)**
+
+[![BladeSight demo video: click to watch on YouTube](https://img.youtube.com/vi/xJRrVH76CBA/maxresdefault.jpg)](https://youtu.be/xJRrVH76CBA)
+
 Zero-shot wind turbine blade inspection: from drone photos to a **verified, prioritized repair
 plan**, built on Meta **SAM 3.1** and **Muse Spark**, with the planning half also running on Meta's
 open-weights **Muse Spark Open**.
@@ -8,13 +13,26 @@ open-weights **Muse Spark Open**.
 > Indie Developer track. Everything in this repository was created during the event.
 
 - **Live demo:** <https://bladesight.onrender.com> (replay mode: no login, no key, no model call).
-  It runs on a free plan that sleeps when idle: the first visit after a quiet period waits for it to
-  wake (21.5 s measured after 3.5 h idle; Render documents about a minute,
-  [`deploy.md`](docs/evidence/deploy.md)).
+  It runs on a free plan that sleeps when idle. An external job requests it every 10 minutes to keep
+  it awake, but a first load can still wait for it to wake (21.5 s measured after 3.5 h idle; Render
+  documents about a minute, [`deploy.md`](docs/evidence/deploy.md)).
 - **Video (3 minutes):** <https://youtu.be/xJRrVH76CBA>. There is no GIF in the repository: images and video are never
   committed (data licence and repo rules), so the video is the demo clip.
 - Plan, decisions, known gaps: [`docs/plan/implementation_plan.md`](docs/plan/implementation_plan.md),
   [`docs/decision_ledger.md`](docs/decision_ledger.md), [`docs/limitations.md`](docs/limitations.md).
+
+## Try it in 60 seconds
+
+1. Open <https://bladesight.onrender.com>. The first load can take up to about a minute if the free
+   instance is asleep.
+2. On **Fleet**, click **Turbine 01**, ranked first. It opens the inspection `T01-2018`.
+3. On the first tile, open defect card **`d2`** (verified, severity 3), then **`d4`** (needs review:
+   the two looks differ by one severity level).
+4. **Work orders**: WO-001 repairs `d2`, and WO-006 asks for new photos of `d4` instead of guessing.
+5. **Agent trace**: the agent's decisions turn by turn, with the rule behind any rejected call.
+6. In the **Run** selector in the header, choose **Muse Spark Open (Baseten)**. Every screen now
+   shows the open-weights run.
+7. **Evaluation**: detection metrics on dev and held-out, and severity agreement with human labels.
 
 ## The problem
 
@@ -273,8 +291,8 @@ The full list, each with its issue, is [`docs/limitations.md`](docs/limitations.
 - The farm is synthetic, sizes are in pixels (no scale), and the position along the blade is
   usually unknown on close-up tiles.
 - The open-weights comparison is one run per model; detection is not open weights.
-- The public demo sleeps when idle (free plan) and replays stored results; live runs are not
-  exposed publicly.
+- The public demo runs on a free plan, so a cold start stays possible despite the external
+  keep-alive, and it replays stored results; live runs are not exposed publicly.
 
 ## Data
 
@@ -302,4 +320,4 @@ labels and the review are the author's, and every decision, spend and cut is in
 
 ## License
 
-Code: MIT (see [`LICENSE`](LICENSE)). Data: CC BY-NC, see [Data](#data) and [`DATA.md`](DATA.md).
+Code: MIT (see [`LICENSE`](LICENSE)). Data: CC BY-NC 4.0 (annotated tiles; source photos CC BY-NC 3.0), see [Data](#data) and [`DATA.md`](DATA.md).
