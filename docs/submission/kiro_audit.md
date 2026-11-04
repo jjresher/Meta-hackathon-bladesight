@@ -115,7 +115,7 @@ looking *worse* or neutral, not better. No misleading rounding found.
 
 ## Check 2: Honesty / overclaim scan
 
-- `grep -rniE 'ground truth|state of the art|SOTA|world.?class|best.in.class'` over `README.md`,
+- `grep -rniE 'ground.truth|state of the art|SOTA|world.?class|best.in.class'` over `README.md`,
   `docs/`, `web/src`: no hits. The only `expert` hit is `docs/decision_ledger.md` L43 "no domain
   expert available" (a scoping note, not a claim). Severity is consistently called "advisory" and
   tied to "one non-specialist applying the rubric" (README Results + "How to read them honestly";
