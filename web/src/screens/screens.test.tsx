@@ -167,7 +167,10 @@ describe("Inspection viewer", () => {
   it("explains every overlay glyph, including ? for a defect that was never verified", async () => {
     const data = structuredClone(inspection);
     data.images[0].defects[0].verification = null;
-    open("/inspections/T03-2018", { "/api/inspections/T03-2018": () => ({ body: data }) });
+    // Tiles open most severe first and this change moves the other tile up: ask for this one.
+    open(`/inspections/T03-2018?image=${encodeURIComponent(data.images[0].id)}`, {
+      "/api/inspections/T03-2018": () => ({ body: data }),
+    });
     const photo = await screen.findByTestId("photo-viewer");
     await act(async () => {});
     fireEvent.load(within(photo).getByRole("img", { name: /Drone photo/ }));
@@ -177,6 +180,19 @@ describe("Inspection viewer", () => {
     for (const v of ["ok", "needs_review", "reinspect"]) expect(screen.getByTestId(`legend-${v}`)).toBeInTheDocument();
     const card = screen.getAllByTestId("defect-card")[0];
     expect(within(card).getByText("Unverified")).toHaveAttribute("title", expect.stringMatching(/did not run/));
+  });
+
+  it("opens the most severe tile and orders the filmstrip and arrow keys by severity", async () => {
+    const data = structuredClone(inspection);
+    data.images.reverse(); // stored order is the least severe tile first
+    open("/inspections/T03-2018", { "/api/inspections/T03-2018": () => ({ body: data }) });
+    await screen.findByTestId("photo-viewer");
+    expect(screen.getByText(/DJI_0702_04_05 ·/)).toBeInTheDocument();
+    const strip = screen.getAllByTestId("thumb").map((t) => t.getAttribute("aria-label")?.match(/DJI_\d+_\d+_\d+/)?.[0]);
+    expect(strip).toEqual(["DJI_0702_04_05", "DJI_0688_04_03"]);
+    expect(screen.getAllByTestId("thumb")[0]).toHaveAttribute("aria-pressed", "true");
+    fireEvent.keyDown(window, { key: "ArrowRight" });
+    expect(await screen.findByText(/DJI_0688_04_03 ·/)).toBeInTheDocument();
   });
 
   it("counts tiles, not photos, in the inspection header", async () => {
