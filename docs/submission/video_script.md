@@ -67,5 +67,5 @@ Sources (every spoken number):
   the open model is better.
 - The agent: never say a rule rejection happened; say the rules are enforced by the tools and that
   no stored run triggered one.
-- If time runs short, cut the "What the agent did on its own" panel first, then the rankings on
+- If time runs short, cut the "Rules that could stop it" scroll to one line first, then the rankings on
   Compare runs; keep the numbers line of the Evaluation scene.
