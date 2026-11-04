@@ -40,7 +40,7 @@ beside it. Items marked **human** need the author (accounts, links, the X post).
 ## Render (issue #14), what to do in the dashboard
 
 `render.yaml` needs **no environment variable** (replay mode has no secret): New > Blueprint >
-this repo > apply. Plan `starter` so it does not sleep. After the first deploy run the smoke script
+this repo > apply. Plan `free`: the instance sleeps after about 15 minutes idle and needs about 1 minute to wake, so open the URL once and wait before recording or sharing it (`docs/limitations.md`). After the first deploy run the smoke script
 against the URL. Never set `META_API_KEY` or `BLADESIGHT_ADMIN_KEY` on the public service.
 
 ## After sending

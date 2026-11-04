@@ -88,6 +88,8 @@ def test_dockerfile_is_replay_only_and_never_copies_data_or_secrets(needle: str)
 def test_render_blueprint_sets_replay_and_a_health_check_and_no_secret() -> None:
     text = (ROOT / "render.yaml").read_text(encoding="utf-8")
     assert "healthCheckPath: /api/health" in text and "value: replay" in text
+    assert "plan: free" in text and "autoDeployTrigger: commit" in text
+    assert "starter" not in text and "autoDeploy:" not in text  # not a valid plan / deprecated key
     for secret_name in ("META_API_KEY", "BASETEN_API_KEY", "BLADESIGHT_ADMIN_KEY", "sk-"):
         assert secret_name not in text
 
