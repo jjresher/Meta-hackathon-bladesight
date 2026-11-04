@@ -15,7 +15,7 @@
 
   --text: #e8eef5;
   --text-dim: #9db0c3;
-  --text-faint: #7589a0;
+  --text-faint: #8497ae; /* 5.06:1 or better on every surface (AA for 11px text) */
 
   --accent: #46c8e8;
   --accent-dim: #1a4a5a;

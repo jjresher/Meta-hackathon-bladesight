@@ -224,9 +224,9 @@ function InspectionBody({ inspection, fleet, orders }: { inspection: Inspection;
           </div>
 
           <div className="legend" aria-label="Overlay colours">
-            <span className="legend__item legend__item--ok">Verified</span>
-            <span className="legend__item legend__item--needs_review">Needs review</span>
-            <span className="legend__item legend__item--reinspect">Reinspect</span>
+            <span className="legend__item legend__item--ok">✓ Verified</span>
+            <span className="legend__item legend__item--needs_review">◆ Needs review</span>
+            <span className="legend__item legend__item--reinspect">▲ Reinspect</span>
             <span className="legend__hint">
               SAM 3.1 masks and boxes, coloured by verdict. <strong>Verified</strong> means two looks agreed and the rule checks
               passed, not that the defect is confirmed on the blade. ← → switch photo.

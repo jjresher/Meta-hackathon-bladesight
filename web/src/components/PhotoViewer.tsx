@@ -30,6 +30,9 @@ function verdictOf(item: InspectedDefect): string {
   return item.verification?.verdict ?? "unverified";
 }
 
+/** Same shapes as the verdict chips (check, diamond, triangle), so the overlay is not colour alone. */
+const GLYPH: Record<string, string> = { ok: "✓", needs_review: "◆", reinspect: "▲", unverified: "?" };
+
 /**
  * The real tile streamed by the API, with the SAM masks and boxes drawn on top as SVG in image
  * pixel coordinates. Masks and boxes are separate layers. If the photo cannot be loaded the
@@ -158,8 +161,9 @@ export default function PhotoViewer({ image, layers, selectedId, onSelect }: Pho
                     top: `${(defect.bbox.y1 / height) * 100}%`,
                   }}
                   aria-hidden="true"
+                  data-testid="box-tag"
                 >
-                  {shortDefectId(defect.id)}
+                  {GLYPH[verdictOf(item)]} {shortDefectId(defect.id)}
                 </span>
               );
             })}
