@@ -33,23 +33,26 @@ BladeSight turns inspection photos into a plan, and it says "I am not sure" inst
 
 ## Results (every number links to its evidence file)
 
-All detection numbers are on **dev** tiles with the frozen pipeline; the single held-out run is
-described in [`eval/preregistration.md`](eval/preregistration.md) and reported in
-`docs/evidence/eval_heldout.md` once it is done (see "Held-out" below).
+Detection numbers are reported twice with the same frozen pipeline: on 300 **dev** tiles, and once
+on the sealed **held-out** split (a single run, preregistered in
+[`eval/preregistration.md`](eval/preregistration.md); see "Held-out" below). Where they differ,
+the held-out row is the one to trust.
 
 | What | Result | Evidence |
 |---|---|---|
 | Damage detection, box level (IoU 0.3, 300 dev tiles) | precision 0.37 (95% CI 0.31-0.42), recall 0.22 (0.18-0.26) | [`eval_dev.md`](docs/evidence/eval_dev.md) |
-| Damage, image level (a damaged 586x371 tile has at least one damage prediction) | recall 0.77, with a 21% false-alarm rate on tiles that have no box | [`eval_dev.md`](docs/evidence/eval_dev.md) |
-| Dirt detection | weak (precision 0.05 on 36 boxes): reported as weak, not offered as a detector | [`eval_dev.md`](docs/evidence/eval_dev.md) |
+| **Held-out** damage detection, box level (IoU 0.3, 760 tiles weighted to the whole split of 2,028) | precision 0.19 (95% CI 0.15-0.22), recall 0.16 (0.14-0.19) | [`eval_heldout.md`](docs/evidence/eval_heldout.md) |
+| **Held-out** damage, image level | recall 0.70 over 368 damaged tiles, with a 24% false-alarm rate on 300 tiles that have no box | [`eval_heldout.md`](docs/evidence/eval_heldout.md) |
+| Damage, image level, dev (a damaged 586x371 tile has at least one damage prediction) | recall 0.77, with a 21% false-alarm rate on tiles that have no box | [`eval_dev.md`](docs/evidence/eval_dev.md) |
+| Dirt detection | weak (precision 0.05 on dev, 0.05 on held-out): reported as weak, not offered as a detector | [`eval_dev.md`](docs/evidence/eval_dev.md), [`eval_heldout.md`](docs/evidence/eval_heldout.md) |
 | Severity vs a human applying the rubric (40 crops) | quadratic weighted kappa 0.12 (95% interval -0.05 to 0.29), exact agreement 25%: **advisory only** | [`severity_agreement.md`](docs/evidence/severity_agreement.md) |
 | Verification on the synthetic farm (96 defects) | 33 `ok`, 50 `needs_review`, 13 `reinspect` | [`fleet_run.md`](docs/evidence/fleet_run.md) |
 | Fleet agent run | 60 steps, 23 tool calls, 9 work orders (3 repair on `ok` defects, 6 re-inspections), 0.06 USD | [`fleet_run.md`](docs/evidence/fleet_run.md) |
 | Cost of detection | about 0.014 USD per tile | [`detect.md`](docs/evidence/detect.md) |
 
 How to read them honestly: most dataset boxes are about 14x14 px, so box-level recall is low for
-any detector; the dev sample over-represents tiles with boxes, so precision is optimistic for a
-real inspection; the severity grade agrees only weakly with the human labels, and the labels come
+any detector; the dev sample over-represents tiles with boxes, so its precision is optimistic for a
+real inspection (the weighted held-out precision is half of it); the severity grade agrees only weakly with the human labels, and the labels come
 from one person without wind-energy experience applying our rubric, so they measure agreement with
 the rubric, not specialist-validated severity. The full list is in
 [`docs/limitations.md`](docs/limitations.md). Costs are documented prices times real usage, not
@@ -100,8 +103,10 @@ The dataset is split by source photo (seed 20261029); 15% of the photos form a s
 split whose hashes are in [`eval/heldout_manifest.sha256`](eval/heldout_manifest.sha256). It is read
 only by one preregistered run: all 460 labeled held-out tiles plus 300 sampled clean tiles,
 weighted so precision and false alarms describe the whole split, with the models, the code state
-and the metrics frozen in [`eval/preregistration.md`](eval/preregistration.md). The result is
-`docs/evidence/eval_heldout.md` once the run is done.
+and the metrics frozen in [`eval/preregistration.md`](eval/preregistration.md). The run happened
+once; it stopped on one transient API error and was resumed from the cache, which the evidence file
+lists under "Deviations" together with the real cost (8.07 USD). The result is
+[`docs/evidence/eval_heldout.md`](docs/evidence/eval_heldout.md); nothing was tuned afterwards.
 
 ## Data
 
