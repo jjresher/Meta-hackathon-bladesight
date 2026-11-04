@@ -3,8 +3,9 @@
 The deployed image never contains the dataset: at build time this reads the 2.8 GB tar as a
 stream, extracts the few PNGs named by `replay/` into `data/dev/img/` and stops as soon as all
 are found. The held-out split is never touched (only dev tile ids from the replay store are
-accepted). If the download fails the build continues without images: the API answers 404 for
-them and the UI shows its image placeholder.
+accepted). If the download fails a local run warns and continues without images (the API answers
+404 for them and the UI shows its image placeholder); the image build uses `--strict` and fails,
+so the host keeps the last good deploy.
 """
 
 from __future__ import annotations
@@ -109,15 +110,21 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="python -m bladesight.data.demo")
     parser.add_argument("--replay-dir", type=Path, default=Path("replay"))
     parser.add_argument("--data-dir", type=Path, default=Path("data"))
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="exit 1 unless every tile is there (the image build: keep the last good deploy)",
+    )
     args = parser.parse_args(argv)
     try:
         got, wanted = fetch(args.replay_dir, args.data_dir)
     except (httpx.HTTPError, tarfile.TarError, OSError) as error:
         print(f"warning: demo tiles not fetched ({error}); images will be missing", file=sys.stderr)
-        return 0  # never fail the image build over the pictures
+        return 1 if args.strict else 0
     print(f"demo tiles: {got} of {wanted} fetched")
     if got < wanted:
         print("warning: some demo tiles were not found in the archive", file=sys.stderr)
+        return 1 if args.strict else 0
     return 0
 
 

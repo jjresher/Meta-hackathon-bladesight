@@ -29,6 +29,28 @@ that has never downloaded the packages.
 Time from `git clone` to the UI at `/` with the API answering, without the tiles: under a minute.
 With the photos: about 10 minutes, all of it the tile download (step 3), which runs in parallel.
 
+## Second clean clone, on `b3984b9` (Nov 4, after detection v2 merged)
+
+Fresh `git clone` from GitHub into `/tmp`, no `.env`, warm uv and npm caches.
+
+| Step | Time | Result |
+|---|---|---|
+| clone, `uv sync`, `npm ci`, web build | 14 s | build OK |
+| `uv run poe check` | not timed | **411 passed** |
+| `uv run python -m bladesight.data.demo` | **10,869 s (3 h 1 min)** | **failed**: `The read operation timed out`, 12 of 96 tiles on disk |
+| `uv run poe serve --port 8023` | - | `/`, `/api/eval`, `/compare`, `/api/work-orders?provider=baseten` answered 200; 11 Meta work orders |
+| `uv run python -m bladesight.api.smoke` | 0.1 s | **failed**: `/images/DJI_0681_06_09.png` 404, the expected result without that tile |
+
+So the app reached the UI in replay mode without the photos, but this run did **not** get all the
+photos: the archive host (`assets.supervisely.com`) delivered 0.36 MB/s to this machine in a 20 s
+check at 10:13 COT, against the about 4 MB/s noted in `docs/limitations.md` for the original
+download. One slow day on one network. Render's speed is not measured directly: GitHub's deployment
+status shows `b3984b9` deployed in about 3 minutes, which suggests its fetch was much faster
+(inferred, not observed). The same day the public demo served 96 of 96 tiles
+with HTTP 200, from an image built earlier. Because of this run the Docker build is now strict
+(`--strict`): a missing tile fails the build and, per https://render.com/docs/deploys, the running
+instance continues (documented, not yet observed here).
+
 ## What the README was missing (fixed in this PR)
 
 - The prerequisites (uv; Node.js 22 with npm) and the `git clone` line.
