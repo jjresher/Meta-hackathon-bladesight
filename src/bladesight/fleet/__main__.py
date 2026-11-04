@@ -25,7 +25,7 @@ from .store import REPLAY_DIR, Store
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="python -m bladesight.fleet")
-    parser.add_argument("command", choices=["build", "process", "run", "status"])
+    parser.add_argument("command", choices=["build", "process", "run", "status", "evidence"])
     parser.add_argument("--data-dir", type=Path, default=Path("data"))
     parser.add_argument("--replay-dir", type=Path, default=REPLAY_DIR)
     parser.add_argument("--provider", choices=["meta", "stub"], default="meta")
@@ -33,6 +33,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--max-steps", type=int, default=40)
     parser.add_argument("--max-cost", type=float, default=1.0, help="run: agent budget in USD")
     parser.add_argument("--run-id")
+    parser.add_argument(
+        "--farm-cost", type=float, default=0.0, help="evidence: USD of the live farm runs"
+    )
+    parser.add_argument(
+        "--agent-cost", type=float, default=0.0, help="evidence: USD of the agent run"
+    )
     args = parser.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     store = Store(args.replay_dir)
@@ -49,6 +55,14 @@ def main(argv: list[str] | None = None) -> int:
             f"inspections={len(inspections)} work_orders={len(store.work_orders())} "
             f"runs={len(store.runs()) if (args.replay_dir / 'runs').exists() else 0}"
         )
+        return 0
+
+    if args.command == "evidence":
+        from .evidence import render
+
+        out = Path("docs/evidence/fleet_run.md")
+        out.write_text(render(store, args.farm_cost, args.agent_cost), encoding="utf-8")
+        print(f"wrote {out}")
         return 0
 
     settings = MetaSettings.from_env()
