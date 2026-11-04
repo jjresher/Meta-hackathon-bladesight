@@ -60,6 +60,7 @@ def build_report(
     n_boot: int = BOOTSTRAP_N,
     needs_review_share: float | None = None,
     sample_note: str | None = None,
+    detector: str | None = None,
 ) -> EvalReport:
     damage = image_level(results, "damage")
     return EvalReport.model_validate(
@@ -84,7 +85,8 @@ def build_report(
                 "propose": "detect/v1",
                 "assess": "assess/v1",
                 "verify": "verify/v1",
-            },
+            }
+            | ({"postprocess": f"detect-post/{detector}"} if detector else {}),
             "cost_usd": cost_usd,
             "evidence_path": evidence_path,
             "sample_note": sample_note,

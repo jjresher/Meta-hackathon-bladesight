@@ -1,0 +1,97 @@
+{
+ "issue": 22,
+ "preregistration_sha256": "a05e986f111ba6639af5c7b1f14be912ea4dbb47c3c8eafd3bdf14c9351b55e3",
+ "manifest_sha256": "46ec38864cc90dd9cb7ce2eb7dd6e1e9ce0bf577c48ef187d9afb69d04e62610",
+ "commit": "9cfd7bc1ad8516ad0801b6ea13dbcebef45e5411",
+ "started_at": "2026-11-04T08:44:50+00:00",
+ "finished_at": "2026-11-04T09:42:25+00:00",
+ "provider": "meta",
+ "n_tiles": 300,
+ "cost_usd": {
+  "v1": 3.16666885,
+  "v2": 0.00681835
+ },
+ "calls": {
+  "v1": {
+   "live": 1098,
+   "cache": 0
+  },
+  "v2": {
+   "live": 1,
+   "cache": 1097
+  }
+ },
+ "metrics": {
+  "v1": {
+   "damage_tp": 90.0,
+   "damage_fp": 225.0,
+   "damage_fn": 400.0,
+   "damage_precision": 0.2857142857142857,
+   "damage_recall": 0.1836734693877551,
+   "damage_f1": 0.22360248447204972,
+   "damage_precision_ci_low": 0.23492063492063492,
+   "damage_precision_ci_high": 0.34201954397394135,
+   "damage_recall_ci_low": 0.1378640776699029,
+   "damage_recall_ci_high": 0.23809523809523808,
+   "damage_f1_ci_low": 0.17559523809523808,
+   "damage_f1_ci_high": 0.27619047619047615,
+   "damage_recall_iou50": 0.1346938775510204,
+   "damage_f1_iou50": 0.16397515527950313,
+   "dirt_precision": 0.04830917874396135,
+   "dirt_recall": 0.2702702702702703,
+   "dirt_f1": 0.0819672131147541,
+   "image_recall": 0.7294117647058823,
+   "clean_false_alarm_rate": 0.21,
+   "touch_recall": 0.5224489795918368,
+   "tiles_with_damage": 170.0,
+   "clean_tiles": 100.0,
+   "damage_truth_boxes": 490.0
+  },
+  "v2": {
+   "damage_tp": 103.0,
+   "damage_fp": 232.0,
+   "damage_fn": 387.0,
+   "damage_precision": 0.3074626865671642,
+   "damage_recall": 0.21020408163265306,
+   "damage_f1": 0.2496969696969697,
+   "damage_precision_ci_low": 0.2532051282051282,
+   "damage_precision_ci_high": 0.36363636363636365,
+   "damage_recall_ci_low": 0.15934065934065933,
+   "damage_recall_ci_high": 0.2676864244741874,
+   "damage_f1_ci_low": 0.1990632318501171,
+   "damage_f1_ci_high": 0.303030303030303,
+   "damage_recall_iou50": 0.15306122448979592,
+   "damage_f1_iou50": 0.18181818181818182,
+   "dirt_precision": 0.04326923076923077,
+   "dirt_recall": 0.24324324324324326,
+   "dirt_f1": 0.07346938775510203,
+   "image_recall": 0.7294117647058823,
+   "clean_false_alarm_rate": 0.21,
+   "touch_recall": 0.5102040816326531,
+   "tiles_with_damage": 170.0,
+   "clean_tiles": 100.0,
+   "damage_truth_boxes": 490.0
+  }
+ },
+ "differences_v2_minus_v1": {
+  "f1_iou30": {
+   "diff": 0.026094485224919972,
+   "low": 0.006176673567977881,
+   "high": 0.044640910262255445
+  },
+  "false_alarm_rate": {
+   "diff": 0.0,
+   "low": 0.0,
+   "high": 0.0
+  }
+ },
+ "verdict": {
+  "f1_v1": 0.22360248447204972,
+  "f1_v2": 0.2496969696969697,
+  "false_alarm_v1": 0.21,
+  "false_alarm_v2": 0.21,
+  "f1_higher": true,
+  "false_alarms_within_margin": true,
+  "v2_wins": true
+ }
+}

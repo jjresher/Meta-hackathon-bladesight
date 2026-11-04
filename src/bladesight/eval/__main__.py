@@ -16,7 +16,9 @@ from pathlib import Path
 
 from ..data import HeldoutSealedError
 from ..data.splits import HELDOUT_ENV
+from ..detect.pipeline import DEFAULT_DETECTOR, DETECTORS
 from ..meta import MetaError, MetaSettings, build_client
+from . import fresh as fr
 from . import heldout as ho
 from .heldout import SAMPLE_SEED, HeldoutError, preflight, reseal, sample_heldout, verify_manifest
 from .metrics import aggregate
@@ -26,7 +28,13 @@ from .runner import evaluate_tiles, load_tiles, sample_tiles
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="python -m bladesight.eval")
-    parser.add_argument("--split", choices=["dev", "heldout"], default="dev")
+    parser.add_argument("--split", choices=["dev", "heldout", "fresh"], default="dev")
+    parser.add_argument(
+        "--detector",
+        choices=sorted(DETECTORS),
+        default=DEFAULT_DETECTOR,
+        help="post-processing version for a dev run (#22); the fresh run does v1 and v2",
+    )
     parser.add_argument("--n", type=int, default=300, help="tiles to evaluate (dev: at most 300)")
     parser.add_argument("--data-dir", type=Path, default=Path("data"))
     parser.add_argument("--out", type=Path, default=Path("docs/evidence"))
@@ -45,6 +53,24 @@ def main(argv: list[str] | None = None) -> int:
         reseal(args.data_dir)
         print(f"{args.data_dir / 'heldout'} sealed")
         return 0
+    if args.split == "fresh":
+        if args.stem or args.cost_usd is not None or args.out != Path("docs/evidence"):
+            parser.error("the fresh-set run takes no --stem, --cost-usd or --out")
+        try:
+            summary = fr.run_fresh(
+                args.data_dir,
+                fr.EVIDENCE.parent,
+                args.provider,
+                dev_table=fr.DEV_TABLE_LINK,
+            )
+        except fr.FreshError as error:
+            print(f"refused: {error}", file=sys.stderr)
+            return 2
+        except MetaError as error:
+            print(f"error: {error}", file=sys.stderr)
+            return 1
+        print(f"verdict {summary['verdict']}; cost {summary['cost_usd']}; wrote {fr.EVIDENCE}")
+        return 0
     if args.split == "dev" and args.n > 300:
         parser.error("the dev evaluation is limited to 300 tiles (sprint rule)")
     if args.stem is not None and (
@@ -55,6 +81,8 @@ def main(argv: list[str] | None = None) -> int:
         target = (args.out / f"{args.stem or 'eval_' + args.split}.md").resolve()
         if target == ho.EVIDENCE.resolve() or (args.stem or "").startswith("eval_heldout"):
             parser.error("only the preregistered held-out run may write the held-out evidence")
+        if (args.stem or "").startswith(fr.EVIDENCE_STEM):
+            parser.error("only the fresh-set run (--split fresh) may write its evidence")
 
     heldout = args.split == "heldout"
     prereg_hash = ""
@@ -98,7 +126,13 @@ def main(argv: list[str] | None = None) -> int:
         client = build_client(settings, provider=args.provider)
         try:
             results = evaluate_tiles(
-                client, settings, chosen, args.split, args.data_dir, weights=weights
+                client,
+                settings,
+                chosen,
+                args.split,
+                args.data_dir,
+                weights=weights,
+                detector="v1" if heldout else args.detector,
             )
         except MetaError as error:
             print(f"error: {error}", file=sys.stderr)
