@@ -2,9 +2,9 @@
 
 **What this measures.** The 40 gold crops were labelled by one person with no wind-energy
 experience, applying `docs/rubric.md` (our own illustrative rubric, observable criteria) blind to
-the model. This file reports how much Muse Spark agrees with that person applying the rubric. It is
-agreement with the rubric applied by a non-specialist, **not** severity validated by a wind-turbine
-specialist.
+the model on these crops. This file reports how much Muse Spark agrees with that person
+applying the rubric. It is agreement with the rubric applied by a non-specialist, **not**
+severity validated by a wind-turbine specialist.
 
 Crops: the dataset's own damage boxes (one per source photo, four size quartiles, seed 20261030;
 `eval/gold/severity.csv` holds ids, boxes and the human labels, no images). Muse Spark
@@ -46,7 +46,8 @@ prices, not invoice-checked).
 - One rater without domain experience and no second rater: there is no inter-rater agreement, so
   the ceiling for the model's agreement is unknown.
 - n = 40 gives a wide interval; the crops are dataset boxes selected by size quartile, so large
-  boxes are over-represented relative to the dataset (73% of boxes are under 400 px^2).
+  boxes are over-represented relative to the dataset (73% of the boxes in the 20-tile spike
+  sample are under 400 px^2).
 - The labeller wrote the rubric and had seen earlier model gradings (issue #7); the page only hid
   the grades for these crops. The model also receives measurements as text that the human does not.
 - The kappa compares two ratings of the same crops; it says nothing about whether either is right.
