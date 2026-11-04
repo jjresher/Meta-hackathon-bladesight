@@ -105,21 +105,22 @@ def _write_heldout(root: Path) -> None:
 
 def test_manifest_verification_detects_a_changed_file(tmp_path: Path) -> None:
     _write_heldout(tmp_path)
-    assert heldout.verify_manifest(tmp_path, tmp_path / "manifest.sha256") == 5
+    assert heldout.verify_manifest(tmp_path, tmp_path / "manifest.sha256", None) == 5
     (tmp_path / "heldout" / "img" / "DJI_0000_01_01.png").write_bytes(b"tampered")
     with pytest.raises(heldout.HeldoutError):
-        heldout.verify_manifest(tmp_path, tmp_path / "manifest.sha256")
+        heldout.verify_manifest(tmp_path, tmp_path / "manifest.sha256", None)
 
 
 def test_cli_refuses_without_the_flag_and_without_a_preregistration(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
     monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(heldout, "PREREGISTRATION", tmp_path / "missing.md")
     monkeypatch.delenv("ALLOW_HELDOUT", raising=False)
     assert eval_main(["--split", "heldout", "--data-dir", str(tmp_path / "data")]) == 2
     monkeypatch.setenv("ALLOW_HELDOUT", "1")
     assert eval_main(["--split", "heldout", "--data-dir", str(tmp_path / "data")]) == 2
-    assert "preregistration" in capsys.readouterr().err
+    assert "frozen before the run" in capsys.readouterr().err
 
 
 def test_cli_single_run_reseals_and_writes_the_evidence(
@@ -129,12 +130,13 @@ def test_cli_single_run_reseals_and_writes_the_evidence(
     monkeypatch.setenv("ALLOW_HELDOUT", "1")
     monkeypatch.setenv("BLADESIGHT_MODE", "replay")
     monkeypatch.setattr(heldout, "N_CLEAN", 1)
+    monkeypatch.setattr(heldout, "ENFORCE_FROZEN", False)  # test-only: the CLI has no such flag
+    monkeypatch.setattr(heldout, "PREREGISTRATION", tmp_path / "eval" / "preregistration.md")
     data = tmp_path / "data"
     _write_heldout(data)
-    monkeypatch.setattr("bladesight.eval.heldout.MANIFEST", data / "manifest.sha256")
     monkeypatch.setattr(
         "bladesight.eval.__main__.verify_manifest",
-        lambda d: heldout.verify_manifest(d, data / "manifest.sha256"),
+        lambda d: heldout.verify_manifest(d, data / "manifest.sha256", None),
     )
     seal(data / "heldout")
     monkeypatch.setattr(heldout, "EVIDENCE", tmp_path / "docs" / "evidence" / "eval_heldout.md")
@@ -159,3 +161,124 @@ def test_cli_single_run_reseals_and_writes_the_evidence(
     (data / "heldout").chmod(0o700)
     assert eval_main(argv) == 2
     (data / "heldout").chmod(0o700)
+
+
+def _arrange(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, enforce: bool = True) -> Path:
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("ALLOW_HELDOUT", "1")
+    monkeypatch.setenv("BLADESIGHT_MODE", "replay")
+    for name in ("META_CHAT_MODEL", "META_SAM_MODEL", "META_REASONING_EFFORT", "META_STORE"):
+        monkeypatch.delenv(name, raising=False)
+    monkeypatch.setattr(heldout, "N_CLEAN", 1)
+    monkeypatch.setattr(heldout, "ENFORCE_FROZEN", enforce)
+    monkeypatch.setattr(heldout, "dirty_files", lambda: [])
+    monkeypatch.setattr(heldout, "EVIDENCE", tmp_path / "docs" / "evidence" / "eval_heldout.md")
+    monkeypatch.setattr(heldout, "PREREGISTRATION", tmp_path / "prereg.md")
+    (tmp_path / "prereg.md").write_text("frozen\n", encoding="utf-8")
+    data = tmp_path / "data"
+    _write_heldout(data)
+    monkeypatch.setattr(
+        "bladesight.eval.__main__.verify_manifest",
+        lambda d: heldout.verify_manifest(d, data / "manifest.sha256", None),
+    )
+    seal(data / "heldout")
+    return data
+
+
+def _mode(data: Path) -> int:
+    return stat.S_IMODE((data / "heldout").stat().st_mode)
+
+
+@pytest.mark.parametrize(
+    "extra",
+    [["--provider", "stub"], ["--stem", "other"], ["--cost-usd", "1"], ["--out", "elsewhere"]],
+)
+def test_the_heldout_run_refuses_options_that_could_consume_or_bypass_it(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, extra: list[str]
+) -> None:
+    data = _arrange(tmp_path, monkeypatch)
+    assert eval_main(["--split", "heldout", "--data-dir", str(data), *extra]) == 2
+    assert _mode(data) == 0 and not heldout.EVIDENCE.exists()  # never even unsealed
+
+
+def test_the_heldout_run_refuses_changed_models_and_a_dirty_tree(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    data = _arrange(tmp_path, monkeypatch)
+    monkeypatch.setenv("META_CHAT_MODEL", "muse-spark-1.2")
+    assert eval_main(["--split", "heldout", "--data-dir", str(data)]) == 2
+    assert "preregistered" in capsys.readouterr().err
+    monkeypatch.delenv("META_CHAT_MODEL")
+    monkeypatch.setenv("META_REASONING_EFFORT", "default")
+    assert eval_main(["--split", "heldout", "--data-dir", str(data)]) == 2
+    monkeypatch.delenv("META_REASONING_EFFORT")
+    monkeypatch.setattr(heldout, "dirty_files", lambda: ["src/bladesight/detect/propose.py"])
+    assert eval_main(["--split", "heldout", "--data-dir", str(data)]) == 2
+    assert "uncommitted" in capsys.readouterr().err and _mode(data) == 0
+
+
+def test_a_manifest_mismatch_aborts_and_reseals(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    data = _arrange(tmp_path, monkeypatch)
+    (data / "heldout").chmod(0o700)
+    (data / "heldout" / "img" / "DJI_0000_01_01.png").chmod(0o600)
+    (data / "heldout" / "img" / "DJI_0000_01_01.png").write_bytes(b"tampered")
+    seal(data / "heldout")
+    assert eval_main(["--split", "heldout", "--data-dir", str(data)]) == 2
+    assert _mode(data) == 0 and not heldout.EVIDENCE.exists()
+    (data / "heldout").chmod(0o700)
+
+
+def test_an_error_during_the_run_reseals_and_leaves_no_evidence(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from bladesight.meta import MetaAuthError
+
+    data = _arrange(tmp_path, monkeypatch)
+
+    def boom(*args: object, **kwargs: object) -> None:
+        raise MetaAuthError("nope")
+
+    monkeypatch.setattr("bladesight.eval.__main__.evaluate_tiles", boom)
+    assert eval_main(["--split", "heldout", "--data-dir", str(data)]) == 1
+    assert _mode(data) == 0 and not heldout.EVIDENCE.exists()
+    (data / "heldout").chmod(0o700)
+
+
+def test_reseal_only_recovers_a_killed_run(tmp_path: Path) -> None:
+    data = tmp_path / "data"
+    _write_heldout(data)
+    (data / "heldout").chmod(0o700)
+    assert eval_main(["--reseal-only", "--data-dir", str(data)]) == 0
+    assert _mode(data) == 0
+    (data / "heldout").chmod(0o700)
+
+
+def test_manifest_hash_and_count_are_checked_against_the_split_summary(tmp_path: Path) -> None:
+    _write_heldout(tmp_path)
+    manifest = tmp_path / "manifest.sha256"
+    text = manifest.read_text(encoding="utf-8")
+    summary = tmp_path / "summary.json"
+    ok = {"manifest_sha256": hashlib.sha256(text.encode()).hexdigest(),
+          "counts": {"heldout": {"tiles": 4}}}  # fmt: skip
+    summary.write_text(json.dumps(ok), encoding="utf-8")
+    assert heldout.verify_manifest(tmp_path, manifest, summary) == 5
+    summary.write_text(json.dumps({**ok, "manifest_sha256": "0" * 64}), encoding="utf-8")
+    with pytest.raises(heldout.HeldoutError):
+        heldout.verify_manifest(tmp_path, manifest, summary)
+    summary.write_text(json.dumps({**ok, "counts": {"heldout": {"tiles": 9}}}), encoding="utf-8")
+    with pytest.raises(heldout.HeldoutError):
+        heldout.verify_manifest(tmp_path, manifest, summary)
+    manifest.write_text("", encoding="utf-8")  # an empty manifest cannot pass
+    summary.write_text(json.dumps({**ok, "manifest_sha256": hashlib.sha256(b"").hexdigest()}))
+    with pytest.raises(heldout.HeldoutError):
+        heldout.verify_manifest(tmp_path, manifest, summary)
+
+
+def test_the_real_manifest_matches_the_committed_summary() -> None:
+    """The committed manifest and split summary agree (no held-out file is read)."""
+    manifest = heldout.MANIFEST.read_text(encoding="utf-8")
+    recorded = json.loads(heldout.SPLIT_SUMMARY.read_text(encoding="utf-8"))
+    assert hashlib.sha256(manifest.encode()).hexdigest() == recorded["manifest_sha256"]
+    assert len(manifest.splitlines()) == recorded["counts"]["heldout"]["tiles"] + 1

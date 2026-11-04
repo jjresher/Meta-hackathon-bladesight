@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import argparse
 import os
-import subprocess
 import sys
 from dataclasses import replace
 from pathlib import Path
@@ -17,19 +16,11 @@ from pathlib import Path
 from ..data import HeldoutSealedError
 from ..data.splits import HELDOUT_ENV
 from ..meta import MetaError, MetaSettings, build_client
+from . import heldout as ho
 from .heldout import SAMPLE_SEED, HeldoutError, preflight, reseal, sample_heldout, verify_manifest
 from .metrics import aggregate
 from .report import build_report, write_outputs
 from .runner import evaluate_tiles, load_tiles, sample_tiles
-
-
-def _git_sha() -> str:
-    try:
-        return subprocess.run(
-            ["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=True
-        ).stdout.strip()
-    except (OSError, subprocess.CalledProcessError):
-        return "unknown"
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -43,7 +34,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--cost-usd", type=float, help="cost of the live run when this is a cached re-render"
     )
+    parser.add_argument(
+        "--reseal-only",
+        action="store_true",
+        help="held-out: restore mode 000 on data/heldout after a killed run, then exit",
+    )
     args = parser.parse_args(argv)
+    if args.reseal_only:
+        reseal(args.data_dir)
+        print(f"{args.data_dir / 'heldout'} sealed")
+        return 0
     if args.split == "dev" and args.n > 300:
         parser.error("the dev evaluation is limited to 300 tiles (sprint rule)")
 
@@ -57,24 +57,33 @@ def main(argv: list[str] | None = None) -> int:
                 file=sys.stderr,
             )
             return 2
+        settings = MetaSettings.from_env()
         try:
+            if ho.ENFORCE_FROZEN:
+                if args.provider != "meta" or args.stem or args.cost_usd is not None:
+                    raise HeldoutError("the held-out run takes no --provider, --stem or --cost-usd")
+                if args.out != Path("docs/evidence"):
+                    raise HeldoutError("the held-out run writes only to docs/evidence")
+                ho.check_frozen(settings)
             prereg_hash = preflight(args.data_dir)
         except HeldoutError as error:
             print(f"refused: {error}", file=sys.stderr)
             return 2
+    else:
+        settings = MetaSettings.from_env()
     try:
+        weights: dict[str, float] = {}
         try:
+            if heldout:  # verify BEFORE reading any label
+                print(f"manifest ok: {verify_manifest(args.data_dir)} held-out files match")
             tiles = load_tiles(args.split, args.data_dir)
         except HeldoutSealedError as error:
             print(f"refused: {error}", file=sys.stderr)
             return 2
-        weights: dict[str, float] = {}
         if heldout:
-            print(f"manifest ok: {verify_manifest(args.data_dir)} held-out files match")
             chosen, weights = sample_heldout(tiles)
         else:
             chosen = sample_tiles(tiles, args.n)
-        settings = MetaSettings.from_env()
         client = build_client(settings, provider=args.provider)
         try:
             results = evaluate_tiles(
@@ -91,6 +100,7 @@ def main(argv: list[str] | None = None) -> int:
             reseal(args.data_dir)
     cost = args.cost_usd if args.cost_usd is not None else sum(r.cost_usd for r in client.records)
     stem = args.stem or f"eval_{args.split}"
+    out_dir = ho.EVIDENCE.parent if heldout and ho.ENFORCE_FROZEN else args.out
     if heldout:
         flat = aggregate([replace(r, weight=1.0) for r in results], "damage")
         unweighted = f"TP {flat.tp:.0f}, FP {flat.fp:.0f}, FN {flat.fn:.0f}"
@@ -102,8 +112,11 @@ def main(argv: list[str] | None = None) -> int:
             f"clean tile weighs {clean_total / max(n_clean, 1):.2f}, so precision, false positives "
             "and false alarms per image are scaled to the whole split. Recall and image-level "
             f"rates are not affected. Unweighted damage counts at IoU 0.3: {unweighted}. "
-            f"Preregistration sha256 {prereg_hash}. "
-            f"Code commit {_git_sha()}."
+            f"Preregistration sha256 {prereg_hash}. Code commit {ho.git_sha()} (no uncommitted "
+            f"changes in src/, pyproject.toml, uv.lock or the preregistration). Models "
+            f"{ho.FROZEN['chat_model']} and {ho.FROZEN['sam_model']}, reasoning effort "
+            f"{ho.FROZEN['reasoning_effort']}, store false (checked against the preregistered "
+            "values before the run)."
         )
     else:
         sample_note = (
@@ -121,7 +134,7 @@ def main(argv: list[str] | None = None) -> int:
     md, svg = write_outputs(
         report,
         results,
-        args.out,
+        out_dir,
         stem,
         title=f"Detection evaluation ({args.split})",
         command=f"uv run poe eval --split {args.split}" + ("" if heldout else f" --n {args.n}"),

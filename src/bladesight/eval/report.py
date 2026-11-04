@@ -164,12 +164,12 @@ def render_markdown(
     for c in report.classes:
         p, r = c.precision_ci, c.recall_ci
         lines.append(
-            f"| {c.label} | {c.tp} | {c.fp} | {c.fn} | {c.precision:.3f}"
+            f"| {c.label} | {c.tp:.1f} | {c.fp:.1f} | {c.fn:.1f} | {c.precision:.3f}"
             f" ({p.low:.3f}-{p.high:.3f}) | {c.recall:.3f} ({r.low:.3f}-{r.high:.3f}) | "
             f"{c.f1:.3f} | {by50[c.label].recall:.3f} |"
             if p and r
-            else f"| {c.label} | {c.tp} | {c.fp} | {c.fn} | {c.precision:.3f} | {c.recall:.3f} | "
-            f"{c.f1:.3f} | {by50[c.label].recall:.3f} |"
+            else f"| {c.label} | {c.tp:.1f} | {c.fp:.1f} | {c.fn:.1f} | {c.precision:.3f} | "
+            f"{c.recall:.3f} | {c.f1:.3f} | {by50[c.label].recall:.3f} |"
         )
     lines += [
         "",
