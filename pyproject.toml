@@ -56,6 +56,7 @@ secrets-scan = "pre-commit run --all-files"
 check = ["lint", "format-check", "typecheck", "test"]
 data = "python -m bladesight.data"
 fleet = "python -m bladesight.fleet"
+serve = "uvicorn bladesight.api:app --host 127.0.0.1 --port 8000"
 detect = "python -m bladesight.detect"
 eval = "python -m bladesight.eval"
 gold = "python -m bladesight.eval.gold"
