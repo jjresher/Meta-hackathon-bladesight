@@ -1514,7 +1514,7 @@
          272.0
         ],
         [
-         0.0,
+         7.0,
          270.0
         ],
         [
@@ -2059,16 +2059,16 @@
         ]
        ]
       ],
-      "mask_area_px": 13006.0
+      "mask_area_px": 13004.0
      },
      "measurement": {
       "defect_id": "T02-2017/DJI_0346_04_05/d1",
-      "area_px": 13006.0,
-      "tile_area_ratio": 0.059823555927619294,
+      "area_px": 13004.0,
+      "tile_area_ratio": 0.05981435654949725,
       "blade_area_ratio": null,
-      "length_px": 368.3905731033525,
-      "width_px": 53.25725923667994,
-      "elongation": 0.855433,
+      "length_px": 368.390632406621,
+      "width_px": 53.26401131265338,
+      "elongation": 0.855414,
       "inside_blade": null,
       "position": "unknown",
       "position_t": null,
@@ -2078,8 +2078,8 @@
       "defect_id": "T02-2017/DJI_0346_04_05/d1",
       "defect_type": "dirt",
       "severity": 1,
-      "rationale": "Long thin dark streaks parallel to blade edge consistent with dirt/staining; no clearly open crack, delamination or exposed fibres visible, but crop is blurry and low resolution.",
-      "confidence": 0.52,
+      "rationale": "Longitudinal dark streaks/staining along the visible blade edge with no clear paint/coating loss, open crack, or exposed fibers; matches cosmetic dirt/streaks but low-resolution duplicated crops make it hard to exclude underlying wear.",
+      "confidence": 0.45,
       "rubric_version": "v1",
       "prompt_version": "assess/v1",
       "model": "meta-models/muse-spark-open",

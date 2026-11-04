@@ -92,7 +92,7 @@ def render(
             "tool refused, with the rule it enforced (`fleet/rules.py`, stable ids); the agent",
             "reads the refusal and decides what to do next. The rationale is the model's own text",
             "in the same turn before the call (null when it wrote none); nothing is filled in.",
-            "The Meta run's fields were backfilled from its stored steps (`fleet backfill`).",
+            "Both runs recorded these fields as they ran (`fleet backfill` changes nothing).",
             "The Muse Spark Open run grades its own re-graded farm (`replay/open-weights/`),",
             "so the two agents saw different verdicts: compare behaviour, not order lists.",
             "",

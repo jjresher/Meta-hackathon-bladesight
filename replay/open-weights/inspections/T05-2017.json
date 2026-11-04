@@ -5,8 +5,8 @@
   "year": 2017,
   "n_images": 4,
   "n_defects": 1,
-  "max_severity": 1,
-  "n_needs_review": 0,
+  "max_severity": null,
+  "n_needs_review": 1,
   "n_reinspect": 0
  },
  "images": [
@@ -54,7 +54,7 @@
       "label": "dirt",
       "score": 0.90234375,
       "bbox": {
-       "x1": 492.0,
+       "x1": 497.0,
        "y1": 0.0,
        "x2": 586.0,
        "y2": 151.0
@@ -594,27 +594,27 @@
          38.0
         ],
         [
-         494.0,
+         499.0,
          36.0
         ],
         [
-         494.0,
+         498.0,
          34.0
         ],
         [
-         493.0,
+         499.0,
          32.0
         ],
         [
-         493.0,
+         500.0,
          30.0
         ],
         [
-         494.0,
+         499.0,
          28.0
         ],
         [
-         495.0,
+         500.0,
          26.0
         ],
         [
@@ -634,23 +634,23 @@
          18.0
         ],
         [
-         495.0,
+         502.0,
          16.0
         ],
         [
-         492.0,
+         499.0,
          14.0
         ],
         [
-         494.0,
+         498.0,
          12.0
         ],
         [
-         493.0,
+         499.0,
          10.0
         ],
         [
-         494.0,
+         506.0,
          8.0
         ],
         [
@@ -671,16 +671,16 @@
         ]
        ]
       ],
-      "mask_area_px": 9635.0
+      "mask_area_px": 9580.0
      },
      "measurement": {
       "defect_id": "T05-2017/DJI_0694_04_03/d1",
-      "area_px": 9635.0,
-      "tile_area_ratio": 0.044318004102922644,
+      "area_px": 9580.0,
+      "tile_area_ratio": 0.04406502120456657,
       "blade_area_ratio": null,
-      "length_px": 168.42575906468764,
-      "width_px": 99.15786368994475,
-      "elongation": 0.411267,
+      "length_px": 168.01325514134797,
+      "width_px": 96.04152176537366,
+      "elongation": 0.428369,
       "inside_blade": null,
       "position": "unknown",
       "position_t": null,
@@ -688,10 +688,10 @@
      },
      "assessment": {
       "defect_id": "T05-2017/DJI_0694_04_03/d1",
-      "defect_type": "dirt",
+      "defect_type": "other",
       "severity": 1,
-      "rationale": "Both crops are low-resolution and blurry, showing only scattered tiny dark specks along the blade edge. Appearance is consistent with dirt/stains with intact surface and no discernible open crack, erosion patch, or fibre exposure, but detail is insufficient for certain grading.",
-      "confidence": 0.35,
+      "rationale": "Both crops are too small and blurry/out-of-focus to grade; only an indistinct blade edge against overcast sky with dark specks is visible, so no defect type or severity can be determined reliably.",
+      "confidence": 0.18,
       "rubric_version": "v1",
       "prompt_version": "assess/v1",
       "model": "meta-models/muse-spark-open",
@@ -699,7 +699,7 @@
      },
      "verification": {
       "defect_id": "T05-2017/DJI_0694_04_03/d1",
-      "verdict": "ok",
+      "verdict": "needs_review",
       "agreement": 1.0,
       "second_severity": 1,
       "checks": [
@@ -716,13 +716,11 @@
        {
         "name": "severity_vs_size",
         "passed": true,
-        "detail": "severity 1 fits 4.43% of the photo"
+        "detail": "severity 1 fits 4.41% of the photo"
        }
       ],
       "reasons": [
-       "both looks agree on severity 1",
-       "combined confidence 0.35",
-       "all rule checks passed"
+       "combined confidence 0.18 is below 0.3"
       ],
       "model": "meta-models/muse-spark-open",
       "provider": "baseten"

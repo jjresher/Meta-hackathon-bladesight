@@ -4,10 +4,10 @@
   "turbine_id": "T11",
   "year": 2017,
   "n_images": 4,
-  "n_defects": 4,
+  "n_defects": 5,
   "max_severity": 3,
-  "n_needs_review": 2,
-  "n_reinspect": 1
+  "n_needs_review": 1,
+  "n_reinspect": 3
  },
  "images": [
   {
@@ -2367,7 +2367,7 @@
       "bbox": {
        "x1": 511.0,
        "y1": 348.0,
-       "x2": 586.0,
+       "x2": 551.0,
        "y2": 371.0
       },
       "outline": [
@@ -2381,43 +2381,43 @@
          350.0
         ],
         [
-         576.0,
+         525.0,
          352.0
         ],
         [
-         581.0,
+         527.0,
          354.0
         ],
         [
-         582.0,
+         532.0,
          356.0
         ],
         [
-         586.0,
+         539.0,
          358.0
         ],
         [
-         586.0,
+         541.0,
          360.0
         ],
         [
-         586.0,
+         542.0,
          362.0
         ],
         [
-         586.0,
+         545.0,
          364.0
         ],
         [
-         586.0,
+         549.0,
          366.0
         ],
         [
-         586.0,
+         550.0,
          368.0
         ],
         [
-         586.0,
+         551.0,
          370.0
         ],
         [
@@ -2470,16 +2470,16 @@
         ]
        ]
       ],
-      "mask_area_px": 1059.0
+      "mask_area_px": 476.0
      },
      "measurement": {
       "defect_id": "T11-2017/DJI_0390_03_05/d2",
-      "area_px": 1059.0,
-      "tile_area_ratio": 0.004871070715619624,
+      "area_px": 476.0,
+      "tile_area_ratio": 0.00218945199304527,
       "blade_area_ratio": null,
-      "length_px": 75.7968227656321,
-      "width_px": 22.327596067142963,
-      "elongation": 0.705428,
+      "length_px": 42.680774722764454,
+      "width_px": 16.684252735712022,
+      "elongation": 0.609092,
       "inside_blade": null,
       "position": "unknown",
       "position_t": null,
@@ -2489,8 +2489,8 @@
       "defect_id": "T11-2017/DJI_0390_03_05/d2",
       "defect_type": "dirt",
       "severity": 1,
-      "rationale": "Blurry close crop shows reddish-brown staining and greyish discolouration with no clear open crack, fibres or coating loss; too blurry to confirm damage so graded as cosmetic.",
-      "confidence": 0.35,
+      "rationale": "Close crop is too blurry to grade definitively but shows reddish-brown streaky discoloration suggesting dirt/stain with no clear paint loss or crack.",
+      "confidence": 0.32,
       "rubric_version": "v1",
       "prompt_version": "assess/v1",
       "model": "muse-spark-1.3",
@@ -2498,9 +2498,9 @@
      },
      "verification": {
       "defect_id": "T11-2017/DJI_0390_03_05/d2",
-      "verdict": "needs_review",
-      "agreement": 0.75,
-      "second_severity": 2,
+      "verdict": "reinspect",
+      "agreement": 0.5,
+      "second_severity": 3,
       "checks": [
        {
         "name": "inside_blade",
@@ -2515,12 +2515,165 @@
        {
         "name": "severity_vs_size",
         "passed": true,
-        "detail": "severity 1 fits 0.49% of the photo"
+        "detail": "severity 1 fits 0.22% of the photo"
        }
       ],
       "reasons": [
-       "the two looks differ by 1 severity level",
-       "combined confidence 0.25 is below 0.3"
+       "the two looks differ by 2 severity levels"
+      ],
+      "model": "muse-spark-1.3",
+      "provider": "meta"
+     },
+     "error": null
+    },
+    {
+     "defect": {
+      "id": "T11-2017/DJI_0390_03_05/d3",
+      "image_id": "T11-2017/DJI_0390_03_05",
+      "concept": "dirt (proposed)",
+      "source": "box_prompt",
+      "label": "dirt",
+      "score": 0.8124998211860657,
+      "bbox": {
+       "x1": 545.0,
+       "y1": 352.0,
+       "x2": 586.0,
+       "y2": 371.0
+      },
+      "outline": [
+       [
+        [
+         576.0,
+         352.0
+        ],
+        [
+         581.0,
+         354.0
+        ],
+        [
+         582.0,
+         356.0
+        ],
+        [
+         586.0,
+         358.0
+        ],
+        [
+         586.0,
+         360.0
+        ],
+        [
+         586.0,
+         362.0
+        ],
+        [
+         586.0,
+         364.0
+        ],
+        [
+         586.0,
+         366.0
+        ],
+        [
+         586.0,
+         368.0
+        ],
+        [
+         586.0,
+         370.0
+        ],
+        [
+         558.0,
+         370.0
+        ],
+        [
+         555.0,
+         368.0
+        ],
+        [
+         554.0,
+         366.0
+        ],
+        [
+         551.0,
+         364.0
+        ],
+        [
+         550.0,
+         362.0
+        ],
+        [
+         549.0,
+         360.0
+        ],
+        [
+         549.0,
+         358.0
+        ],
+        [
+         548.0,
+         356.0
+        ],
+        [
+         546.0,
+         354.0
+        ],
+        [
+         546.0,
+         352.0
+        ]
+       ]
+      ],
+      "mask_area_px": 583.0
+     },
+     "measurement": {
+      "defect_id": "T11-2017/DJI_0390_03_05/d3",
+      "area_px": 583.0,
+      "tile_area_ratio": 0.002681618722574354,
+      "blade_area_ratio": null,
+      "length_px": 42.87230211103724,
+      "width_px": 21.059422131910935,
+      "elongation": 0.508787,
+      "inside_blade": null,
+      "position": "unknown",
+      "position_t": null,
+      "units": "pixels"
+     },
+     "assessment": {
+      "defect_id": "T11-2017/DJI_0390_03_05/d3",
+      "defect_type": "dirt",
+      "severity": 1,
+      "rationale": "Blurry close crop shows reddish-brown streaky discolouration on white surface with no clear open crack, fibres, or definite coating loss; wider view shows it small against blade.",
+      "confidence": 0.35,
+      "rubric_version": "v1",
+      "prompt_version": "assess/v1",
+      "model": "muse-spark-1.3",
+      "provider": "meta"
+     },
+     "verification": {
+      "defect_id": "T11-2017/DJI_0390_03_05/d3",
+      "verdict": "reinspect",
+      "agreement": 0.5,
+      "second_severity": 3,
+      "checks": [
+       {
+        "name": "inside_blade",
+        "passed": true,
+        "detail": "no blade mask: not checked"
+       },
+       {
+        "name": "detector_score",
+        "passed": true,
+        "detail": "detector confidence 0.81"
+       },
+       {
+        "name": "severity_vs_size",
+        "passed": true,
+        "detail": "severity 1 fits 0.27% of the photo"
+       }
+      ],
+      "reasons": [
+       "the two looks differ by 2 severity levels"
       ],
       "model": "muse-spark-1.3",
       "provider": "meta"

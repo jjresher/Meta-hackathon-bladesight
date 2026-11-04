@@ -29,7 +29,7 @@
       "bbox": {
        "x1": 137.0,
        "y1": 151.0,
-       "x2": 264.0,
+       "x2": 256.0,
        "y2": 346.0
       },
       "outline": [
@@ -219,7 +219,7 @@
          241.0
         ],
         [
-         254.0,
+         248.0,
          243.0
         ],
         [
@@ -283,67 +283,67 @@
          273.0
         ],
         [
-         262.0,
+         255.0,
          275.0
         ],
         [
-         262.0,
+         255.0,
          277.0
         ],
         [
-         264.0,
+         256.0,
          279.0
         ],
         [
-         264.0,
+         256.0,
          281.0
         ],
         [
-         262.0,
+         256.0,
          283.0
         ],
         [
-         263.0,
+         255.0,
          285.0
         ],
         [
-         263.0,
+         255.0,
          287.0
         ],
         [
-         264.0,
+         256.0,
          289.0
         ],
         [
-         264.0,
+         256.0,
          291.0
         ],
         [
-         263.0,
+         255.0,
          293.0
         ],
         [
-         263.0,
+         255.0,
          295.0
         ],
         [
-         262.0,
+         255.0,
          297.0
         ],
         [
-         264.0,
+         256.0,
          299.0
         ],
         [
-         264.0,
+         256.0,
          301.0
         ],
         [
-         262.0,
+         254.0,
          303.0
         ],
         [
-         263.0,
+         254.0,
          305.0
         ],
         [
@@ -351,15 +351,15 @@
          307.0
         ],
         [
-         263.0,
+         249.0,
          309.0
         ],
         [
-         263.0,
+         249.0,
          311.0
         ],
         [
-         262.0,
+         250.0,
          313.0
         ],
         [
@@ -820,16 +820,16 @@
         ]
        ]
       ],
-      "mask_area_px": 17604.0
+      "mask_area_px": 17519.0
      },
      "measurement": {
       "defect_id": "T12-2017/DJI_0723_08_04/d1",
-      "area_px": 17604.0,
-      "tile_area_ratio": 0.08097292623018684,
+      "area_px": 17519.0,
+      "tile_area_ratio": 0.08058195266000018,
       "blade_area_ratio": null,
-      "length_px": 204.90111434647247,
-      "width_px": 135.42385321672504,
-      "elongation": 0.339077,
+      "length_px": 204.3866988625225,
+      "width_px": 134.53922472544605,
+      "elongation": 0.341742,
       "inside_blade": null,
       "position": "unknown",
       "position_t": null,
@@ -837,10 +837,10 @@
      },
      "assessment": {
       "defect_id": "T12-2017/DJI_0723_08_04/d1",
-      "defect_type": "dirt",
-      "severity": 1,
-      "rationale": "Small blurry crop shows a compact oval beige discolouration patch on white blade with apparently intact surface, no open crack, fibres or delamination; looks cosmetic like dirt/light staining but limited detail makes coating wear ambiguous.",
-      "confidence": 0.33,
+      "defect_type": "surface_damage",
+      "severity": 3,
+      "rationale": "Large compact oval tan patch with sharp border on the white surface suggests paint/coating loss with substrate showing, occupying a notable share of the visible width; no clearly open crack, fibres/delamination or confirmed through-hole is resolvable in this blurry low-res crop without scale.",
+      "confidence": 0.36,
       "rubric_version": "v1",
       "prompt_version": "assess/v1",
       "model": "meta-models/muse-spark-open",
@@ -850,7 +850,7 @@
       "defect_id": "T12-2017/DJI_0723_08_04/d1",
       "verdict": "needs_review",
       "agreement": 1.0,
-      "second_severity": 1,
+      "second_severity": 3,
       "checks": [
        {
         "name": "inside_blade",
@@ -864,13 +864,12 @@
        },
        {
         "name": "severity_vs_size",
-        "passed": false,
-        "detail": "severity 1 but it covers 8.1% of the photo"
+        "passed": true,
+        "detail": "severity 3 fits 8.06% of the photo"
        }
       ],
       "reasons": [
-       "rule check failed: detector_score (detector confidence 0.19)",
-       "rule check failed: severity_vs_size (severity 1 but it covers 8.1% of the photo)"
+       "rule check failed: detector_score (detector confidence 0.19)"
       ],
       "model": "meta-models/muse-spark-open",
       "provider": "baseten"

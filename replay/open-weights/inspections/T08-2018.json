@@ -6,8 +6,8 @@
   "n_images": 4,
   "n_defects": 4,
   "max_severity": null,
-  "n_needs_review": 2,
-  "n_reinspect": 2
+  "n_needs_review": 3,
+  "n_reinspect": 1
  },
  "images": [
   {
@@ -39,7 +39,7 @@
        "x1": 226.0,
        "y1": 82.0,
        "x2": 264.0,
-       "y2": 202.0
+       "y2": 133.0
       },
       "outline": [
        [
@@ -148,38 +148,6 @@
          132.0
         ],
         [
-         260.0,
-         196.0
-        ],
-        [
-         258.0,
-         198.0
-        ],
-        [
-         258.0,
-         200.0
-        ],
-        [
-         256.0,
-         201.0
-        ],
-        [
-         255.0,
-         201.0
-        ],
-        [
-         255.0,
-         200.0
-        ],
-        [
-         255.0,
-         198.0
-        ],
-        [
-         255.0,
-         196.0
-        ],
-        [
          259.0,
          132.0
         ],
@@ -236,19 +204,19 @@
          106.0
         ],
         [
-         232.0,
+         249.0,
          104.0
         ],
         [
-         229.0,
+         248.0,
          102.0
         ],
         [
-         226.0,
+         246.0,
          100.0
         ],
         [
-         226.0,
+         246.0,
          98.0
         ],
         [
@@ -285,16 +253,16 @@
         ]
        ]
       ],
-      "mask_area_px": 616.0
+      "mask_area_px": 554.0
      },
      "measurement": {
       "defect_id": "T08-2018/DJI_0183_03_05/d1",
-      "area_px": 616.0,
-      "tile_area_ratio": 0.0028334084615879965,
+      "area_px": 554.0,
+      "tile_area_ratio": 0.002548227739804789,
       "blade_area_ratio": null,
-      "length_px": 121.35013384331532,
-      "width_px": 35.54511252569961,
-      "elongation": 0.707086,
+      "length_px": 59.96048997793136,
+      "width_px": 24.979046054440175,
+      "elongation": 0.583408,
       "inside_blade": null,
       "position": "unknown",
       "position_t": null,
@@ -304,7 +272,7 @@
       "defect_id": "T08-2018/DJI_0183_03_05/d1",
       "defect_type": "dirt",
       "severity": 1,
-      "rationale": "Circumferential tan/brown staining/discolouration at blade-root joint with a thin dark vertical streak; crop is blurry and too small/low-resolution to confirm an open crack, appears cosmetic dirt/streak with surface/paint intact and streak small versus visible blade width.",
+      "rationale": "Blurry low-res crops show light brown staining/discolouration at the blade root with a faint thin dark hairline that is indistinct; no clear paint/coating loss, exposed fibres or clearly open/long crack is discernible relative to visible blade width.",
       "confidence": 0.38,
       "rubric_version": "v1",
       "prompt_version": "assess/v1",
@@ -313,9 +281,9 @@
      },
      "verification": {
       "defect_id": "T08-2018/DJI_0183_03_05/d1",
-      "verdict": "reinspect",
-      "agreement": 0.5,
-      "second_severity": 3,
+      "verdict": "needs_review",
+      "agreement": 1.0,
+      "second_severity": 1,
       "checks": [
        {
         "name": "inside_blade",
@@ -330,11 +298,11 @@
        {
         "name": "severity_vs_size",
         "passed": true,
-        "detail": "severity 1 fits 0.28% of the photo"
+        "detail": "severity 1 fits 0.25% of the photo"
        }
       ],
       "reasons": [
-       "the two looks differ by 2 severity levels"
+       "combined confidence 0.28 is below 0.3"
       ],
       "model": "meta-models/muse-spark-open",
       "provider": "baseten"

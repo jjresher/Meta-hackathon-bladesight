@@ -12,10 +12,10 @@
   "action": "repair",
   "rationale": "Verified severity 3 cracks, verdict ok",
   "evidence": [
-   "T01-2018/DJI_0681_06_09/d2: severity 3 (crack), verdict ok, agreement 1.00, confidence 0.45",
+   "T01-2018/DJI_0681_06_09/d2: severity 3 (crack), verdict ok, agreement 1.00, confidence 0.50",
    "T01-2018/DJI_0681_06_09/d7: severity 3 (crack), verdict ok, agreement 1.00, confidence 0.35"
   ],
-  "due_within_days": 30,
+  "due_within_days": 90,
   "created_by": "agent",
   "run_id": "run-final",
   "model": "muse-spark-1.3",
@@ -63,6 +63,46 @@
  },
  {
   "id": "WO-004",
+  "kind": "repair",
+  "priority": "P2",
+  "turbine_id": "T07",
+  "inspection_id": "T07-2018",
+  "defect_ids": [
+   "T07-2018/DJI_0682_07_06/d1"
+  ],
+  "action": "repair",
+  "rationale": "Verified severity 3 surface_damage, verdict ok",
+  "evidence": [
+   "T07-2018/DJI_0682_07_06/d1: severity 3 (surface_damage), verdict ok, agreement 1.00, confidence 0.55"
+  ],
+  "due_within_days": 90,
+  "created_by": "agent",
+  "run_id": "run-final",
+  "model": "muse-spark-1.3",
+  "provider": "meta"
+ },
+ {
+  "id": "WO-005",
+  "kind": "repair",
+  "priority": "P2",
+  "turbine_id": "T12",
+  "inspection_id": "T12-2018",
+  "defect_ids": [
+   "T12-2018/DJI_0270_04_02/d4"
+  ],
+  "action": "repair",
+  "rationale": "Verified severity 3 crack, verdict ok",
+  "evidence": [
+   "T12-2018/DJI_0270_04_02/d4: severity 3 (crack), verdict ok, agreement 1.00, confidence 0.30"
+  ],
+  "due_within_days": 90,
+  "created_by": "agent",
+  "run_id": "run-final",
+  "model": "muse-spark-1.3",
+  "provider": "meta"
+ },
+ {
+  "id": "WO-006",
   "kind": "reinspect",
   "priority": "P2",
   "turbine_id": "T01",
@@ -81,7 +121,7 @@
    "T01-2018/DJI_0681_06_09/d4: not verified (the two looks differ by 1 severity level; combined confidence 0.25 is below 0.3)",
    "T01-2018/DJI_0681_06_09/d6: not verified (the two looks differ by 1 severity level; combined confidence 0.25 is below 0.3)",
    "T01-2018/DJI_0391_06_05/d1: not verified (the two looks differ by 2 severity levels)",
-   "T01-2018/DJI_0391_06_05/d2: not verified (combined confidence 0.25 is below 0.3; rule check failed: detector_score (detector confidence 0.01))",
+   "T01-2018/DJI_0391_06_05/d2: not verified (rule check failed: detector_score (detector confidence 0.01))",
    "T01-2018/DJI_0391_06_05/d3: not verified (the two looks differ by 1 severity level; combined confidence 0.25 is below 0.3; rule check failed: detector_score (detector confidence 0.02))",
    "T01-2018/DJI_0391_06_05/d4: not verified (rule check failed: severity_vs_size (severity 1 but it covers 25.0% of the photo))"
   ],
@@ -92,7 +132,7 @@
   "provider": "meta"
  },
  {
-  "id": "WO-005",
+  "id": "WO-007",
   "kind": "reinspect",
   "priority": "P2",
   "turbine_id": "T02",
@@ -104,7 +144,7 @@
    "T02-2018/DJI_0982_06_05/d6"
   ],
   "action": "reinspect",
-  "rationale": "verdict needs_review, low confidence, need better evidence",
+  "rationale": "verdict needs_review, need better evidence",
   "evidence": [
    "T02-2018/DJI_0711_01_04/d1: not verified (the two looks differ by 1 severity level)",
    "T02-2018/DJI_0982_06_05/d2: not verified (the two looks differ by 1 severity level)",
@@ -118,7 +158,7 @@
   "provider": "meta"
  },
  {
-  "id": "WO-006",
+  "id": "WO-008",
   "kind": "reinspect",
   "priority": "P2",
   "turbine_id": "T10",
@@ -146,7 +186,49 @@
   "provider": "meta"
  },
  {
-  "id": "WO-007",
+  "id": "WO-009",
+  "kind": "reinspect",
+  "priority": "P2",
+  "turbine_id": "T07",
+  "inspection_id": "T07-2018",
+  "defect_ids": [
+   "T07-2018/DJI_0682_07_06/d3"
+  ],
+  "action": "reinspect",
+  "rationale": "verdict needs_review, need better evidence",
+  "evidence": [
+   "T07-2018/DJI_0682_07_06/d3: not verified (combined confidence 0.25 is below 0.3)"
+  ],
+  "due_within_days": 14,
+  "created_by": "agent",
+  "run_id": "run-final",
+  "model": "muse-spark-1.3",
+  "provider": "meta"
+ },
+ {
+  "id": "WO-010",
+  "kind": "reinspect",
+  "priority": "P2",
+  "turbine_id": "T12",
+  "inspection_id": "T12-2018",
+  "defect_ids": [
+   "T12-2018/DJI_0270_04_02/d1",
+   "T12-2018/DJI_0270_04_02/d2"
+  ],
+  "action": "reinspect",
+  "rationale": "verdict needs_review, need better evidence",
+  "evidence": [
+   "T12-2018/DJI_0270_04_02/d1: not verified (combined confidence 0.25 is below 0.3)",
+   "T12-2018/DJI_0270_04_02/d2: not verified (combined confidence 0.25 is below 0.3)"
+  ],
+  "due_within_days": 14,
+  "created_by": "agent",
+  "run_id": "run-final",
+  "model": "muse-spark-1.3",
+  "provider": "meta"
+ },
+ {
+  "id": "WO-011",
   "kind": "reinspect",
   "priority": "P2",
   "turbine_id": "T03",
@@ -155,51 +237,9 @@
    "T03-2018/DJI_0011_02_05/d1"
   ],
   "action": "reinspect",
-  "rationale": "verdict needs_review, need better evidence before grading severity 2",
-  "evidence": [
-   "T03-2018/DJI_0011_02_05/d1: not verified (the two looks differ by 1 severity level)"
-  ],
-  "due_within_days": 14,
-  "created_by": "agent",
-  "run_id": "run-final",
-  "model": "muse-spark-1.3",
-  "provider": "meta"
- },
- {
-  "id": "WO-008",
-  "kind": "reinspect",
-  "priority": "P2",
-  "turbine_id": "T04",
-  "inspection_id": "T04-2018",
-  "defect_ids": [
-   "T04-2018/DJI_0005_07_04/d1"
-  ],
-  "action": "reinspect",
   "rationale": "verdict needs_review, need better evidence",
   "evidence": [
-   "T04-2018/DJI_0005_07_04/d1: not verified (rule check failed: detector_score (detector confidence 0.07); rule check failed: severity_vs_size (severity 2 but it covers 11.4% of the photo))"
-  ],
-  "due_within_days": 14,
-  "created_by": "agent",
-  "run_id": "run-final",
-  "model": "muse-spark-1.3",
-  "provider": "meta"
- },
- {
-  "id": "WO-009",
-  "kind": "reinspect",
-  "priority": "P2",
-  "turbine_id": "T08",
-  "inspection_id": "T08-2018",
-  "defect_ids": [
-   "T08-2018/DJI_0183_03_05/d1",
-   "T08-2018/DJI_0183_03_05/d5"
-  ],
-  "action": "reinspect",
-  "rationale": "verdict needs_review or reinspect, need better evidence",
-  "evidence": [
-   "T08-2018/DJI_0183_03_05/d1: not verified (the two looks differ by 2 severity levels)",
-   "T08-2018/DJI_0183_03_05/d5: not verified (the two looks differ by 1 severity level)"
+   "T03-2018/DJI_0011_02_05/d1: not verified (the two looks differ by 1 severity level)"
   ],
   "due_within_days": 14,
   "created_by": "agent",

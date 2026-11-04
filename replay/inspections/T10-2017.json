@@ -4,10 +4,10 @@
   "turbine_id": "T10",
   "year": 2017,
   "n_images": 4,
-  "n_defects": 2,
+  "n_defects": 4,
   "max_severity": null,
-  "n_needs_review": 1,
-  "n_reinspect": 1
+  "n_needs_review": 2,
+  "n_reinspect": 2
  },
  "images": [
   {
@@ -73,39 +73,39 @@
          8.0
         ],
         [
-         272.0,
+         263.0,
          10.0
         ],
         [
-         273.0,
+         263.0,
          12.0
         ],
         [
-         278.0,
+         265.0,
          14.0
         ],
         [
-         277.0,
+         265.0,
          16.0
         ],
         [
-         276.0,
+         267.0,
          18.0
         ],
         [
-         285.0,
+         267.0,
          20.0
         ],
         [
-         287.0,
+         268.0,
          22.0
         ],
         [
-         288.0,
+         268.0,
          24.0
         ],
         [
-         285.0,
+         269.0,
          26.0
         ],
         [
@@ -121,19 +121,19 @@
          32.0
         ],
         [
-         295.0,
+         273.0,
          34.0
         ],
         [
-         296.0,
+         273.0,
          36.0
         ],
         [
-         295.0,
+         275.0,
          38.0
         ],
         [
-         299.0,
+         276.0,
          40.0
         ],
         [
@@ -165,39 +165,39 @@
          54.0
         ],
         [
-         311.0,
+         281.0,
          56.0
         ],
         [
-         311.0,
+         281.0,
          58.0
         ],
         [
-         310.0,
+         282.0,
          60.0
         ],
         [
-         317.0,
+         283.0,
          62.0
         ],
         [
-         318.0,
+         284.0,
          64.0
         ],
         [
-         319.0,
+         287.0,
          66.0
         ],
         [
-         316.0,
+         288.0,
          68.0
         ],
         [
-         317.0,
+         293.0,
          70.0
         ],
         [
-         321.0,
+         301.0,
          72.0
         ],
         [
@@ -398,16 +398,16 @@
         ]
        ]
       ],
-      "mask_area_px": 3445.0
+      "mask_area_px": 3231.0
      },
      "measurement": {
       "defect_id": "T10-2017/DJI_0378_08_09/d1",
-      "area_px": 3445.0,
-      "tile_area_ratio": 0.01584592881521209,
+      "area_px": 3231.0,
+      "tile_area_ratio": 0.014861595356153924,
       "blade_area_ratio": null,
-      "length_px": 153.510967707318,
-      "width_px": 64.4068204076962,
-      "elongation": 0.580442,
+      "length_px": 152.47560951905936,
+      "width_px": 62.60699987088174,
+      "elongation": 0.589397,
       "inside_blade": null,
       "position": "unknown",
       "position_t": null,
@@ -417,7 +417,7 @@
       "defect_id": "T10-2017/DJI_0378_08_09/d1",
       "defect_type": "other",
       "severity": 1,
-      "rationale": "No clear blade defect is visible, only blurred wires and a clamp on a structure. Crop is too blurry to grade and appears to be a false detection.",
+      "rationale": "Crop is too blurry to grade and shows no clear blade; thin lines are wires/cables over a metal structure with at most light staining.",
       "confidence": 0.2,
       "rubric_version": "v1",
       "prompt_version": "assess/v1",
@@ -443,7 +443,7 @@
        {
         "name": "severity_vs_size",
         "passed": true,
-        "detail": "severity 1 fits 1.58% of the photo"
+        "detail": "severity 1 fits 1.49% of the photo"
        }
       ],
       "reasons": [
@@ -464,10 +464,10 @@
       "label": "dirt",
       "score": 0.07373046875,
       "bbox": {
-       "x1": 282.0,
+       "x1": 421.0,
        "y1": 0.0,
        "x2": 492.0,
-       "y2": 97.0
+       "y2": 25.0
       },
       "outline": [
        [
@@ -524,211 +524,11 @@
          24.0
         ],
         [
-         285.0,
-         28.0
-        ],
-        [
-         295.0,
-         32.0
-        ],
-        [
-         296.0,
-         34.0
-        ],
-        [
-         297.0,
-         36.0
-        ],
-        [
-         296.0,
-         38.0
-        ],
-        [
-         300.0,
-         40.0
-        ],
-        [
-         410.0,
-         42.0
-        ],
-        [
-         410.0,
-         44.0
-        ],
-        [
-         409.0,
-         46.0
-        ],
-        [
-         409.0,
-         48.0
-        ],
-        [
-         301.0,
-         50.0
-        ],
-        [
-         310.0,
-         52.0
-        ],
-        [
-         309.0,
-         54.0
-        ],
-        [
-         312.0,
-         56.0
-        ],
-        [
-         306.0,
-         58.0
-        ],
-        [
-         326.0,
-         77.0
-        ],
-        [
-         325.0,
-         79.0
-        ],
-        [
-         329.0,
-         82.0
-        ],
-        [
-         333.0,
-         84.0
-        ],
-        [
-         336.0,
-         86.0
-        ],
-        [
-         341.0,
-         88.0
-        ],
-        [
-         351.0,
-         90.0
-        ],
-        [
-         356.0,
-         92.0
-        ],
-        [
-         355.0,
-         94.0
-        ],
-        [
-         353.0,
-         96.0
-        ],
-        [
-         349.0,
-         96.0
-        ],
-        [
-         343.0,
-         94.0
-        ],
-        [
-         332.0,
-         92.0
-        ],
-        [
-         324.0,
-         90.0
-        ],
-        [
-         316.0,
-         88.0
-        ],
-        [
-         312.0,
-         86.0
-        ],
-        [
-         308.0,
-         84.0
-        ],
-        [
-         304.0,
-         82.0
-        ],
-        [
-         323.0,
-         79.0
-        ],
-        [
-         323.0,
-         77.0
-        ],
-        [
-         305.0,
-         58.0
-        ],
-        [
-         305.0,
-         56.0
-        ],
-        [
-         306.0,
-         54.0
-        ],
-        [
-         300.0,
-         52.0
-        ],
-        [
-         300.0,
-         50.0
-        ],
-        [
-         299.0,
-         48.0
-        ],
-        [
-         298.0,
-         46.0
-        ],
-        [
-         296.0,
-         44.0
-        ],
-        [
-         299.0,
-         42.0
-        ],
-        [
-         296.0,
-         40.0
-        ],
-        [
-         295.0,
-         38.0
-        ],
-        [
-         296.0,
-         36.0
-        ],
-        [
-         291.0,
-         34.0
-        ],
-        [
-         291.0,
-         32.0
-        ],
-        [
-         283.0,
-         28.0
-        ],
-        [
-         288.0,
+         489.0,
          24.0
         ],
         [
-         287.0,
+         481.0,
          22.0
         ],
         [
@@ -777,16 +577,16 @@
         ]
        ]
       ],
-      "mask_area_px": 770.0
+      "mask_area_px": 338.0
      },
      "measurement": {
       "defect_id": "T10-2017/DJI_0378_08_09/d2",
-      "area_px": 770.0,
-      "tile_area_ratio": 0.003541760576984996,
+      "area_px": 338.0,
+      "tile_area_ratio": 0.0015546949026245826,
       "blade_area_ratio": null,
-      "length_px": 195.3508381808692,
-      "width_px": 98.09127447514939,
-      "elongation": 0.497871,
+      "length_px": 74.99504374763387,
+      "width_px": 7.230302446595914,
+      "elongation": 0.90359,
       "inside_blade": null,
       "position": "unknown",
       "position_t": null,
@@ -796,8 +596,8 @@
       "defect_id": "T10-2017/DJI_0378_08_09/d2",
       "defect_type": "other",
       "severity": 1,
-      "rationale": "No wind turbine blade or blade defect is visible; images show a steel structure, cable, and fastener with rust staining, likely a false detection.",
-      "confidence": 0.1,
+      "rationale": "Wider view shows metal structure/bridge not a turbine blade and close crop is too blurry/small to confirm damage, showing only a small dark spot/streak with no open crack or fibres.",
+      "confidence": 0.25,
       "rubric_version": "v1",
       "prompt_version": "assess/v1",
       "model": "muse-spark-1.3",
@@ -805,6 +605,145 @@
      },
      "verification": {
       "defect_id": "T10-2017/DJI_0378_08_09/d2",
+      "verdict": "needs_review",
+      "agreement": 1.0,
+      "second_severity": 1,
+      "checks": [
+       {
+        "name": "inside_blade",
+        "passed": true,
+        "detail": "no blade mask: not checked"
+       },
+       {
+        "name": "detector_score",
+        "passed": false,
+        "detail": "detector confidence 0.07"
+       },
+       {
+        "name": "severity_vs_size",
+        "passed": true,
+        "detail": "severity 1 fits 0.16% of the photo"
+       }
+      ],
+      "reasons": [
+       "combined confidence 0.25 is below 0.3",
+       "rule check failed: detector_score (detector confidence 0.07)"
+      ],
+      "model": "muse-spark-1.3",
+      "provider": "meta"
+     },
+     "error": null
+    },
+    {
+     "defect": {
+      "id": "T10-2017/DJI_0378_08_09/d3",
+      "image_id": "T10-2017/DJI_0378_08_09",
+      "concept": "dirt (proposed)",
+      "source": "box_prompt",
+      "label": "dirt",
+      "score": 0.07373046875,
+      "bbox": {
+       "x1": 296.0,
+       "y1": 39.0,
+       "x2": 305.0,
+       "y2": 53.0
+      },
+      "outline": [
+       [
+        [
+         299.0,
+         39.0
+        ],
+        [
+         301.0,
+         41.0
+        ],
+        [
+         301.0,
+         43.0
+        ],
+        [
+         302.0,
+         45.0
+        ],
+        [
+         302.0,
+         47.0
+        ],
+        [
+         301.0,
+         49.0
+        ],
+        [
+         302.0,
+         51.0
+        ],
+        [
+         305.0,
+         52.0
+        ],
+        [
+         300.0,
+         52.0
+        ],
+        [
+         300.0,
+         51.0
+        ],
+        [
+         299.0,
+         49.0
+        ],
+        [
+         298.0,
+         47.0
+        ],
+        [
+         297.0,
+         45.0
+        ],
+        [
+         299.0,
+         43.0
+        ],
+        [
+         297.0,
+         41.0
+        ],
+        [
+         297.0,
+         39.0
+        ]
+       ]
+      ],
+      "mask_area_px": 44.0
+     },
+     "measurement": {
+      "defect_id": "T10-2017/DJI_0378_08_09/d3",
+      "area_px": 44.0,
+      "tile_area_ratio": 0.00020238631868485692,
+      "blade_area_ratio": null,
+      "length_px": 15.535647514031496,
+      "width_px": 6.1023974830667385,
+      "elongation": 0.6072,
+      "inside_blade": null,
+      "position": "unknown",
+      "position_t": null,
+      "units": "pixels"
+     },
+     "assessment": {
+      "defect_id": "T10-2017/DJI_0378_08_09/d3",
+      "defect_type": "other",
+      "severity": 1,
+      "rationale": "Both crops are extremely blurry with only indistinct dark lines and no clearly visible blade defect, so it cannot be reliably graded.",
+      "confidence": 0.15,
+      "rubric_version": "v1",
+      "prompt_version": "assess/v1",
+      "model": "muse-spark-1.3",
+      "provider": "meta"
+     },
+     "verification": {
+      "defect_id": "T10-2017/DJI_0378_08_09/d3",
       "verdict": "reinspect",
       "agreement": 1.0,
       "second_severity": 1,
@@ -822,7 +761,122 @@
        {
         "name": "severity_vs_size",
         "passed": true,
-        "detail": "severity 1 fits 0.35% of the photo"
+        "detail": "severity 1 fits 0.02% of the photo"
+       }
+      ],
+      "reasons": [
+       "combined confidence 0.10 is below 0.15",
+       "rule check failed: detector_score (detector confidence 0.07)"
+      ],
+      "model": "muse-spark-1.3",
+      "provider": "meta"
+     },
+     "error": null
+    },
+    {
+     "defect": {
+      "id": "T10-2017/DJI_0378_08_09/d4",
+      "image_id": "T10-2017/DJI_0378_08_09",
+      "concept": "dirt (proposed)",
+      "source": "box_prompt",
+      "label": "dirt",
+      "score": 0.07373046875,
+      "bbox": {
+       "x1": 402.0,
+       "y1": 41.0,
+       "x2": 410.0,
+       "y2": 49.0
+      },
+      "outline": [
+       [
+        [
+         409.0,
+         41.0
+        ],
+        [
+         410.0,
+         43.0
+        ],
+        [
+         410.0,
+         45.0
+        ],
+        [
+         409.0,
+         47.0
+        ],
+        [
+         409.0,
+         48.0
+        ],
+        [
+         406.0,
+         48.0
+        ],
+        [
+         407.0,
+         47.0
+        ],
+        [
+         403.0,
+         45.0
+        ],
+        [
+         402.0,
+         43.0
+        ],
+        [
+         403.0,
+         41.0
+        ]
+       ]
+      ],
+      "mask_area_px": 45.0
+     },
+     "measurement": {
+      "defect_id": "T10-2017/DJI_0378_08_09/d4",
+      "area_px": 45.0,
+      "tile_area_ratio": 0.00020698600774587638,
+      "blade_area_ratio": null,
+      "length_px": 9.427924437480101,
+      "width_px": 7.731331371977888,
+      "elongation": 0.179954,
+      "inside_blade": null,
+      "position": "unknown",
+      "position_t": null,
+      "units": "pixels"
+     },
+     "assessment": {
+      "defect_id": "T10-2017/DJI_0378_08_09/d4",
+      "defect_type": "other",
+      "severity": 1,
+      "rationale": "No blade surface is recognizable; both crops are very blurry showing a rod and metal panels, so no defect can be graded.",
+      "confidence": 0.1,
+      "rubric_version": "v1",
+      "prompt_version": "assess/v1",
+      "model": "muse-spark-1.3",
+      "provider": "meta"
+     },
+     "verification": {
+      "defect_id": "T10-2017/DJI_0378_08_09/d4",
+      "verdict": "reinspect",
+      "agreement": 1.0,
+      "second_severity": 1,
+      "checks": [
+       {
+        "name": "inside_blade",
+        "passed": true,
+        "detail": "no blade mask: not checked"
+       },
+       {
+        "name": "detector_score",
+        "passed": false,
+        "detail": "detector confidence 0.07"
+       },
+       {
+        "name": "severity_vs_size",
+        "passed": true,
+        "detail": "severity 1 fits 0.02% of the photo"
        }
       ],
       "reasons": [

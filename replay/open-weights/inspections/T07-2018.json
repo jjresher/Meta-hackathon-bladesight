@@ -4,9 +4,9 @@
   "turbine_id": "T07",
   "year": 2018,
   "n_images": 4,
-  "n_defects": 5,
+  "n_defects": 4,
   "max_severity": 1,
-  "n_needs_review": 4,
+  "n_needs_review": 3,
   "n_reinspect": 0
  },
  "images": [
@@ -17,107 +17,7 @@
    "width": 586,
    "height": 371,
    "blade_outline": [],
-   "defects": [
-    {
-     "defect": {
-      "id": "T07-2018/DJI_0743_04_09/d1",
-      "image_id": "T07-2018/DJI_0743_04_09",
-      "concept": "damage (proposed)",
-      "source": "box_prompt",
-      "label": "damage",
-      "score": 0.494140625,
-      "bbox": {
-       "x1": 308.0,
-       "y1": 184.0,
-       "x2": 316.0,
-       "y2": 188.0
-      },
-      "outline": [
-       [
-        [
-         315.0,
-         184.0
-        ],
-        [
-         316.0,
-         186.0
-        ],
-        [
-         315.0,
-         187.0
-        ],
-        [
-         311.0,
-         187.0
-        ],
-        [
-         308.0,
-         186.0
-        ],
-        [
-         312.0,
-         184.0
-        ]
-       ]
-      ],
-      "mask_area_px": 22.0
-     },
-     "measurement": {
-      "defect_id": "T07-2018/DJI_0743_04_09/d1",
-      "area_px": 22.0,
-      "tile_area_ratio": 0.00010119315934242846,
-      "blade_area_ratio": null,
-      "length_px": 8.036055483904534,
-      "width_px": 4.0819702445443795,
-      "elongation": 0.492043,
-      "inside_blade": null,
-      "position": "unknown",
-      "position_t": null,
-      "units": "pixels"
-     },
-     "assessment": {
-      "defect_id": "T07-2018/DJI_0743_04_09/d1",
-      "defect_type": "dirt",
-      "severity": 1,
-      "rationale": "Tiny dark speck (~22 px, 0.01% of photo) on featureless blurry gray field with no visible blade edges or texture for scale. Crops are too small and blurry to distinguish dirt/stain from tiny chip and to rule out hidden damage, so conservatively graded as cosmetic at the lower level.",
-      "confidence": 0.28,
-      "rubric_version": "v1",
-      "prompt_version": "assess/v1",
-      "model": "meta-models/muse-spark-open",
-      "provider": "baseten"
-     },
-     "verification": {
-      "defect_id": "T07-2018/DJI_0743_04_09/d1",
-      "verdict": "needs_review",
-      "agreement": 1.0,
-      "second_severity": 1,
-      "checks": [
-       {
-        "name": "inside_blade",
-        "passed": true,
-        "detail": "no blade mask: not checked"
-       },
-       {
-        "name": "detector_score",
-        "passed": false,
-        "detail": "detector confidence 0.49"
-       },
-       {
-        "name": "severity_vs_size",
-        "passed": true,
-        "detail": "severity 1 fits 0.01% of the photo"
-       }
-      ],
-      "reasons": [
-       "combined confidence 0.25 is below 0.3",
-       "rule check failed: detector_score (detector confidence 0.49)"
-      ],
-      "model": "meta-models/muse-spark-open",
-      "provider": "baseten"
-     },
-     "error": null
-    }
-   ]
+   "defects": []
   },
   {
    "id": "T07-2018/DJI_0170_01_05",
@@ -147,177 +47,177 @@
       "bbox": {
        "x1": 85.0,
        "y1": 34.0,
-       "x2": 196.0,
+       "x2": 168.0,
        "y2": 148.0
       },
       "outline": [
        [
         [
-         111.0,
+         109.0,
          34.0
         ],
         [
-         124.0,
+         119.0,
          36.0
         ],
         [
-         132.0,
+         126.0,
          38.0
         ],
         [
-         138.0,
+         129.0,
          40.0
         ],
         [
-         142.0,
+         128.0,
          42.0
         ],
         [
-         155.0,
+         140.0,
          44.0
         ],
         [
-         174.0,
+         142.0,
          46.0
         ],
         [
-         181.0,
+         148.0,
          48.0
         ],
         [
-         182.0,
+         150.0,
          50.0
         ],
         [
-         183.0,
+         150.0,
          52.0
         ],
         [
-         185.0,
+         152.0,
          54.0
         ],
         [
-         185.0,
+         156.0,
          56.0
         ],
         [
-         184.0,
+         165.0,
          58.0
         ],
         [
-         184.0,
+         164.0,
          60.0
         ],
         [
-         185.0,
+         159.0,
          62.0
         ],
         [
-         186.0,
+         164.0,
          64.0
         ],
         [
-         189.0,
+         165.0,
          66.0
         ],
         [
-         191.0,
+         167.0,
          68.0
         ],
         [
-         192.0,
+         165.0,
          70.0
         ],
         [
-         193.0,
+         166.0,
          72.0
         ],
         [
-         194.0,
+         166.0,
          74.0
         ],
         [
-         195.0,
+         165.0,
          76.0
         ],
         [
-         195.0,
+         167.0,
          78.0
         ],
         [
-         194.0,
+         166.0,
          80.0
         ],
         [
-         194.0,
+         166.0,
          82.0
         ],
         [
-         193.0,
+         166.0,
          84.0
         ],
         [
-         193.0,
+         161.0,
          86.0
         ],
         [
-         193.0,
+         165.0,
          88.0
         ],
         [
-         193.0,
+         164.0,
          90.0
         ],
         [
-         193.0,
+         164.0,
          92.0
         ],
         [
-         193.0,
+         164.0,
          94.0
         ],
         [
-         193.0,
+         164.0,
          96.0
         ],
         [
-         193.0,
+         165.0,
          98.0
         ],
         [
-         194.0,
+         165.0,
          100.0
         ],
         [
-         194.0,
+         165.0,
          102.0
         ],
         [
-         195.0,
+         165.0,
          104.0
         ],
         [
-         195.0,
+         164.0,
          106.0
         ],
         [
-         196.0,
+         165.0,
          108.0
         ],
         [
-         196.0,
+         165.0,
          110.0
         ],
         [
-         196.0,
+         165.0,
          112.0
         ],
         [
-         194.0,
+         165.0,
          114.0
         ],
         [
-         166.0,
+         165.0,
          116.0
         ],
         [
@@ -325,11 +225,11 @@
          118.0
         ],
         [
-         167.0,
+         166.0,
          120.0
         ],
         [
-         168.0,
+         167.0,
          122.0
         ],
         [
@@ -337,11 +237,11 @@
          124.0
         ],
         [
-         168.0,
+         167.0,
          126.0
         ],
         [
-         167.0,
+         166.0,
          128.0
         ],
         [
@@ -377,7 +277,7 @@
          144.0
         ],
         [
-         153.0,
+         151.0,
          146.0
         ],
         [
@@ -409,7 +309,7 @@
          138.0
         ],
         [
-         111.0,
+         114.0,
          136.0
         ],
         [
@@ -445,7 +345,7 @@
          120.0
         ],
         [
-         89.0,
+         90.0,
          118.0
         ],
         [
@@ -618,16 +518,16 @@
         ]
        ]
       ],
-      "mask_area_px": 9356.0
+      "mask_area_px": 7229.0
      },
      "measurement": {
       "defect_id": "T07-2018/DJI_0682_07_06/d1",
-      "area_px": 9356.0,
-      "tile_area_ratio": 0.04303469085489821,
+      "area_px": 7229.0,
+      "tile_area_ratio": 0.03325115222210979,
       "blade_area_ratio": null,
-      "length_px": 123.7911634582447,
-      "width_px": 112.67419031400138,
-      "elongation": 0.089804,
+      "length_px": 122.56310499888481,
+      "width_px": 92.768212856346,
+      "elongation": 0.243098,
       "inside_blade": null,
       "position": "unknown",
       "position_t": null,
@@ -637,8 +537,8 @@
       "defect_id": "T07-2018/DJI_0682_07_06/d1",
       "defect_type": "surface_damage",
       "severity": 3,
-      "rationale": "Irregular yellowish-brown patch at the blade edge shows visible paint/coating loss with possible substrate showing but no clearly open long crack or exposed fibres. Images are blurry and the full chord is not visible, so fibre exposure cannot be ruled out and size vs width is uncertain.",
-      "confidence": 0.52,
+      "rationale": "Yellow-brown irregular patch with coating loss/peeling and exposed underlayer, no open crack or fibres visible; moderate patch size vs visible blade.",
+      "confidence": 0.62,
       "rubric_version": "v1",
       "prompt_version": "assess/v1",
       "model": "meta-models/muse-spark-open",
@@ -663,7 +563,7 @@
        {
         "name": "severity_vs_size",
         "passed": true,
-        "detail": "severity 3 fits 4.30% of the photo"
+        "detail": "severity 3 fits 3.33% of the photo"
        }
       ],
       "reasons": [

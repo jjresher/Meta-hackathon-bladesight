@@ -66,8 +66,8 @@ retyped; older stored results still validate):
     (`src/bladesight/fleet/rules.py`), e.g. `verified_only` (a repair or monitor order may only
     cite `ok` defects), `reinspect_unverified_only`, `report_cites_existing_orders`.
 
-The Meta run's fields were backfilled from its stored steps (`uv run poe fleet backfill`, no model
-call).
+Both stored runs recorded these fields as they ran; `uv run poe fleet backfill` (no model call)
+fills them into older stores and changes nothing here.
 
 ## Conventions
 

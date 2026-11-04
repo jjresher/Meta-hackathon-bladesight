@@ -27,6 +27,7 @@ import random
 import re
 import statistics
 import subprocess
+import sys
 from collections.abc import Sequence
 from datetime import UTC, datetime
 from pathlib import Path
@@ -665,6 +666,9 @@ def main(argv: list[str] | None = None) -> int:
         dev_variant_table(args.data_dir, EVIDENCE.parent / f"{EVIDENCE_STEM}_dev.md")
         print(f"wrote {EVIDENCE.parent / f'{EVIDENCE_STEM}_dev.md'}")
         return 0
+    if args.write and MANIFEST.exists():  # before any data is read
+        print(f"refused: {MANIFEST} exists (the fresh set is frozen)", file=sys.stderr)
+        return 2
     tiles = load_split("dev", args.data_dir)
     reasons = excluded_photos(tiles)
     excluded = set().union(*reasons.values())

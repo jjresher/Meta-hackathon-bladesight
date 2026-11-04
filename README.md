@@ -74,6 +74,9 @@ models ([`docs/api.md`](docs/api.md)) from which the UI's types are generated.
 
 The held-out run (preregistered, run once on 760 tiles of photos nobody tuned on, see "Held-out"
 below) is the number to quote for detection; the dev numbers are where the pipeline was developed.
+Both measure the first detector (v1). The demo runs a later one (v2), a post-processing change
+measured separately, after the held-out run, on a preregistered fresh dev set; v2 was never
+measured on the held-out split.
 
 | What | Result | Evidence |
 |---|---|---|
@@ -83,11 +86,12 @@ below) is the number to quote for detection; the dev numbers are where the pipel
 | Damage detection, box level (IoU 0.3, 300 dev tiles) | precision 0.37 (95% CI 0.31-0.42), recall 0.22 (0.18-0.26) | [`eval_dev.md`](docs/evidence/eval_dev.md) |
 | Damage, image level, dev (a damaged 586x371 tile has at least one damage prediction) | recall 0.77, with a 21% false-alarm rate on tiles that have no box | [`eval_dev.md`](docs/evidence/eval_dev.md) |
 | Dirt detection, dev | weak (precision 0.05, recall 0.31 over 36 truth boxes): reported as weak, not offered as a detector | [`eval_dev.md`](docs/evidence/eval_dev.md) |
+| Detection v2, a later improvement measured on a preregistered fresh dev set after the held-out run (300 dev tiles, 490 damage boxes, photos disjoint from the tuned sample) | damage F1 at IoU 0.3: 0.25 against v1's 0.22 (paired difference +0.026, 95% CI +0.006 to +0.045); false alarms 21% for both on the 100 tiles with no box; precision 0.31, recall 0.21. Dev data, not held-out | [`eval_fresh_v2.md`](docs/evidence/eval_fresh_v2.md) |
 | Severity vs a human applying the rubric (40 crops) | quadratic weighted kappa 0.12 (95% interval -0.05 to 0.29), exact agreement 25%: **advisory only** | [`severity_agreement.md`](docs/evidence/severity_agreement.md) |
 | Same 40 crops on **Muse Spark Open** | kappa 0.19 (0.01 to 0.38), exact agreement 30%: no worse, not shown to be better | [`open_weights.md`](docs/evidence/open_weights.md) |
-| Verification on the synthetic farm (96 defects) | 33 `ok`, 50 `needs_review`, 13 `reinspect` | [`fleet_run.md`](docs/evidence/fleet_run.md) |
-| Fleet agent run (Muse Spark) | 60 steps, 23 tool calls in 14 model turns, 9 work orders (3 repair on `ok` defects, 6 re-inspections), 0.06 USD | [`fleet_run.md`](docs/evidence/fleet_run.md) |
-| Same farm, grading + verification + agent on **Muse Spark Open** | same severity as Muse Spark on 74 of 96 defects, same verdict on 63; 22 tool calls, 8 work orders (2 repair, 6 re-inspections); 1.74 + 0.06 USD | [`open_weights.md`](docs/evidence/open_weights.md), [`open_weights_farm.md`](docs/evidence/open_weights_farm.md) |
+| Verification on the synthetic farm (98 defects, detection v2) | 35 `ok`, 50 `needs_review`, 13 `reinspect` | [`fleet_run.md`](docs/evidence/fleet_run.md) |
+| Fleet agent run (Muse Spark) | 59 steps, 25 tool calls in 16 model turns, 11 work orders (5 repair on `ok` defects, 6 re-inspections), 0.07 USD | [`fleet_run.md`](docs/evidence/fleet_run.md) |
+| Same farm, grading + verification + agent on **Muse Spark Open** | same severity as Muse Spark on 78 of 98 defects, same verdict on 64; 23 tool calls, 9 work orders (2 repair, 1 monitor, 6 re-inspections); 2.11 (cumulative over both grading passes, see [`limitations.md`](docs/limitations.md)) + 0.06 USD | [`open_weights.md`](docs/evidence/open_weights.md), [`open_weights_farm.md`](docs/evidence/open_weights_farm.md) |
 | Cost of detection | about 0.014 USD per tile | [`detect.md`](docs/evidence/detect.md) |
 | Public demo | smoke check OK in 1.9 s; cold start 21.5 s after 3.5 h idle (one sample); no horizontal scroll at 390x844 on all five screens checked | [`deploy.md`](docs/evidence/deploy.md) |
 
@@ -97,7 +101,7 @@ the truth boxes are under 400 px^2, i.e. smaller than 20x20 px, and the median i
 the dev sample over-represents tiles with boxes, so dev precision is optimistic for a real
 inspection; the severity grade agrees only weakly with the human labels, and the labels come from
 one person without wind-energy experience applying our rubric, so they measure agreement with the
-rubric, not specialist-validated severity. The open-weights comparison is one run per model on 96
+rubric, not specialist-validated severity. The open-weights comparison is one run per model on 98
 defects: agreement between two models, not accuracy. The full list is in
 [`docs/limitations.md`](docs/limitations.md). Costs are documented prices times real usage, not
 checked against an invoice.
@@ -107,7 +111,7 @@ checked against an invoice.
 Counted from the stored traces in [`fleet_run.md`](docs/evidence/fleet_run.md):
 
 - The agent decides its own sequence of tool calls over seven tools (rank, read, compare, assess,
-  order, re-inspect, report): 23 calls in 14 model turns on Muse Spark, 22 calls in 7 turns on
+  order, re-inspect, report): 25 calls in 16 model turns on Muse Spark, 23 calls in 7 turns on
   Muse Spark Open, each ending with a report it wrote. The prompt gives the rules and a suggested
   workflow; the loop does not fix which tool comes next or which defects to act on.
 - It acts on uncertainty instead of hiding it: in both runs 6 of the orders are re-inspection
@@ -120,7 +124,7 @@ Counted from the stored traces in [`fleet_run.md`](docs/evidence/fleet_run.md):
   the UI lists the rules in force and says that no call was rejected.
 - Every step is in the trace with the tool, the arguments, a `decision` summary, the `outcome`,
   the rule that blocked it if any, and the model's own text before the call as `rationale` when it
-  wrote one (the Muse Spark run did before all 23 calls; the Muse Spark Open run wrote none).
+  wrote one (the Muse Spark run did before 18 of its 25 calls; the Muse Spark Open run wrote none).
 
 ## Runs on Meta open weights
 
@@ -128,8 +132,8 @@ The whole planning half of the pipeline (severity, verification, the agent with 
 and the report) has run end to end on **Muse Spark Open** (`meta-models/muse-spark-open`, Baseten),
 stored as a second replay (`replay/open-weights/`) next to the Muse Spark one, on the same stored
 detections. Detection (Muse Spark box proposals and SAM 3.1 masks) stays on the Meta Model API:
-SAM 3.1 has no open-weights path here. The two runs agree on the severity of 74 of 96 defects and
-on the verdict of 63; the open model is more cautious on this farm (22 `ok` against 33)
+SAM 3.1 has no open-weights path here. The two runs agree on the severity of 78 of 98 defects and
+on the verdict of 64; the open model is more cautious on this farm (25 `ok` against 35)
 ([`open_weights.md`](docs/evidence/open_weights.md),
 [`open_weights_farm.md`](docs/evidence/open_weights_farm.md)). We do not claim either model is
 better. In the UI, pick "Muse Spark Open (Baseten)" in the run selector or open **Compare runs**.
@@ -184,7 +188,7 @@ uv run python -m bladesight.api.smoke http://127.0.0.1:8000   # in a second term
 curl -s http://127.0.0.1:8000/api/replays                    # which model ran each stage, per run
 curl -s "http://127.0.0.1:8000/api/fleet?provider=baseten"   # ranking from the Open grades
 curl -s "http://127.0.0.1:8000/api/runs?provider=baseten"    # the Open agent trace
-uv run poe fleet compare --farm-cost 1.63 --open-farm-cost 1.7406  # rewrite open_weights_farm.md from the two replays (free; the flags are the recorded farm costs)
+uv run poe fleet compare --farm-cost 1.778 --open-farm-cost 2.1059  # rewrite open_weights_farm.md from the two replays (free; the flags are the recorded farm costs)
 ```
 
 For UI development run the API (`uv run poe serve`) and `uv run poe web-dev` (Vite on port 5173
@@ -201,13 +205,13 @@ cache and never calls a model.
 cp .env.example .env   # fill META_API_KEY and META_SPEND_LIMIT_USD; never commit .env
 uv run poe data                                # download, split by photo, seal the held-out split
 BLADESIGHT_MODE=live uv run poe detect DJI_0382_02_04
-BLADESIGHT_MODE=live uv run poe fleet process  # detect, grade and verify the farm (1.63 USD for 96 tiles, all stages)
+BLADESIGHT_MODE=live uv run poe fleet process  # detect, grade and verify the farm (1.78 USD for 96 tiles over the runs behind the store, all stages)
 BLADESIGHT_MODE=live uv run poe fleet run      # the agent
 ```
 
 Re-run the planning half on Muse Spark Open (needs `BASETEN_API_KEY` and `BASETEN_SPEND_LIMIT_USD`
-in `.env` or the environment; no Meta key is needed because detections are reused; about 1.80 USD,
-and 192 grading calls wait for the 15 requests/minute limit, so at least 13 minutes;
+in `.env` or the environment; no Meta key is needed because detections are reused; 2.16 USD over the runs behind
+the stored replay, and 197 grading calls wait for the 15 requests/minute limit, so at least 14 minutes;
 [`open_weights.md`](docs/evidence/open_weights.md)). Write to a new folder so the stored replay
 stays as it is. Re-grading reads the farm tiles, so fetch them first
 (`uv run python -m bladesight.data.demo`, or `uv run poe data` for the whole dataset):

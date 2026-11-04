@@ -16,7 +16,7 @@ from ..data import TileLabel, image_path
 from ..measure import measure_detection
 from ..meta import MetaError, MetaSettings, build_client
 from .overlay import render_overlay
-from .pipeline import detect_tile
+from .pipeline import DETECTORS, PRODUCT_DETECTOR, detect_tile
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -26,6 +26,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--out", type=Path, default=Path("outputs/detect"))
     parser.add_argument("--provider", choices=["meta", "stub"], default="meta")
     parser.add_argument("--no-blade", action="store_true", help="skip the blade concept call")
+    parser.add_argument(
+        "--detector",
+        choices=sorted(DETECTORS),
+        default=PRODUCT_DETECTOR,
+        help="post-processing version (#22; the product runs v2)",
+    )
     args = parser.parse_args(argv)
 
     path = Path(args.tile)
@@ -43,7 +49,12 @@ def main(argv: list[str] | None = None) -> int:
     started = time.monotonic()
     try:
         detection = detect_tile(
-            client, settings, tile_id, path.read_bytes(), with_blade=not args.no_blade
+            client,
+            settings,
+            tile_id,
+            path.read_bytes(),
+            with_blade=not args.no_blade,
+            detector=args.detector,
         )
     except MetaError as error:
         print(f"error: {error}", file=sys.stderr)

@@ -27,7 +27,7 @@ from ..contracts import (
     Measurement,
 )
 from ..data import image_path
-from ..detect.pipeline import detect_tile
+from ..detect.pipeline import PRODUCT_DETECTOR, detect_tile
 from ..measure import measure_detection
 from ..meta import (
     MetaClient,
@@ -99,7 +99,15 @@ def process_image(
 ) -> InspectionImage:
     """`client` runs detection (Meta Model API); `chat` grades (defaults to `client` on Meta)."""
     chat = chat or ChatTarget(client, provider, settings.chat_model)  # type: ignore[arg-type]
-    detection = detect_tile(client, settings, tile_id, png, image_id=image_id, with_blade=False)
+    detection = detect_tile(
+        client,
+        settings,
+        tile_id,
+        png,
+        image_id=image_id,
+        with_blade=False,
+        detector=PRODUCT_DETECTOR,
+    )
     measurements = {m.defect_id: m for m in measure_detection(detection)}
     ranked = sorted(detection.defects, key=lambda d: -d.defect.score)[:MAX_DEFECTS_PER_IMAGE]
     defects = [

@@ -25,6 +25,18 @@ export const FALSE_ALARM_RATE = {
   heldout: { file: "docs/evidence/eval_heldout.md", rate: 0.24, cleanTiles: 300 },
 } as const;
 
+/**
+ * Detection v2, the detector the demo runs: measured on a preregistered fresh dev set after the
+ * held-out run, never on the held-out split. The detection numbers on this page measure v1.
+ */
+export const DETECTOR_V2 = {
+  file: "docs/evidence/eval_fresh_v2.md",
+  tiles: 300,
+  f1V1: 0.224,
+  f1V2: 0.25,
+  falseAlarm: 0.21,
+} as const;
+
 export const evidenceUrl = (path: string): string => `${EVIDENCE_BASE_URL}${path}`;
 
 /**
@@ -33,30 +45,30 @@ export const evidenceUrl = (path: string): string => `${EVIDENCE_BASE_URL}${path
  */
 export const OPEN_WEIGHTS_FARM = {
   file: "docs/evidence/open_weights_farm.md",
-  defects: 96,
-  sameSeverity: 74,
-  sameSeverityPct: 77,
-  withinOne: 85,
-  withinOnePct: 89,
-  sameVerdict: 63,
-  sameVerdictPct: 66,
+  defects: 98,
+  sameSeverity: 78,
+  sameSeverityPct: 80,
+  withinOne: 89,
+  withinOnePct: 91,
+  sameVerdict: 64,
+  sameVerdictPct: 65,
   /** Verdict counts per run. */
   verdicts: {
-    meta: { ok: 33, needs_review: 50, reinspect: 13 },
-    baseten: { ok: 22, needs_review: 60, reinspect: 14 },
+    meta: { ok: 35, needs_review: 50, reinspect: 13 },
+    baseten: { ok: 25, needs_review: 59, reinspect: 14 },
   },
   /** Rows: Meta verdict ok / needs_review / reinspect; columns: Open verdict, same order. */
   verdictMatrix: [
-    [17, 11, 5],
-    [3, 42, 5],
-    [2, 7, 4],
+    [18, 13, 4],
+    [4, 41, 5],
+    [3, 5, 5],
   ],
   turbines: 12,
-  spearman: 0.77,
+  spearman: 0.62,
   topSixInBoth: 4,
-  orders: { meta: 9, baseten: 8, metaRun: "run-final", openRun: "run-open-weights" },
-  repairDefects: { both: 2, union: 5, meta: 4, baseten: 3 },
-  reinspectDefects: { both: 16, union: 30, meta: 19, baseten: 27 },
+  orders: { meta: 11, baseten: 9, metaRun: "run-final", openRun: "run-open-weights" },
+  repairDefects: { both: 2, union: 7, meta: 6, baseten: 3 },
+  reinspectDefects: { both: 14, union: 27, meta: 19, baseten: 22 },
 } as const;
 
 /**

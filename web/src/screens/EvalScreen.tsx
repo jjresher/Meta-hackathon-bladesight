@@ -6,7 +6,7 @@ import RangeBar from "../components/RangeBar";
 import SweepChart from "../components/SweepChart";
 import { InfoIcon } from "../components/icons";
 import { useAsyncData } from "../hooks/useAsyncData";
-import { FALSE_ALARM_RATE, SEVERITY_AGREEMENT, evidenceUrl } from "../evidence";
+import { DETECTOR_V2, FALSE_ALARM_RATE, SEVERITY_AGREEMENT, evidenceUrl } from "../evidence";
 import { pct, usd } from "../lib/format";
 import type { ClassMetrics, EvalReport, Interval } from "../types";
 
@@ -237,6 +237,16 @@ function EvalBody({ reports }: { reports: EvalReport[] }) {
           reported as measured, with intervals.
         </p>
       </header>
+
+      <p className="note" data-testid="detector-note">
+        <InfoIcon className="note__icon" />
+        <span>
+          The detection numbers below measure the first detector (v1). The demo farm runs a later one (v2): on a
+          preregistered fresh dev set of {DETECTOR_V2.tiles} tiles its box F1 was {DETECTOR_V2.f1V2.toFixed(2)} against{" "}
+          {DETECTOR_V2.f1V1.toFixed(2)} at the same false-alarm rate (
+          <a href={evidenceUrl(DETECTOR_V2.file)}>evidence</a>). v2 was never measured on the held-out split.
+        </span>
+      </p>
 
       <div className="seg seg--tabs" role="group" aria-label="Evaluation split">
         {(["heldout", "dev"] as const).map((key) => (

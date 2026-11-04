@@ -6,7 +6,7 @@
   "n_images": 4,
   "n_defects": 9,
   "max_severity": 3,
-  "n_needs_review": 3,
+  "n_needs_review": 4,
   "n_reinspect": 0
  },
  "images": [
@@ -668,7 +668,7 @@
          61.0
         ],
         [
-         353.0,
+         356.0,
          59.0
         ],
         [
@@ -704,7 +704,7 @@
          43.0
         ],
         [
-         361.0,
+         368.0,
          41.0
         ],
         [
@@ -716,19 +716,19 @@
          37.0
         ],
         [
-         363.0,
+         370.0,
          35.0
         ],
         [
-         361.0,
+         372.0,
          33.0
         ],
         [
-         361.0,
+         375.0,
          31.0
         ],
         [
-         362.0,
+         370.0,
          29.0
         ],
         [
@@ -757,16 +757,16 @@
         ]
        ]
       ],
-      "mask_area_px": 4553.0
+      "mask_area_px": 4522.0
      },
      "measurement": {
       "defect_id": "T08-2017/DJI_0378_08_08/d1",
-      "area_px": 4553.0,
-      "tile_area_ratio": 0.02094238429482167,
+      "area_px": 4522.0,
+      "tile_area_ratio": 0.020799793933930066,
       "blade_area_ratio": null,
-      "length_px": 177.17552298552835,
-      "width_px": 60.36329564738634,
-      "elongation": 0.659302,
+      "length_px": 177.17639936628345,
+      "width_px": 60.36517645069978,
+      "elongation": 0.659293,
       "inside_blade": null,
       "position": "unknown",
       "position_t": null,
@@ -774,10 +774,10 @@
      },
      "assessment": {
       "defect_id": "T08-2017/DJI_0378_08_08/d1",
-      "defect_type": "surface_damage",
-      "severity": 2,
-      "rationale": "Blurry low-resolution crop shows only slight roughness and paint wear along the blade edge with no clear open crack, fibres or large loss.",
-      "confidence": 0.35,
+      "defect_type": "dirt",
+      "severity": 1,
+      "rationale": "Small dark speck on white painted surface with coating appearing intact and no open crack, erosion patch, or fibres; crop is blurry and low-resolution.",
+      "confidence": 0.45,
       "rubric_version": "v1",
       "prompt_version": "assess/v1",
       "model": "muse-spark-1.3",
@@ -786,7 +786,7 @@
      "verification": {
       "defect_id": "T08-2017/DJI_0378_08_08/d1",
       "verdict": "needs_review",
-      "agreement": 0.75,
+      "agreement": 1.0,
       "second_severity": 1,
       "checks": [
        {
@@ -802,11 +802,10 @@
        {
         "name": "severity_vs_size",
         "passed": true,
-        "detail": "severity 2 fits 2.09% of the photo"
+        "detail": "severity 1 fits 2.08% of the photo"
        }
       ],
       "reasons": [
-       "the two looks differ by 1 severity level",
        "combined confidence 0.20 is below 0.3"
       ],
       "model": "muse-spark-1.3",
@@ -1565,10 +1564,10 @@
       "label": "damage",
       "score": 0.83203125,
       "bbox": {
-       "x1": 200.0,
+       "x1": 223.0,
        "y1": 228.0,
        "x2": 273.0,
-       "y2": 283.0
+       "y2": 278.0
       },
       "outline": [
        [
@@ -1673,67 +1672,51 @@
          276.0
         ],
         [
-         211.0,
-         278.0
+         229.0,
+         277.0
         ],
         [
-         208.0,
-         280.0
+         226.0,
+         277.0
         ],
         [
-         205.0,
-         282.0
-        ],
-        [
-         204.0,
-         282.0
-        ],
-        [
-         202.0,
-         280.0
-        ],
-        [
-         200.0,
-         278.0
-        ],
-        [
-         200.0,
+         225.0,
          276.0
         ],
         [
-         200.0,
+         224.0,
          274.0
         ],
         [
-         200.0,
+         224.0,
          272.0
         ],
         [
-         200.0,
+         224.0,
          270.0
         ],
         [
-         201.0,
+         223.0,
          268.0
         ],
         [
-         202.0,
+         224.0,
          266.0
         ],
         [
-         204.0,
+         224.0,
          264.0
         ],
         [
-         205.0,
+         224.0,
          262.0
         ],
         [
-         207.0,
+         225.0,
          260.0
         ],
         [
-         209.0,
+         226.0,
          258.0
         ],
         [
@@ -1798,16 +1781,16 @@
         ]
        ]
       ],
-      "mask_area_px": 1451.0
+      "mask_area_px": 1178.0
      },
      "measurement": {
       "defect_id": "T08-2017/DJI_0052_06_03/d3",
-      "area_px": 1451.0,
-      "tile_area_ratio": 0.006674148827539258,
+      "area_px": 1178.0,
+      "tile_area_ratio": 0.005418433713880942,
       "blade_area_ratio": null,
-      "length_px": 81.63487777490451,
-      "width_px": 30.00477923262008,
-      "elongation": 0.632451,
+      "length_px": 59.655529785847975,
+      "width_px": 28.111692570207197,
+      "elongation": 0.528766,
       "inside_blade": null,
       "position": "unknown",
       "position_t": null,
@@ -1815,10 +1798,10 @@
      },
      "assessment": {
       "defect_id": "T08-2017/DJI_0052_06_03/d3",
-      "defect_type": "leading_edge_erosion",
-      "severity": 3,
-      "rationale": "Visible patch of paint/coating loss with grey substrate showing near the leading edge plus reddish erosion along the edge, with no exposed fibres or open crack.",
-      "confidence": 0.6,
+      "defect_type": "surface_damage",
+      "severity": 2,
+      "rationale": "Close crop is overexposed and blurry, but wider view shows a pale patch of paint/coating loss with reddish marks nearby and no clear open crack or fibres.",
+      "confidence": 0.4,
       "rubric_version": "v1",
       "prompt_version": "assess/v1",
       "model": "muse-spark-1.3",
@@ -1826,8 +1809,8 @@
      },
      "verification": {
       "defect_id": "T08-2017/DJI_0052_06_03/d3",
-      "verdict": "ok",
-      "agreement": 1.0,
+      "verdict": "needs_review",
+      "agreement": 0.75,
       "second_severity": 3,
       "checks": [
        {
@@ -1843,13 +1826,11 @@
        {
         "name": "severity_vs_size",
         "passed": true,
-        "detail": "severity 3 fits 0.67% of the photo"
+        "detail": "severity 2 fits 0.54% of the photo"
        }
       ],
       "reasons": [
-       "both looks agree on severity 3",
-       "combined confidence 0.60",
-       "all rule checks passed"
+       "the two looks differ by 1 severity level"
       ],
       "model": "muse-spark-1.3",
       "provider": "meta"
@@ -1863,107 +1844,139 @@
       "concept": "damage (proposed)",
       "source": "box_prompt",
       "label": "damage",
-      "score": 0.6953125,
+      "score": 0.83203125,
       "bbox": {
-       "x1": 197.0,
-       "y1": 300.0,
-       "x2": 210.0,
-       "y2": 319.0
+       "x1": 200.0,
+       "y1": 257.0,
+       "x2": 218.0,
+       "y2": 283.0
       },
       "outline": [
        [
         [
          209.0,
-         300.0
+         257.0
+        ],
+        [
+         212.0,
+         259.0
+        ],
+        [
+         214.0,
+         261.0
+        ],
+        [
+         215.0,
+         263.0
+        ],
+        [
+         217.0,
+         265.0
+        ],
+        [
+         218.0,
+         267.0
+        ],
+        [
+         217.0,
+         269.0
+        ],
+        [
+         217.0,
+         271.0
+        ],
+        [
+         212.0,
+         273.0
+        ],
+        [
+         212.0,
+         275.0
         ],
         [
          210.0,
-         302.0
+         277.0
         ],
         [
-         209.0,
-         304.0
-        ],
-        [
-         208.0,
-         306.0
+         210.0,
+         279.0
         ],
         [
          207.0,
-         308.0
-        ],
-        [
-         206.0,
-         310.0
-        ],
-        [
-         206.0,
-         312.0
+         281.0
         ],
         [
          205.0,
-         314.0
+         282.0
+        ],
+        [
+         204.0,
+         282.0
+        ],
+        [
+         202.0,
+         281.0
+        ],
+        [
+         201.0,
+         279.0
+        ],
+        [
+         200.0,
+         277.0
+        ],
+        [
+         200.0,
+         275.0
+        ],
+        [
+         200.0,
+         273.0
+        ],
+        [
+         200.0,
+         271.0
+        ],
+        [
+         200.0,
+         269.0
+        ],
+        [
+         201.0,
+         267.0
         ],
         [
          203.0,
-         316.0
-        ],
-        [
-         201.0,
-         318.0
-        ],
-        [
-         198.0,
-         318.0
-        ],
-        [
-         197.0,
-         316.0
-        ],
-        [
-         197.0,
-         314.0
-        ],
-        [
-         197.0,
-         312.0
-        ],
-        [
-         197.0,
-         310.0
-        ],
-        [
-         198.0,
-         308.0
-        ],
-        [
-         199.0,
-         306.0
-        ],
-        [
-         201.0,
-         304.0
+         265.0
         ],
         [
          205.0,
-         302.0
+         263.0
+        ],
+        [
+         206.0,
+         261.0
+        ],
+        [
+         207.0,
+         259.0
         ],
         [
          208.0,
-         300.0
+         257.0
         ]
        ]
       ],
-      "mask_area_px": 133.0
+      "mask_area_px": 273.0
      },
      "measurement": {
       "defect_id": "T08-2017/DJI_0052_06_03/d4",
-      "area_px": 133.0,
-      "tile_area_ratio": 0.0006117586451155902,
+      "area_px": 273.0,
+      "tile_area_ratio": 0.0012557151136583166,
       "blade_area_ratio": null,
-      "length_px": 21.589184530925166,
-      "width_px": 9.689083211553054,
-      "elongation": 0.551207,
+      "length_px": 25.10962991252495,
+      "width_px": 16.596866708354753,
+      "elongation": 0.339024,
       "inside_blade": null,
       "position": "unknown",
       "position_t": null,
@@ -1972,8 +1985,8 @@
      "assessment": {
       "defect_id": "T08-2017/DJI_0052_06_03/d4",
       "defect_type": "surface_damage",
-      "severity": 3,
-      "rationale": "Close crop is too blurry to resolve detail but wider view shows patchy paint/coating loss with reddish spots and a pale chip, with no clear open crack or exposed fibres.",
+      "severity": 2,
+      "rationale": "Wider view shows small reddish paint chips along blade edge, tiny vs visible width with no clear crack or fibres; close crop is very blurry so grade is uncertain.",
       "confidence": 0.35,
       "rubric_version": "v1",
       "prompt_version": "assess/v1",
@@ -1984,7 +1997,7 @@
       "defect_id": "T08-2017/DJI_0052_06_03/d4",
       "verdict": "needs_review",
       "agreement": 0.75,
-      "second_severity": 2,
+      "second_severity": 1,
       "checks": [
        {
         "name": "inside_blade",
@@ -1994,17 +2007,17 @@
        {
         "name": "detector_score",
         "passed": true,
-        "detail": "detector confidence 0.70"
+        "detail": "detector confidence 0.83"
        },
        {
         "name": "severity_vs_size",
         "passed": true,
-        "detail": "severity 3 fits 0.06% of the photo"
+        "detail": "severity 2 fits 0.13% of the photo"
        }
       ],
       "reasons": [
        "the two looks differ by 1 severity level",
-       "combined confidence 0.20 is below 0.3"
+       "combined confidence 0.15 is below 0.3"
       ],
       "model": "muse-spark-1.3",
       "provider": "meta"
@@ -2877,16 +2890,16 @@
         ]
        ]
       ],
-      "mask_area_px": 3668.0
+      "mask_area_px": 3667.0
      },
      "measurement": {
       "defect_id": "T08-2017/DJI_0419_07_01/d3",
-      "area_px": 3668.0,
-      "tile_area_ratio": 0.016871659475819433,
+      "area_px": 3667.0,
+      "tile_area_ratio": 0.016867059786758416,
       "blade_area_ratio": null,
-      "length_px": 140.97942472293323,
-      "width_px": 49.489973708902085,
-      "elongation": 0.648956,
+      "length_px": 140.97812879997457,
+      "width_px": 49.48915874211548,
+      "elongation": 0.648959,
       "inside_blade": null,
       "position": "unknown",
       "position_t": null,
@@ -2896,8 +2909,8 @@
       "defect_id": "T08-2017/DJI_0419_07_01/d3",
       "defect_type": "surface_damage",
       "severity": 3,
-      "rationale": "Brown irregular patch with jagged edge at the lower edge looks like paint/coating loss exposing substrate with no clear fibres or open crack; both crops are very blurry/low-resolution so dirt cannot be excluded.",
-      "confidence": 0.35,
+      "rationale": "Irregular brown patch with jagged missing white coating at blade edge, consistent with paint/coating loss exposing substrate with no visible fibres or open crack.",
+      "confidence": 0.6,
       "rubric_version": "v1",
       "prompt_version": "assess/v1",
       "model": "muse-spark-1.3",
@@ -2927,7 +2940,7 @@
       ],
       "reasons": [
        "both looks agree on severity 3",
-       "combined confidence 0.35",
+       "combined confidence 0.60",
        "all rule checks passed"
       ],
       "model": "muse-spark-1.3",

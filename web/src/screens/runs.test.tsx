@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -91,6 +91,7 @@ describe("Defect card accessibility", () => {
     vi.stubGlobal("matchMedia", (query: string) => ({ matches: query === "(hover: none)", media: query }));
     open("/inspections/T03-2018");
     const photo = await screen.findByTestId("photo-viewer");
+    await act(async () => {});
     fireEvent.load(within(photo).getByRole("img", { name: /Drone photo/ }));
     fireEvent.mouseEnter((await screen.findAllByTestId("defect-card"))[1]);
     expect(photo).not.toHaveClass("has-hover");

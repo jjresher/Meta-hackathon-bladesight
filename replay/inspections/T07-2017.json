@@ -35,7 +35,7 @@
       "outline": [
        [
         [
-         325.0,
+         323.0,
          138.0
         ],
         [
@@ -275,7 +275,7 @@
          256.0
         ],
         [
-         308.0,
+         307.0,
          258.0
         ],
         [
@@ -387,11 +387,11 @@
          262.0
         ],
         [
-         286.0,
+         288.0,
          260.0
         ],
         [
-         286.0,
+         287.0,
          258.0
         ],
         [
@@ -403,7 +403,7 @@
          254.0
         ],
         [
-         284.0,
+         285.0,
          252.0
         ],
         [
@@ -411,11 +411,11 @@
          250.0
         ],
         [
-         285.0,
+         286.0,
          248.0
         ],
         [
-         285.0,
+         286.0,
          246.0
         ],
         [
@@ -631,21 +631,21 @@
          140.0
         ],
         [
-         320.0,
+         322.0,
          138.0
         ]
        ]
       ],
-      "mask_area_px": 20605.0
+      "mask_area_px": 20501.0
      },
      "measurement": {
       "defect_id": "T07-2017/DJI_0222_03_02/d1",
-      "area_px": 20605.0,
-      "tile_area_ratio": 0.09477659310230628,
+      "area_px": 20501.0,
+      "tile_area_ratio": 0.09429822543996026,
       "blade_area_ratio": null,
-      "length_px": 309.3042864890892,
-      "width_px": 148.58988742137953,
-      "elongation": 0.5196,
+      "length_px": 309.2968434163276,
+      "width_px": 148.56818003223606,
+      "elongation": 0.519658,
       "inside_blade": null,
       "position": "unknown",
       "position_t": null,
@@ -655,7 +655,7 @@
       "defect_id": "T07-2017/DJI_0222_03_02/d1",
       "defect_type": "surface_damage",
       "severity": 3,
-      "rationale": "Large patch of paint/coating loss and flaking with brown discolouration along a seam, substrate showing but no visible fibres or open crack.",
+      "rationale": "Broad patch of paint/coating loss with brown rust-like substrate showing along a seam, no visible fibres or open crack.",
       "confidence": 0.68,
       "rubric_version": "v1",
       "prompt_version": "assess/v1",
@@ -681,7 +681,7 @@
        {
         "name": "severity_vs_size",
         "passed": true,
-        "detail": "severity 3 fits 9.48% of the photo"
+        "detail": "severity 3 fits 9.43% of the photo"
        }
       ],
       "reasons": [
@@ -716,7 +716,7 @@
        "x1": 466.0,
        "y1": 210.0,
        "x2": 586.0,
-       "y2": 258.0
+       "y2": 257.0
       },
       "outline": [
        [
@@ -809,20 +809,12 @@
          252.0
         ],
         [
-         485.0,
+         484.0,
          254.0
         ],
         [
-         477.0,
+         475.0,
          256.0
-        ],
-        [
-         470.0,
-         257.0
-        ],
-        [
-         469.0,
-         257.0
         ],
         [
          467.0,
@@ -922,16 +914,16 @@
         ]
        ]
       ],
-      "mask_area_px": 1196.0
+      "mask_area_px": 1190.0
      },
      "measurement": {
       "defect_id": "T07-2017/DJI_0270_02_01/d1",
-      "area_px": 1196.0,
-      "tile_area_ratio": 0.005501228116979292,
+      "area_px": 1190.0,
+      "tile_area_ratio": 0.0054736299826131755,
       "blade_area_ratio": null,
-      "length_px": 128.1218312666067,
-      "width_px": 15.889522975215357,
-      "elongation": 0.875981,
+      "length_px": 128.11890804387258,
+      "width_px": 15.934307004925927,
+      "elongation": 0.875629,
       "inside_blade": null,
       "position": "unknown",
       "position_t": null,
@@ -940,9 +932,9 @@
      "assessment": {
       "defect_id": "T07-2017/DJI_0270_02_01/d1",
       "defect_type": "other",
-      "severity": 1,
-      "rationale": "Crop is too small and blurry to grade, showing only a tiny dark streak against sky with no resolvable blade surface detail.",
-      "confidence": 0.15,
+      "severity": 2,
+      "rationale": "Thin distant blade against sky with dark central patch, but crop is too small and blurry to grade reliably.",
+      "confidence": 0.2,
       "rubric_version": "v1",
       "prompt_version": "assess/v1",
       "model": "muse-spark-1.3",
@@ -951,7 +943,7 @@
      "verification": {
       "defect_id": "T07-2017/DJI_0270_02_01/d1",
       "verdict": "needs_review",
-      "agreement": 0.75,
+      "agreement": 1.0,
       "second_severity": 2,
       "checks": [
        {
@@ -967,12 +959,11 @@
        {
         "name": "severity_vs_size",
         "passed": true,
-        "detail": "severity 1 fits 0.55% of the photo"
+        "detail": "severity 2 fits 0.55% of the photo"
        }
       ],
       "reasons": [
-       "the two looks differ by 1 severity level",
-       "combined confidence 0.15 is below 0.3"
+       "combined confidence 0.20 is below 0.3"
       ],
       "model": "muse-spark-1.3",
       "provider": "meta"

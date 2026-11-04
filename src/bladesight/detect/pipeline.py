@@ -120,7 +120,10 @@ V1 = PostConfig()
 # mask's largest part, and suppress (not union) overlapping same-label masks.
 V2 = PostConfig(split_components=True, min_area_px=40, min_part_share=0.1, merge="nms")
 DETECTORS: dict[str, PostConfig] = {"v1": V1, "v2": V2}
-DEFAULT_DETECTOR = "v1"
+DEFAULT_DETECTOR = "v1"  # evaluation default: eval_dev / eval_heldout stay reproducible on v1
+# What the product runs (the farm, `poe detect`): v2 won the preregistered fresh-set comparison
+# (docs/evidence/eval_fresh_v2.md). The held-out result of #16 measured v1 only.
+PRODUCT_DETECTOR = "v2"
 
 
 @dataclass
