@@ -472,3 +472,53 @@ def test_the_api_selects_the_open_weights_replay_and_says_which_model_ran_each_s
     assert orders and {o["provider"] for o in orders} == {"baseten"}
     assert client.get("/api/reports/latest?provider=baseten").json()["model"] == "open-m"
     assert client.get("/api/fleet?provider=baseten").json()["run_id"] == "run-open"
+
+
+# --- evidence ----------------------------------------------------------------------------------
+
+
+def _two_replays(tmp_path: Path) -> tuple[Store, Store]:
+    meta = make_store(tmp_path)
+    meta.save_layout({"turbines": {}})
+    run_agent(
+        build_client(MetaSettings(), provider="stub", stub=StubProvider(chat_responses=_script())),
+        MetaSettings(),
+        meta,
+        run_id="run-meta",
+        provider="meta",
+    )
+    settings = MetaSettings()
+    stub = StubProvider(chat_responses=[_grade(3) for _ in range(40)])
+    chat = chat_target(settings, "stub", client=build_client(settings, provider="stub", stub=stub))
+    chat = type(chat)(chat.client, "baseten", "open-m", 6000)
+    open_ = Store(tmp_path / "open")
+    regrade_farm(chat, settings, meta, open_, _data_dir(tmp_path))
+    return meta, open_
+
+
+def test_autonomy_counts_come_from_the_trace(tmp_path: Path) -> None:
+    from bladesight.fleet.compare import autonomy, latest_run
+
+    meta, _ = _two_replays(tmp_path)
+    run = latest_run(meta)
+    assert run is not None
+    a = autonomy(run, meta.work_orders())
+    assert a.tool_calls == {"list_turbines": 1, "create_work_order": 2,
+                            "request_reinspection": 1, "write_report": 1}  # fmt: skip
+    assert a.rejected == {"verified_only": 1} and a.orders == {"repair": 1, "reinspect": 1}
+    assert a.with_rationale == 3 and a.turns == 5
+
+
+def test_the_comparison_counts_agreement_between_the_two_replays(tmp_path: Path) -> None:
+    from bladesight.fleet.compare import render_comparison
+    from bladesight.fleet.evidence import render
+
+    meta, open_ = _two_replays(tmp_path)
+    text = render_comparison(meta, open_, meta_farm_cost=1.0, open_farm_cost=2.0)
+    # make_store grades 6 defects (one is ungraded); the regrade gives all 7 severity 3
+    assert "Defects graded and verified in both runs: 6 (Meta 6, Open 7" in text
+    assert "Same severity: **1 of 6**" in text  # only the T01-2018 severity-3 defect
+    assert "Spearman rank correlation over the 3 turbines" in text
+    assert "| Rejections by rule | `verified_only` 1 |" in text
+    evidence = render(meta, 1.0, 0.1, open_store=open_)
+    assert "## Agent autonomy" in evidence and "`run-meta`" in evidence

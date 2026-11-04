@@ -8,6 +8,7 @@
 - `regrade`: re-grade and re-verify the defects stored in `--source-dir` (same detections and
   measurements, no detection call) on `--chat-provider`, into `--replay-dir`.
 - `status`: what the store holds.
+- `compare`: `docs/evidence/open_weights_farm.md`, the Meta replay vs the Open replay (free).
 - `backfill`: fill the provenance and trace fields into a store written before they existed
   (free, no model call; `backfill.py`).
 
@@ -30,14 +31,23 @@ from ..meta import MetaClient, MetaError, MetaSettings, build_client
 from .agent import MAX_TOKENS, run_agent
 from .build import build_layout
 from .process import process_farm, regrade_farm
-from .store import REPLAY_DIR, Store
+from .store import OPEN_WEIGHTS_DIR, REPLAY_DIR, Store
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="python -m bladesight.fleet")
     parser.add_argument(
         "command",
-        choices=["build", "process", "regrade", "run", "status", "evidence", "backfill"],
+        choices=[
+            "build",
+            "process",
+            "regrade",
+            "run",
+            "status",
+            "evidence",
+            "backfill",
+            "compare",
+        ],
     )
     parser.add_argument("--data-dir", type=Path, default=Path("data"))
     parser.add_argument("--replay-dir", type=Path, default=REPLAY_DIR)
@@ -55,6 +65,12 @@ def main(argv: list[str] | None = None) -> int:
         "--source-dir", type=Path, default=REPLAY_DIR, help="regrade: the store to re-grade"
     )
     parser.add_argument("--workers", type=int, default=1, help="regrade: parallel defects")
+    parser.add_argument(
+        "--open-dir", type=Path, default=OPEN_WEIGHTS_DIR, help="evidence/compare: Open replay"
+    )
+    parser.add_argument(
+        "--open-farm-cost", type=float, default=0.0, help="compare: USD of the Open regrade"
+    )
     parser.add_argument("--only", action="append", help="process: only this inspection id")
     parser.add_argument("--max-steps", type=int, default=40)
     parser.add_argument("--max-cost", type=float, default=1.0, help="run: agent budget in USD")
@@ -93,7 +109,27 @@ def main(argv: list[str] | None = None) -> int:
         from .evidence import render
 
         out = Path("docs/evidence/fleet_run.md")
-        out.write_text(render(store, args.farm_cost, args.agent_cost), encoding="utf-8")
+        open_store = Store(args.open_dir) if (args.open_dir / "inspections").exists() else None
+        out.write_text(
+            render(store, args.farm_cost, args.agent_cost, open_store=open_store),
+            encoding="utf-8",
+        )
+        print(f"wrote {out}")
+        return 0
+
+    if args.command == "compare":
+        from .compare import render_comparison
+
+        out = Path("docs/evidence/open_weights_farm.md")
+        out.write_text(
+            render_comparison(
+                store,
+                Store(args.open_dir),
+                meta_farm_cost=args.farm_cost,
+                open_farm_cost=args.open_farm_cost,
+            ),
+            encoding="utf-8",
+        )
         print(f"wrote {out}")
         return 0
 
