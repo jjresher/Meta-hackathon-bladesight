@@ -1,0 +1,11 @@
+# Render blueprint. Replay mode needs no secret: nothing here is a key.
+services:
+  - type: web
+    name: bladesight
+    runtime: docker
+    plan: starter            # paid instance: it does not sleep during judging (Nov 5-16)
+    healthCheckPath: /api/health
+    autoDeploy: false
+    envVars:
+      - key: BLADESIGHT_MODE
+        value: replay
