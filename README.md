@@ -29,9 +29,10 @@ open-weights **Muse Spark Open**.
 3. On the first tile, open defect card **`d2`** (verified, severity 3), then **`d4`** (needs review:
    the two looks differ by one severity level).
 4. **Work orders**: WO-001 repairs `d2`, and WO-006 asks for new photos of `d4` instead of guessing.
-5. **Agent trace**: the agent's decisions turn by turn, with the rule behind any rejected call.
-6. In the **Run** selector in the header, choose **Muse Spark Open (Baseten)**. Every screen now
-   shows the open-weights run.
+5. **Agent trace**: the agent's decisions turn by turn (no call was rejected in the stored runs).
+6. In the **Run** selector in the header, choose **Muse Spark Open (Baseten)**. Fleet, inspections,
+   work orders and the agent trace now show the open-weights run; Evaluation stays the same, because
+   it measures the Muse Spark pipeline.
 7. **Evaluation**: detection metrics on dev and held-out, and severity agreement with human labels.
 
 ## The problem
@@ -64,7 +65,7 @@ both runs are stored and the demo switches between them.
 ## What you see in the demo
 
 - **Run selector** (header): "Muse Spark (Model API)" or "Muse Spark Open (Baseten)". It names the
-  model behind each stage and every screen follows it (`?provider=` in the URL).
+  model behind each stage and every run-specific screen follows it (`?provider=` in the URL).
 - **Fleet**: the 12 turbines of the synthetic farm, ranked by a deterministic score (verified
   defects at full weight, `needs_review` at a quarter), with status and 2017-vs-2018 trend.
 - **Inspection**: the tile with SAM 3.1 masks and boxes, a glyph key for the verdicts, and one card
@@ -111,7 +112,7 @@ measured on the held-out split.
 | Verification on the synthetic farm (98 defects, detection v2) | 35 `ok`, 50 `needs_review`, 13 `reinspect` | [`fleet_run.md`](docs/evidence/fleet_run.md) |
 | Fleet agent run (Muse Spark) | 59 steps, 25 tool calls in 16 model turns, 11 work orders (5 repair on `ok` defects, 6 re-inspections), 0.07 USD | [`fleet_run.md`](docs/evidence/fleet_run.md) |
 | Same farm, grading + verification + agent on **Muse Spark Open** | same severity as Muse Spark on 78 of 98 defects, same verdict on 64; 23 tool calls, 9 work orders (2 repair, 1 monitor, 6 re-inspections); 2.11 (cumulative over both grading passes, see [`limitations.md`](docs/limitations.md)) + 0.06 USD | [`open_weights.md`](docs/evidence/open_weights.md), [`open_weights_farm.md`](docs/evidence/open_weights_farm.md) |
-| Cost of detection | about 0.0106 USD per tile measured (3.1759 USD for 300 dev tiles); the earlier 0.014 estimate included a blade call the pipeline no longer makes | [`eval_dev.md`](docs/evidence/eval_dev.md), [`detect.md`](docs/evidence/detect.md) |
+| Cost of detection | about 0.0106 USD per tile measured (3.1759 USD for 300 dev tiles); the earlier 0.014 estimate included a blade call that evaluation and the farm do not make | [`eval_dev.md`](docs/evidence/eval_dev.md), [`detect.md`](docs/evidence/detect.md) |
 | Public demo | smoke check OK in 1.9 s; cold start 21.5 s after 3.5 h idle (a second wake took 12.47 s, idle time unknown); no horizontal scroll at 390x844 on all five screens checked | [`deploy.md`](docs/evidence/deploy.md) |
 
 How to read them honestly: the labelled boxes are tiny (in the spike's sample of dev tiles, 73% of

@@ -29,7 +29,7 @@ Timed with `curl -s -o /dev/null -w '%{time_total} %{http_code}'` from Medellín
 Reading: after a long idle the first request waited **about 21.5 s** for the instance to wake,
 then answered 200; warm requests take 0.3-0.5 s. Two earlier probes at 20-25 minutes idle found the
 instance still awake, so the spin-down did not happen exactly at 15 minutes in those cases (or
-other traffic kept it awake: it cannot be told apart). One cold sample only: the wake-up time can
+other traffic kept it awake: it cannot be told apart). One cold sample in this table (a second, 12.47 s, is under Keep-alive): the wake-up time can
 vary (Render documents "about one minute"), so a cold smoke check or a cold visit should allow for
 up to a minute.
 

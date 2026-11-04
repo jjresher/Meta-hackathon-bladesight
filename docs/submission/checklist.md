@@ -51,19 +51,18 @@ Estimates are wall-clock. Steps 1-8 fit before the 13:00 freeze; the video is th
 | 2 | by 08:15 | Close stale PR #47 (superseded by #46 and #49; optionally move its "How this compares with the dev run" paragraph first, see [`dod_audit.md`](dod_audit.md)). | 5 min |
 | 3 | by 08:30 | Attach screenshots as PR comments (not commits): the 5 overlay PNGs from `bladesight-wt/i5/outputs/detect/` on PR #28 (issue #5 DoD), and the 1280 and 390 px screenshots from `bladesight-screenshots/` on PR #44 (issue #13 DoD); tick those boxes and close #13. Keep the CC BY-NC attribution in the comment. | 15 min |
 | 4 | by 08:45 | Done: the owner confirmed the URL on a real phone (comment on #14). | 10 min |
-| 5 | before recording | Wake the URL by hand before recording and before the submission checks (12-22 s in the two cold samples, `docs/evidence/deploy.md`). During judging the external cron-job.org job (`GET /api/health` every 10 minutes since Nov 4, 16:10 COT) keeps it awake; the GitHub Actions workflow is only a backup. | 5 min |
+| 5 | before recording | Wake the URL by hand before recording and before the submission checks (12-22 s in the two cold samples, `docs/evidence/deploy.md`). During judging the external cron-job.org job (`GET /api/health` every 10 minutes since Nov 4, 16:10 COT) is there to keep it awake; the GitHub Actions workflow is only a backup. | 5 min |
 | 6 | 09:00-11:30 | Record the video (#19) from [`video_script.md`](video_script.md) against the live URL: wake it, 1280x720 browser window, replay mode only; edit to 3:00 or less, English captions. | 2 h 30 |
 | 7 | 11:30-12:00 | Upload (YouTube or Vimeo, public or unlisted); check the length and that it opens in an incognito window. Tick the #19 DoD boxes. | 30 min |
 | 8 | before 13:00 | Code freeze: last merge to `main`, CI green (`gh run list --branch main`), Render redeployed, smoke passes (`uv run python -m bladesight.api.smoke https://bladesight.onrender.com`). | 15 min |
 | 9 | 13:00-13:20 | Done: the video link is in the README and in this table (#70). For any later README change: small docs PR, merge. A README change rebuilds the Docker layer that streams the tiles: if the archive host is slow the deploy can take long or fail, and the previous deploy stays live (the README on GitHub still shows the link). Afterwards check the deploy status in the Render dashboard: the smoke check also passes on the old deploy after a failed build. | 20 min |
 | 10 | 13:20-14:00 | Skipped: no X post, by decision (#21). | 0 min |
-| 11 | 14:00-15:00 | Fill the submission form from "Facts for the form": track, challenge, repo, live URL, video, X post, contributors, bonus flags (agentic yes; open weights yes, scoped as written). | 1 h |
-| 12 | before sending | Incognito check of every link in the form: repo, README renders with the diagram, live URL (wake it), video, X post. | 15 min |
+| 11 | 14:00-15:00 | Fill the submission form from "Facts for the form": track, challenge, repo, live URL, video, contributors, bonus flags (agentic yes; open weights yes, scoped as written). | 1 h |
+| 12 | before sending | Incognito check of every link in the form: repo, README renders with the diagram, live URL (wake it), video. | 15 min |
 | 13 | by 18:00 | Send. Keep the confirmation (screenshot). Tick the #20 DoD and close #18, #19, #20 when their boxes are met. | 10 min |
 | 14 | after sending | LinkedIn and Discord posts, EAFIT groups; Most Viral window to Nov 8; gallery vote push from Nov 9 (reminder plan in [`launch.md`](launch.md)). | 30 min |
 
-Buffer: 18:00 to the 21:00 deadline. If the recording runs late, skip the X thread replies and send
-the form with the main post only.
+Buffer: 18:00 to the 21:00 deadline.
 
 ## Before sending (final ticks)
 

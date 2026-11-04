@@ -19,7 +19,8 @@ real usage, not invoice-checked. Overlay PNGs were written to the gitignored `ou
 - **Cost per image** (all calls live): the Muse Spark box proposal plus SAM box refinement cost
   0.1058 USD over 16 live Spark + SAM pairs in spike step 4 (`docs/evidence/spike.md`), i.e. about
   0.0066 per tile; the two SAM text concepts 2 x 0.0025 = 0.0050; the blade concept 0.0025. That is
-  **about 0.014 USD per tile**; we budget 0.015. Dev evaluation on 300 tiles is therefore about 4.5
+  **about 0.014 USD per tile** (with the blade call; measured without it on the dev run: about 0.0106,
+  [`eval_dev.md`](eval_dev.md)); we budget 0.015. Dev evaluation on 300 tiles is therefore about 4.5
   USD for detection alone.
 - **Why 1 live call per tile here**: adding `frame_size` to the box-request cache key (found by the
   audit) changed the key of the spike's cached box-prompt SAM replies, so that call was repeated
