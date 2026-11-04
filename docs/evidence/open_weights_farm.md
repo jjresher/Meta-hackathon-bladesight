@@ -77,6 +77,6 @@ Verdict (rows Meta, columns Open):
 
 ## Cost (documented prices x real usage, not invoice-checked)
 
-- Grading + second look of the farm: Meta 1.7780 USD (the whole farm
-  run, detection included, from `fleet_run.md`); Open 2.1059 USD (severity and second look only; detection reused).
+- Grading + second look of the farm: Meta 1.7780 USD (the runs
+  behind the store, cumulative, see `docs/limitations.md`); Open 2.1059 USD (severity and second look only; detection reused).
 - Agent run with its report: Meta 0.0683 USD; Open 0.0569 USD.

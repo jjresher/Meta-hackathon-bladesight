@@ -246,8 +246,8 @@ def render_comparison(
         "",
         "## Cost (documented prices x real usage, not invoice-checked)",
         "",
-        f"- Grading + second look of the farm: Meta {meta_farm_cost:.4f} USD (the whole farm",
-        "  run, detection included, from `fleet_run.md`); Open "
+        f"- Grading + second look of the farm: Meta {meta_farm_cost:.4f} USD (the runs",
+        "  behind the store, cumulative, see `docs/limitations.md`); Open "
         f"{open_farm_cost:.4f} USD (severity and second look only; detection reused).",
         f"- Agent run with its report: Meta {ra.total_cost_usd if ra else 0:.4f} USD; Open "
         f"{rb.total_cost_usd if rb else 0:.4f} USD.",

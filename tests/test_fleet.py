@@ -282,3 +282,24 @@ def test_a_client_error_mid_run_keeps_the_partial_trace(store: Store) -> None:
     run = run_agent(client, MetaSettings(), store, run_id="run-err", provider="stub")
     assert run.status == "error" and run.steps[-1].kind == "error"
     assert any(s.kind == "tool_call" for s in run.steps) and store.run("run-err").status == "error"
+
+
+def test_the_farm_runs_the_product_detector_and_eval_keeps_v1(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from bladesight.detect.pipeline import DEFAULT_DETECTOR, PRODUCT_DETECTOR
+    from bladesight.fleet import process
+
+    assert (PRODUCT_DETECTOR, DEFAULT_DETECTOR) == ("v2", "v1")
+    seen: dict[str, object] = {}
+
+    def spy(*args: object, **kwargs: object) -> None:
+        seen.update(kwargs)
+        raise LookupError
+
+    monkeypatch.setattr(process, "detect_tile", spy)
+    settings = MetaSettings()
+    client = build_client(settings, provider="stub")
+    with pytest.raises(LookupError):
+        process.process_image(client, settings, b"", "t", "i", provider="stub")
+    assert seen["detector"] == "v2"

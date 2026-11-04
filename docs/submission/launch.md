@@ -60,7 +60,7 @@ Built solo for #MetaAIHackathon: BladeSight turns drone photos of wind turbine b
 ```
 
 ```text
-2/3 Honest numbers from one preregistered held-out run (760 tiles): a damaged tile is flagged 70% of the time, with false alarms on 24% of clean tiles. Box-level precision 0.19, recall 0.16 (most boxes are tiny). Severity agrees only weakly with a human (kappa 0.12): advisory.
+2/3 Honest numbers, first detector, one preregistered held-out run (760 tiles): 70% of damaged tiles flagged, false alarms on 24% of clean ones. Box precision 0.19, recall 0.16. The demo runs a later detector. Severity agrees only weakly with a human (kappa 0.12): advisory.
 ```
 
 ```text
@@ -103,7 +103,7 @@ Code: https://github.com/jjresher/Meta-hackathon-bladesight
 Hi all, sharing my Indie-track project: **BladeSight**, a zero-shot wind turbine blade inspection agent.
 Drone photos in -> SAM 3.1 segments defects (no training) -> Muse Spark grades them against a rubric -> a second look marks each one ok / needs_review / reinspect -> a fleet agent writes repair orders that can only cite verified defects, and asks for re-inspection when it is unsure.
 The planning half (grading, verification, agent, report) also runs on Muse Spark Open, Meta's open-weights model, on Baseten; detection (Muse Spark boxes + SAM 3.1 masks) stays on the Meta Model API.
-One preregistered held-out run on 760 tiles: 70% of damaged tiles flagged, 24% false alarms on clean tiles; box-level numbers are low and the severity grade is advisory (all in the repo's evidence files).
+One preregistered held-out run of the first detector on 760 tiles: 70% of damaged tiles flagged, 24% false alarms on clean tiles; the demo runs a later detector, measured only on a fresh dev set; box-level numbers are low and the severity grade is advisory (all in the repo's evidence files).
 The demo farm is synthetic (real DTU photos, CC BY-NC, of one turbine). Replay mode, no login:
 Demo: <demo URL>  Video: <video URL>  Code: https://github.com/jjresher/Meta-hackathon-bladesight
 Feedback welcome, especially from anyone who has inspected blades for real.

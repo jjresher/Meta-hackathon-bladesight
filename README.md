@@ -91,7 +91,7 @@ measured on the held-out split.
 | Same 40 crops on **Muse Spark Open** | kappa 0.19 (0.01 to 0.38), exact agreement 30%: no worse, not shown to be better | [`open_weights.md`](docs/evidence/open_weights.md) |
 | Verification on the synthetic farm (98 defects, detection v2) | 35 `ok`, 50 `needs_review`, 13 `reinspect` | [`fleet_run.md`](docs/evidence/fleet_run.md) |
 | Fleet agent run (Muse Spark) | 59 steps, 25 tool calls in 16 model turns, 11 work orders (5 repair on `ok` defects, 6 re-inspections), 0.07 USD | [`fleet_run.md`](docs/evidence/fleet_run.md) |
-| Same farm, grading + verification + agent on **Muse Spark Open** | same severity as Muse Spark on 78 of 98 defects, same verdict on 64; 23 tool calls, 9 work orders (2 repair, 1 monitor, 6 re-inspections); 2.11 + 0.06 USD | [`open_weights.md`](docs/evidence/open_weights.md), [`open_weights_farm.md`](docs/evidence/open_weights_farm.md) |
+| Same farm, grading + verification + agent on **Muse Spark Open** | same severity as Muse Spark on 78 of 98 defects, same verdict on 64; 23 tool calls, 9 work orders (2 repair, 1 monitor, 6 re-inspections); 2.11 (cumulative over both grading passes, see [`limitations.md`](docs/limitations.md)) + 0.06 USD | [`open_weights.md`](docs/evidence/open_weights.md), [`open_weights_farm.md`](docs/evidence/open_weights_farm.md) |
 | Cost of detection | about 0.014 USD per tile | [`detect.md`](docs/evidence/detect.md) |
 | Public demo | smoke check OK in 1.9 s; cold start 21.5 s after 3.5 h idle (one sample); no horizontal scroll at 390x844 on all five screens checked | [`deploy.md`](docs/evidence/deploy.md) |
 
@@ -188,7 +188,7 @@ uv run python -m bladesight.api.smoke http://127.0.0.1:8000   # in a second term
 curl -s http://127.0.0.1:8000/api/replays                    # which model ran each stage, per run
 curl -s "http://127.0.0.1:8000/api/fleet?provider=baseten"   # ranking from the Open grades
 curl -s "http://127.0.0.1:8000/api/runs?provider=baseten"    # the Open agent trace
-uv run poe fleet compare --farm-cost 1.63 --open-farm-cost 1.7406  # rewrite open_weights_farm.md from the two replays (free; the flags are the recorded farm costs)
+uv run poe fleet compare --farm-cost 1.778 --open-farm-cost 2.1059  # rewrite open_weights_farm.md from the two replays (free; the flags are the recorded farm costs)
 ```
 
 For UI development run the API (`uv run poe serve`) and `uv run poe web-dev` (Vite on port 5173
