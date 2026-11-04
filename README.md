@@ -25,8 +25,8 @@ BladeSight turns inspection photos into a plan, and it says "I am not sure" inst
    ([`docs/rubric.md`](docs/rubric.md), not an industry standard) and explains why.
 4. **Verification** takes a second, independent look and runs rule checks; the result is `ok`,
    `needs_review` or `reinspect`, always with reasons.
-5. **A fleet agent** (Muse Spark with tools) ranks the turbines, compares inspections, writes
-   work orders and a report. A work order can only cite defects with an `ok` verdict: the tool
+5. **A fleet agent** (Muse Spark with tools) explains a transparent ranking score computed over
+   verified defects only, compares inspections, writes work orders and a report. A work order can only cite defects with an `ok` verdict: the tool
    rejects anything else, and unverified defects can only become re-inspection requests.
 
 ![Architecture](docs/architecture.svg)
@@ -41,7 +41,7 @@ described in [`eval/preregistration.md`](eval/preregistration.md) and reported i
 |---|---|---|
 | Damage detection, box level (IoU 0.3, 300 dev tiles) | precision 0.37 (95% CI 0.31-0.42), recall 0.22 (0.18-0.26) | [`eval_dev.md`](docs/evidence/eval_dev.md) |
 | Damage, image level (a damaged 586x371 tile has at least one damage prediction) | recall 0.77, with a 21% false-alarm rate on tiles that have no box | [`eval_dev.md`](docs/evidence/eval_dev.md) |
-| Dirt detection | weak (precision 0.05 on 36 boxes): not offered as a detector | [`eval_dev.md`](docs/evidence/eval_dev.md) |
+| Dirt detection | weak (precision 0.05 on 36 boxes): reported as weak, not offered as a detector | [`eval_dev.md`](docs/evidence/eval_dev.md) |
 | Severity vs a human applying the rubric (40 crops) | quadratic weighted kappa 0.12 (95% interval -0.05 to 0.29), exact agreement 25%: **advisory only** | [`severity_agreement.md`](docs/evidence/severity_agreement.md) |
 | Verification on the synthetic farm (96 defects) | 33 `ok`, 50 `needs_review`, 13 `reinspect` | [`fleet_run.md`](docs/evidence/fleet_run.md) |
 | Fleet agent run | 60 steps, 23 tool calls, 9 work orders (3 repair on `ok` defects, 6 re-inspections), 0.06 USD | [`fleet_run.md`](docs/evidence/fleet_run.md) |
@@ -69,12 +69,14 @@ Replay mode (the default: no API key, no model call) serves the stored results i
 ```bash
 uv sync
 uv run python -m bladesight.data.demo     # streams the 2.8 GB archive, keeps only the demo tiles
+(cd web && npm ci && npm run build)       # the web UI (issue #13); skip it to use the API alone
 uv run poe serve                          # API at http://127.0.0.1:8000 (interactive docs at /docs)
 uv run python -m bladesight.api.smoke http://127.0.0.1:8000
 ```
 
-Without the tiles the API still works and images answer 404. The web UI lives in `web/` and is
-served at `/` when `web/dist` exists. Endpoints: [`docs/api.md`](docs/api.md).
+Without the tiles the API still works and images answer 404. The UI is served at `/` when
+`web/dist` exists; without it `/` answers 404 and the API lives under `/api` and `/docs`.
+Endpoints: [`docs/api.md`](docs/api.md).
 
 Live mode spends money; follow [`meta-api-check`](.claude/skills/meta-api-check/SKILL.md):
 
@@ -82,7 +84,7 @@ Live mode spends money; follow [`meta-api-check`](.claude/skills/meta-api-check/
 cp .env.example .env   # fill META_API_KEY and META_SPEND_LIMIT_USD; never commit .env
 uv run poe data                                # download, split by photo, seal the held-out split
 BLADESIGHT_MODE=live uv run poe detect DJI_0382_02_04
-BLADESIGHT_MODE=live uv run poe fleet process  # detect, grade and verify the farm (1.63 USD for 96 tiles)
+BLADESIGHT_MODE=live uv run poe fleet process  # detect, grade and verify the farm (1.63 USD for 96 tiles, all stages)
 BLADESIGHT_MODE=live uv run poe fleet run      # the agent
 uv run poe check                               # lint, format, types, tests (no model call)
 ```
