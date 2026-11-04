@@ -60,8 +60,8 @@ turbine -> inspection -> its work order -> agent trace -> evaluation. Run time 3
 | Evaluation | `/eval` | none (390 / 390) | the severity kappa value |
 
 No element extended past the viewport on any screen; no console error, page error or HTTP status
->= 400 during the run. This is a phone-sized browser emulation, not a physical phone: opening the
-URL on a real phone stays a human check in `docs/submission/checklist.md`.
+>= 400 during the run. This is a phone-sized browser emulation, not a physical phone. The owner
+confirmed the URL on a real phone on Nov 4, in a comment on issue #14.
 
 ## Keep-alive
 
@@ -71,6 +71,12 @@ history is not recorded here. It replaces the paid instance the plan had in mind
 period. A cold start remains possible (for example if a request is missed or Render restarts the
 instance). One service awake all month uses at most 744 of the 750 Free instance hours, which fits
 only while it is the workspace's only always-on Free service.
+
+The job does not make every request fast. Around 18:05-18:13 COT on Nov 4, about 15 minutes after
+the 17:50 deploy and with three audits probing the URL at once, some requests failed: one smoke run
+was killed at 60 s, `/api/health` timed out at 70 s and `/api/replays` at 30 s, and one read of
+`/api/fleet` was not JSON. The next requests answered in 0.3-4 s, and a smoke run at about 18:13
+passed but took 41.8 s. The cause is unknown.
 
 **GitHub Actions workflow (second pinger, unreliable):** the `keep-alive` workflow
 (`.github/workflows/keepalive.yml`) GETs `/api/health` on the schedule

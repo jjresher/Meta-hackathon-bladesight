@@ -42,7 +42,8 @@ Agreement between the two runs:
 - Same severity on **78 of 98** defects (80%), within one level on 89 (91%).
 - Same verdict on **64 of 98** (65%). 18 defects are `ok` in both, 17 of them with the same severity.
   The open model is more cautious on this farm (fewer `ok`, more `needs_review`).
-- Farm ranking (the deterministic score of verified defects): Spearman correlation 0.62 over the
+- Farm ranking (the deterministic score: verified defects at full weight, `needs_review` at a
+  quarter): Spearman correlation 0.62 over the
   12 turbines; 4 of the top 6 turbines are the same (T01, T02, T07, T10).
 - Work orders: 2 of the 7 defects in any repair order are in a repair order in both runs; 14 of
   the 27 defects in any re-inspection request are requested in both.

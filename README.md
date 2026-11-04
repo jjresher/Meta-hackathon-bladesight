@@ -16,7 +16,7 @@ open-weights **Muse Spark Open**.
   It runs on a free plan that sleeps when idle. An external job requests it every 10 minutes to keep
   it awake, but a first load can still wait for it to wake (21.5 s measured after 3.5 h idle; Render
   documents about a minute, [`deploy.md`](docs/evidence/deploy.md)).
-- **Video (3 minutes):** <https://youtu.be/xJRrVH76CBA>. There is no GIF in the repository: images and video are never
+- **Video (2:55):** <https://youtu.be/xJRrVH76CBA>. There is no GIF in the repository: images and video are never
   committed (data licence and repo rules), so the video is the demo clip.
 - Plan, decisions, known gaps: [`docs/plan/implementation_plan.md`](docs/plan/implementation_plan.md),
   [`docs/decision_ledger.md`](docs/decision_ledger.md), [`docs/limitations.md`](docs/limitations.md).
@@ -36,7 +36,7 @@ open-weights **Muse Spark Open**.
 
 ## The problem
 
-Wind turbine blades erode, crack and get struck by lightning. Inspections produce thousands of drone
+Wind turbine blades erode, crack and get struck by lightning. Inspections produce large numbers of drone
 photos that people still review by hand, and a missed defect becomes a blade failure, downtime and a
 crane rental. BladeSight turns inspection photos into a plan an operations team can act on, and it
 says "I am not sure" instead of guessing.
@@ -52,8 +52,9 @@ says "I am not sure" instead of guessing.
    ([`docs/rubric.md`](docs/rubric.md), not an industry standard) and explains why.
 4. **Verification** takes a second, independent look and runs rule checks; the result is `ok`,
    `needs_review` or `reinspect`, always with reasons.
-5. **A fleet agent** (Muse Spark with seven tools) explains a transparent ranking score computed
-   over verified defects only, compares inspections, writes work orders and a report. A repair or
+5. **A fleet agent** (Muse Spark with seven tools) explains a transparent ranking score
+   (verified defects at full weight, `needs_review` defects at a quarter,
+   [`rank.py`](src/bladesight/fleet/rank.py)), compares inspections, writes work orders and a report. A repair or
    monitor order can only cite defects with an `ok` verdict: the tool rejects anything else, and
    unverified defects can only become re-inspection requests.
 
@@ -64,13 +65,14 @@ both runs are stored and the demo switches between them.
 
 - **Run selector** (header): "Muse Spark (Model API)" or "Muse Spark Open (Baseten)". It names the
   model behind each stage and every screen follows it (`?provider=` in the URL).
-- **Fleet**: the 12 turbines of the synthetic farm, ranked by a deterministic score of verified
-  defects, with status and 2017-vs-2018 trend.
+- **Fleet**: the 12 turbines of the synthetic farm, ranked by a deterministic score (verified
+  defects at full weight, `needs_review` at a quarter), with status and 2017-vs-2018 trend.
 - **Inspection**: the tile with SAM 3.1 masks and boxes, a glyph key for the verdicts, and one card
   per defect (severity, verdict, the second look's reasons, the rationale, and a badge naming the
   model that graded it). The work orders that cite a defect are linked from its card.
 - **Work orders** and the agent's **report**: repair orders cite verified defects; re-inspection
-  requests cover the ones verification could not confirm.
+  requests cover some of the defects verification could not confirm (19 of 63 in the Muse Spark
+  run, [`open_weights_farm.md`](docs/evidence/open_weights_farm.md)).
 - **Agent trace**: the agent's decisions turn by turn (its stated reason, the tool call, accepted or
   rejected, and the rule that stopped it if any), what it did on its own, and the 14 rules in force.
 - **Compare runs**: the two runs side by side (agreement on severity and verdict, both rankings,
@@ -109,8 +111,8 @@ measured on the held-out split.
 | Verification on the synthetic farm (98 defects, detection v2) | 35 `ok`, 50 `needs_review`, 13 `reinspect` | [`fleet_run.md`](docs/evidence/fleet_run.md) |
 | Fleet agent run (Muse Spark) | 59 steps, 25 tool calls in 16 model turns, 11 work orders (5 repair on `ok` defects, 6 re-inspections), 0.07 USD | [`fleet_run.md`](docs/evidence/fleet_run.md) |
 | Same farm, grading + verification + agent on **Muse Spark Open** | same severity as Muse Spark on 78 of 98 defects, same verdict on 64; 23 tool calls, 9 work orders (2 repair, 1 monitor, 6 re-inspections); 2.11 (cumulative over both grading passes, see [`limitations.md`](docs/limitations.md)) + 0.06 USD | [`open_weights.md`](docs/evidence/open_weights.md), [`open_weights_farm.md`](docs/evidence/open_weights_farm.md) |
-| Cost of detection | about 0.014 USD per tile | [`detect.md`](docs/evidence/detect.md) |
-| Public demo | smoke check OK in 1.9 s; cold start 21.5 s after 3.5 h idle (one sample); no horizontal scroll at 390x844 on all five screens checked | [`deploy.md`](docs/evidence/deploy.md) |
+| Cost of detection | about 0.0106 USD per tile measured (3.1759 USD for 300 dev tiles); the earlier 0.014 estimate included a blade call the pipeline no longer makes | [`eval_dev.md`](docs/evidence/eval_dev.md), [`detect.md`](docs/evidence/detect.md) |
+| Public demo | smoke check OK in 1.9 s; cold start 21.5 s after 3.5 h idle (a second wake took 12.47 s, idle time unknown); no horizontal scroll at 390x844 on all five screens checked | [`deploy.md`](docs/evidence/deploy.md) |
 
 How to read them honestly: the labelled boxes are tiny (in the spike's sample of dev tiles, 73% of
 the truth boxes are under 400 px^2, i.e. smaller than 20x20 px, and the median is 210 px^2, about
@@ -128,7 +130,7 @@ checked against an invoice.
 Counted from the stored traces in [`fleet_run.md`](docs/evidence/fleet_run.md):
 
 - The agent decides its own sequence of tool calls over seven tools (rank, read, compare, assess,
-  order, re-inspect, report): 25 calls in 16 model turns on Muse Spark, 23 calls in 7 turns on
+  order, re-inspect, report; both stored runs used six and neither called `assess_image`): 25 calls in 16 model turns on Muse Spark, 23 calls in 7 turns on
   Muse Spark Open, each ending with a report it wrote. The prompt gives the rules and a suggested
   workflow; the loop does not fix which tool comes next or which defects to act on.
 - It acts on uncertainty instead of hiding it: in both runs 6 of the orders are re-inspection
@@ -156,7 +158,7 @@ on the verdict of 64; the open model is more cautious on this farm (25 `ok` agai
 better. In the UI, pick "Muse Spark Open (Baseten)" in the run selector or open **Compare runs**.
 
 The model id actually used on Baseten is exactly **`meta-models/muse-spark-open`**: it is the only
-Muse Spark id that `/v1/models` lists for this account (checked on Nov 4). The `-1026` id from the
+Muse Spark id that `/v1/models` lists for this account (checked on Nov 3). The `-1026` id from the
 hackathon guide answers 404 ([`open_weights.md`](docs/evidence/open_weights.md)). To verify:
 
 ```bash
@@ -248,9 +250,11 @@ BLADESIGHT_MODE=live uv run poe fleet process  # detect, grade and verify the fa
 BLADESIGHT_MODE=live uv run poe fleet run      # the agent
 ```
 
+The 1.78 USD is the cost line of [`fleet_run.md`](docs/evidence/fleet_run.md).
+
 Re-run the planning half on Muse Spark Open (needs `BASETEN_API_KEY` and `BASETEN_SPEND_LIMIT_USD`
 in `.env` or the environment; no Meta key is needed because detections are reused; 2.16 USD over the runs behind
-the stored replay, and 197 grading calls wait for the 15 requests/minute limit, so at least 14 minutes;
+the stored replay, and 197 grading calls wait for the 15 requests/minute limit, so at least 13 minutes;
 [`open_weights.md`](docs/evidence/open_weights.md)). Write to a new folder so the stored replay
 stays as it is. Re-grading reads the farm tiles, so fetch them first
 (`uv run python -m bladesight.data.demo`, or `uv run poe data` for the whole dataset):
