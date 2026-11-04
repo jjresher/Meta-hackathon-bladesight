@@ -4,7 +4,7 @@ import { api } from "../api/client";
 import { TrendBadge, TurbineStatusChip } from "../components/Chips";
 import { Async } from "../components/PageState";
 import SeverityScale from "../components/SeverityScale";
-import { InfoIcon, ToneGlyph, type Tone } from "../components/icons";
+import { InfoIcon, ToneGlyph, TurbineArt, type Tone } from "../components/icons";
 import { useAsyncData } from "../hooks/useAsyncData";
 import { useRun } from "../lib/run";
 import { defectsLabel, latestInspection } from "../lib/format";
@@ -164,6 +164,7 @@ function FleetBody({ fleet }: { fleet: Fleet }) {
           defect that needs review adds a quarter of its weight to the priority score; one that needs reinspection adds
           nothing. Both ask for a person or new photos.
         </p>
+        <TurbineArt className="page-head__art" />
       </header>
 
       <p className="note" data-testid="fleet-note">

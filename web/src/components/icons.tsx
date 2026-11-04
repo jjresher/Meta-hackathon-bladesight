@@ -109,6 +109,19 @@ export function ArrowLeftIcon({ size = 14, className }: IconProps) {
 }
 
 /** The BladeSight brand mark: a stylized three-blade rotor. */
+const BLADE = "M0 -2 C 1.2 -7 1 -10.5 0 -12.5 C -1 -10.5 -1.2 -7 0 -2 Z";
+
+/** Three blades around the origin; `.rotor` turns them slowly unless reduced motion is on. */
+function Rotor({ seconds, delay = 0 }: { seconds?: number; delay?: number }) {
+  return (
+    <g className="rotor" style={seconds ? { animationDuration: `${seconds}s`, animationDelay: `${delay}s` } : undefined}>
+      <path d={BLADE} />
+      <path d={BLADE} transform="rotate(120)" />
+      <path d={BLADE} transform="rotate(240)" />
+    </g>
+  );
+}
+
 export function BrandMark({ size = 34 }: { size?: number }) {
   return (
     <svg
@@ -119,15 +132,38 @@ export function BrandMark({ size = 34 }: { size?: number }) {
       focusable="false"
       className="app-brand__mark"
     >
-      <circle cx="17" cy="17" r="15.5" fill="none" stroke="var(--accent)" strokeWidth="1.5" strokeDasharray="20.3 4" strokeDashoffset="10.15" />
-      <g transform="translate(17 17)" fill="var(--text)">
-        <circle r="2.2" fill="var(--accent)" />
-        <g>
-          <path d="M0 -2 C 1.2 -7 1 -10.5 0 -12.5 C -1 -10.5 -1.2 -7 0 -2 Z" />
-          <path d="M0 -2 C 1.2 -7 1 -10.5 0 -12.5 C -1 -10.5 -1.2 -7 0 -2 Z" transform="rotate(120)" />
-          <path d="M0 -2 C 1.2 -7 1 -10.5 0 -12.5 C -1 -10.5 -1.2 -7 0 -2 Z" transform="rotate(240)" />
-        </g>
+      <path d="M16.2 14 L17.8 14 L18.6 34 L15.4 34 Z" fill="var(--text)" />
+      <g transform="translate(17 13.5)" fill="var(--text)">
+        <Rotor />
+        <circle r="2" fill="var(--accent-fill)" />
       </g>
+    </svg>
+  );
+}
+
+const TURBINES = [
+  { x: 74, hub: 46, scale: 1.7, seconds: 17, delay: -5 },
+  { x: 160, hub: 24, scale: 2.5, seconds: 13, delay: 0 },
+  { x: 232, hub: 40, scale: 1.95, seconds: 15, delay: -9 },
+];
+
+/** Three turbines on a low ridge: the Fleet heading and the empty states. Decoration only. */
+export function TurbineArt({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 270 86" aria-hidden="true" focusable="false" className={className}>
+      <path className="turbine-art__hill" d="M0 86 C 50 62 110 60 160 70 C 200 78 240 64 270 70 L270 86 Z" />
+      {TURBINES.map(({ x, hub, scale, seconds, delay }) => (
+        <g key={x}>
+          <path className="turbine-art__tower" d={`M${x - 0.9} ${hub} L${x + 0.9} ${hub} L${x + 1.8} 80 L${x - 1.8} 80 Z`} />
+          <g transform={`translate(${x} ${hub}) scale(${scale})`}>
+            <g className="turbine-art__blades">
+              <Rotor seconds={seconds} delay={delay} />
+            </g>
+            <circle className="turbine-art__hub" r="1.5" />
+          </g>
+        </g>
+      ))}
+      <path className="turbine-art__hill turbine-art__hill--near" d="M0 86 C 70 74 150 84 270 76 L270 86 Z" />
     </svg>
   );
 }

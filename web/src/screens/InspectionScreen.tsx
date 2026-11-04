@@ -8,7 +8,7 @@ import OverlayLegend from "../components/OverlayLegend";
 import PhotoViewer, { VERDICT_TEXT, type Layers } from "../components/PhotoViewer";
 import { Async } from "../components/PageState";
 import SeverityScale from "../components/SeverityScale";
-import { ArrowLeftIcon, InfoIcon } from "../components/icons";
+import { ArrowLeftIcon, InfoIcon, TurbineArt } from "../components/icons";
 import { SEVERITY_AGREEMENT } from "../evidence";
 import { useAsyncData } from "../hooks/useAsyncData";
 import { useRun } from "../lib/run";
@@ -151,7 +151,7 @@ function InspectionBody({ inspection, fleet, orders }: { inspection: Inspection;
   if (!image) {
     return (
       <p className="note note--empty">
-        <InfoIcon className="note__icon" />
+        <TurbineArt className="note__art" />
         <span>This inspection has no tiles.</span>
       </p>
     );
