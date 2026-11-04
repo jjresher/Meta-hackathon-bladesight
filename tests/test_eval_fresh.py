@@ -183,7 +183,7 @@ def test_a_dev_run_with_detector_v2_needs_its_own_stem() -> None:
 
 def test_the_manifest_writer_refuses_to_overwrite_the_frozen_set() -> None:
     assert fresh.MANIFEST.exists()
-    assert fresh.main(["--write"]) == 2
+    assert fresh.main(["--write", "--data-dir", "/nonexistent"]) == 2  # refused before any read
 
 
 def test_a_v2_dev_run_records_its_detector(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
