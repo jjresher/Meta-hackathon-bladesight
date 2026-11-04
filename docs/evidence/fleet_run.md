@@ -26,6 +26,30 @@ completed (`docs/decision_ledger.md`); the shares above therefore depend on that
 
 Trace and orders: `replay/runs/`, `replay/work_orders.json`, `replay/reports/`.
 
+## Agent autonomy
+
+Counted from the stored traces (`fleet/compare.py`). A rejection is a tool call the
+tool refused, with the rule it enforced (`fleet/rules.py`, stable ids); the agent
+reads the refusal and decides what to do next. The rationale is the model's own text
+in the same turn before the call (null when it wrote none); nothing is filled in.
+The Meta run's fields were backfilled from its stored steps (`fleet backfill`).
+The Muse Spark Open run grades its own re-graded farm (`replay/open-weights/`),
+so the two agents saw different verdicts: compare behaviour, not order lists.
+
+| | `run-final` (muse-spark-1.3) | `run-open-weights` (meta-models/muse-spark-open) |
+|---|---|---|
+| Status | `completed` | `completed` |
+| Steps in the trace | 60 | 45 |
+| Model turns | 14 | 7 |
+| Tool calls | 23 | 22 |
+| Tool calls by tool | `compare_inspections` 6, `create_work_order` 3, `get_inspection` 6, `list_turbines` 1, `request_reinspection` 6, `write_report` 1 | `compare_inspections` 6, `create_work_order` 2, `get_inspection` 6, `list_turbines` 1, `request_reinspection` 6, `write_report` 1 |
+| Tool calls with the model's own text before them | 23 | 0 |
+| Calls rejected by a tool rule | 0 | 0 |
+| Rejections by rule | none | none |
+| Work orders | 9 | 8 |
+| Work orders by kind | `reinspect` 6, `repair` 3 | `reinspect` 6, `repair` 2 |
+| Agent cost (USD) | 0.0645 | 0.0634 |
+
 ## Per inspection
 
 | Inspection | Defects | Max verified severity | Needs review | Reinspect |

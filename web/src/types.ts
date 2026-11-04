@@ -40,6 +40,46 @@ export interface AgentStep {
   duration_ms: number;
   cost_usd: number;
   model: string | null;
+  /**
+   * provider of `model`
+   */
+  provider: ("meta" | "baseten" | "stub") | null;
+  /**
+   * model turn (1-based) the step belongs to; null on errors
+   */
+  turn: number | null;
+  /**
+   * the model's own text in the same turn, before this call; null if it gave none
+   */
+  rationale: string | null;
+  /**
+   * what the call asked for, summarised from its arguments
+   */
+  decision: string | null;
+  /**
+   * rejected when the tool returned an error
+   */
+  outcome: ("accepted" | "rejected") | null;
+  /**
+   * the rule the tool enforced when it rejected this call
+   */
+  blocked_by_rule: RuleRef | null;
+}
+/**
+ * A rule enforced in code by an agent tool (`bladesight.fleet.rules.RULES`).
+ *
+ * This interface was referenced by `Contract`'s JSON-Schema
+ * via the `definition` "RuleRef".
+ */
+export interface RuleRef {
+  /**
+   * stable id, e.g. 'verified_only'
+   */
+  id: string;
+  /**
+   * the rule in plain words
+   */
+  text: string;
 }
 /**
  * Muse Spark's grade of one defect against `docs/rubric.md`.
@@ -315,6 +355,14 @@ export interface Verification {
    * @minItems 1
    */
   reasons: [string, ...string[]];
+  /**
+   * model of the second look; null in results stored before it
+   */
+  model: string | null;
+  /**
+   * provider of the second look
+   */
+  provider: ("meta" | "baseten" | "stub") | null;
 }
 /**
  * This interface was referenced by `Contract`'s JSON-Schema
@@ -342,6 +390,42 @@ export interface InspectionImage {
   height: number;
   blade_outline: [number, number][][];
   defects: InspectedDefect[];
+}
+/**
+ * One stored run of the pipeline. Select it with `?provider=` on the data endpoints.
+ *
+ * This interface was referenced by `Contract`'s JSON-Schema
+ * via the `definition` "ReplaySet".
+ */
+export interface ReplaySet {
+  /**
+   * the chat provider of this replay
+   */
+  provider: "meta" | "baseten";
+  label: string;
+  /**
+   * what the endpoints serve without `?provider=`
+   */
+  default: boolean;
+  /**
+   * which model ran each stage of this replay
+   */
+  stages: StageModel[];
+  /**
+   * latest agent run of this replay
+   */
+  run_id: string | null;
+  n_inspections: number;
+  note: string;
+}
+/**
+ * This interface was referenced by `Contract`'s JSON-Schema
+ * via the `definition` "StageModel".
+ */
+export interface StageModel {
+  stage: "detection_proposals" | "segmentation" | "severity" | "verification" | "agent";
+  model: string;
+  provider: "meta" | "baseten" | "stub";
 }
 /**
  * This interface was referenced by `Contract`'s JSON-Schema
@@ -384,6 +468,11 @@ export interface WorkOrder {
   due_within_days: number;
   created_by: "agent" | "human";
   run_id: string | null;
+  /**
+   * model of the agent that wrote the order
+   */
+  model: string | null;
+  provider: ("meta" | "baseten" | "stub") | null;
 }
 
 // --- aliases derived from the types above (added by scripts/gen-types.mjs) ---

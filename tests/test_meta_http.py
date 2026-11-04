@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 import httpx
 import pytest
@@ -25,8 +26,10 @@ from bladesight.meta import (
     SpendTracker,
     ToolCall,
     ToolSpec,
+    Usage,
 )
 from bladesight.meta.http_provider import join_url
+from bladesight.meta.spend import cost_usd, estimate_chat_usd
 
 BASE = "https://api.example.test"
 KEY = "sk-test-DO-NOT-LEAK-123"
@@ -255,11 +258,54 @@ def test_incomplete_reasoning_only_reply_is_returned_not_lost() -> None:
         httpx.Response(200, json={"output": [{"type": "function_call", "name": "x"}]}),
     ],
 )
-def test_malformed_success_responses_are_invalid_not_retried(response: httpx.Response) -> None:
+def test_malformed_success_responses_are_retried_once_and_billed(response: httpx.Response) -> None:
     route = respx.post(RESPONSES_URL).mock(return_value=response)
+    client = client_for(provider())
+    with pytest.raises(MetaInvalidResponseError) as info:
+        client.chat(chat_request())
+    assert route.call_count == 2  # one retry (#23), then the typed error
+    assert info.value.attempts == 2
+    # Each unparsable 2xx was probably billed: settled at the estimate, never released as free.
+    assert client.spend.spent_usd == pytest.approx(2 * estimate_chat_usd(chat_request()))
+
+
+@respx.mock
+def test_an_unparsable_2xx_then_a_good_reply_succeeds_and_counts_both(tmp_path: Path) -> None:
+    route = respx.post(RESPONSES_URL).mock(
+        side_effect=[
+            httpx.Response(200, text="<html>truncated"),
+            httpx.Response(200, json=responses_body("fine")),
+        ]
+    )
+    sleeps: list[float] = []
+    client = client_for(provider(), sleeps, cache=DiskCache(tmp_path / "c"))
+
+    result = client.chat(chat_request())
+
+    assert result.text == "fine"
+    assert route.call_count == 2
+    assert len(sleeps) == 1  # backoff before the retry
+    record = client.records[0]
+    assert (record.attempts, record.retried_codes) == (2, ["200"])
+    usage = Usage(input_tokens=11, cached_input_tokens=4, output_tokens=7)
+    good = cost_usd("muse-spark-1.3", usage)
+    assert record.cost_usd == pytest.approx(good)
+    assert client.spend.spent_usd == pytest.approx(estimate_chat_usd(chat_request()) + good)
+    # Only the good reply is cached: a repeat is served from the cache with no request.
+    assert client.chat(chat_request()).text == "fine"
+    assert route.call_count == 2
+
+
+@respx.mock
+def test_two_unparsable_2xx_are_never_cached(tmp_path: Path) -> None:
+    route = respx.post(RESPONSES_URL).respond(200, json={"output": "nope"})
+    client = client_for(provider(), cache=DiskCache(tmp_path / "c"))
     with pytest.raises(MetaInvalidResponseError):
-        client_for(provider()).chat(chat_request())
-    assert route.call_count == 1
+        client.chat(chat_request())
+
+    route.respond(200, json=responses_body("later"))
+    assert client.chat(chat_request()).text == "later"  # a real request, not a cached failure
+    assert route.call_count == 3
 
 
 def test_images_are_only_allowed_in_user_messages() -> None:

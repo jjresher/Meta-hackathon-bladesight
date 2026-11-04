@@ -94,7 +94,11 @@ class MetaConnectionError(MetaError):
 
 
 class MetaInvalidResponseError(MetaError):
-    """A 2xx response whose body does not match the expected shape. Not retried here."""
+    """A 2xx response whose body does not match the expected shape.
+
+    Not retried by `call_with_retry`: `MetaClient` retries it once on a fresh reservation and
+    settles each such attempt at its estimate, because a 2xx was probably billed.
+    """
 
     kind = "invalid_response"
 

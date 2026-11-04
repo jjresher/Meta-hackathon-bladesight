@@ -128,6 +128,10 @@ class Verification(Contract):
     second_severity: int | None = Field(default=None, ge=1, le=5)
     checks: list[Check] = Field(default_factory=list)
     reasons: list[str] = Field(min_length=1, description="why this verdict; never empty")
+    model: str | None = Field(
+        default=None, description="model of the second look; null in results stored before it"
+    )
+    provider: Provider | None = Field(default=None, description="provider of the second look")
 
 
 class InspectedDefect(Contract):
@@ -205,6 +209,8 @@ class WorkOrder(Contract):
     due_within_days: int = Field(ge=0)
     created_by: Literal["agent", "human"] = "agent"
     run_id: str | None = None
+    model: str | None = Field(default=None, description="model of the agent that wrote the order")
+    provider: Provider | None = None
 
 
 class Report(Contract):
@@ -221,6 +227,13 @@ class Report(Contract):
 # --- agent ------------------------------------------------------------------------------------
 
 
+class RuleRef(Contract):
+    """A rule enforced in code by an agent tool (`bladesight.fleet.rules.RULES`)."""
+
+    id: str = Field(description="stable id, e.g. 'verified_only'")
+    text: str = Field(description="the rule in plain words")
+
+
 class AgentStep(Contract):
     index: int = Field(ge=0)
     kind: Literal["thought", "tool_call", "tool_result", "final", "error"]
@@ -230,6 +243,24 @@ class AgentStep(Contract):
     duration_ms: int = Field(ge=0)
     cost_usd: float = Field(ge=0)
     model: str | None = None
+    provider: Provider | None = Field(default=None, description="provider of `model`")
+    turn: int | None = Field(
+        default=None, ge=1, description="model turn (1-based) the step belongs to; null on errors"
+    )
+    # The four fields below are set on `tool_call` steps only (null elsewhere).
+    rationale: str | None = Field(
+        default=None,
+        description="the model's own text in the same turn, before this call; null if it gave none",
+    )
+    decision: str | None = Field(
+        default=None, description="what the call asked for, summarised from its arguments"
+    )
+    outcome: Literal["accepted", "rejected"] | None = Field(
+        default=None, description="rejected when the tool returned an error"
+    )
+    blocked_by_rule: RuleRef | None = Field(
+        default=None, description="the rule the tool enforced when it rejected this call"
+    )
 
 
 class AgentRun(Contract):
@@ -244,6 +275,24 @@ class AgentRun(Contract):
     total_cost_usd: float = Field(ge=0)
     work_order_ids: list[str] = Field(default_factory=list)
     report_id: str | None = None
+
+
+class StageModel(Contract):
+    stage: Literal["detection_proposals", "segmentation", "severity", "verification", "agent"]
+    model: str
+    provider: Provider
+
+
+class ReplaySet(Contract):
+    """One stored run of the pipeline. Select it with `?provider=` on the data endpoints."""
+
+    provider: Literal["meta", "baseten"] = Field(description="the chat provider of this replay")
+    label: str
+    default: bool = Field(description="what the endpoints serve without `?provider=`")
+    stages: list[StageModel] = Field(description="which model ran each stage of this replay")
+    run_id: str | None = Field(default=None, description="latest agent run of this replay")
+    n_inspections: int
+    note: str
 
 
 # --- evaluation -------------------------------------------------------------------------------
@@ -317,6 +366,9 @@ EXPORTED: dict[str, type[Contract]] = {
     "WorkOrder": WorkOrder,
     "Report": Report,
     "AgentStep": AgentStep,
+    "RuleRef": RuleRef,
     "AgentRun": AgentRun,
+    "ReplaySet": ReplaySet,
+    "StageModel": StageModel,
     "EvalReport": EvalReport,
 }

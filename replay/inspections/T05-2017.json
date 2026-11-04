@@ -721,7 +721,9 @@
       ],
       "reasons": [
        "combined confidence 0.25 is below 0.3"
-      ]
+      ],
+      "model": "muse-spark-1.3",
+      "provider": "meta"
      },
      "error": null
     }
