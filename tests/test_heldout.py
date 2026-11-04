@@ -154,6 +154,7 @@ def test_cli_single_run_reseals_and_writes_the_evidence(
     assert stat.S_IMODE((data / "heldout").stat().st_mode) == 0  # sealed again
     text = (tmp_path / "docs" / "evidence" / "eval_heldout.md").read_text(encoding="utf-8")
     assert "Preregistered sample" in text and "sha256" in text
+    assert "Unweighted damage counts at IoU 0.3: TP" in text
     # the evidence file now exists: a second run is refused
     (data / "heldout").chmod(0o700)
     assert eval_main(argv) == 2

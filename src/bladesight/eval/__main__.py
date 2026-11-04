@@ -11,12 +11,14 @@ import argparse
 import os
 import subprocess
 import sys
+from dataclasses import replace
 from pathlib import Path
 
 from ..data import HeldoutSealedError
 from ..data.splits import HELDOUT_ENV
 from ..meta import MetaError, MetaSettings, build_client
 from .heldout import SAMPLE_SEED, HeldoutError, preflight, reseal, sample_heldout, verify_manifest
+from .metrics import aggregate
 from .report import build_report, write_outputs
 from .runner import evaluate_tiles, load_tiles, sample_tiles
 
@@ -90,6 +92,8 @@ def main(argv: list[str] | None = None) -> int:
     cost = args.cost_usd if args.cost_usd is not None else sum(r.cost_usd for r in client.records)
     stem = args.stem or f"eval_{args.split}"
     if heldout:
+        flat = aggregate([replace(r, weight=1.0) for r in results], "damage")
+        unweighted = f"TP {flat.tp:.0f}, FP {flat.fp:.0f}, FN {flat.fn:.0f}"
         n_clean = sum(not r.has_label for r in results)
         clean_total = round(n_clean * max((r.weight for r in results), default=1.0))
         sample_note = (
@@ -97,7 +101,8 @@ def main(argv: list[str] | None = None) -> int:
             f"tiles plus {n_clean} of its {clean_total} clean tiles (seed {SAMPLE_SEED}); each "
             f"clean tile weighs {clean_total / max(n_clean, 1):.2f}, so precision, false positives "
             "and false alarms per image are scaled to the whole split. Recall and image-level "
-            f"rates are not affected. Preregistration sha256 {prereg_hash}. "
+            f"rates are not affected. Unweighted damage counts at IoU 0.3: {unweighted}. "
+            f"Preregistration sha256 {prereg_hash}. "
             f"Code commit {_git_sha()}."
         )
     else:
